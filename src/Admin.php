@@ -1,9 +1,12 @@
 <?php
+namespace Aurismore\AAT;
+
 if (!defined('ABSPATH')) exit;
 
-class AAT_Admin {
+class Admin {
     private $core;
-    public function __construct($core) {
+
+    public function __construct(Core $core) {
         $this->core = $core;
         add_action('admin_menu', [$this, 'menu']);
         add_action('admin_init', [$this, 'register_settings']);
@@ -12,6 +15,7 @@ class AAT_Admin {
         add_action('admin_post_aat_import', [$this, 'import']);
         add_action('admin_post_aat_reset_defaults', [$this, 'reset_defaults']);
         add_action('admin_post_aat_save_license', [$this, 'save_license']);
+        add_action('admin_post_aat_clear_support_log', [$this, 'clear_support_log']);
         add_filter('plugin_action_links_' . plugin_basename(AAT_FILE), [$this, 'plugin_links']);
     }
 
@@ -26,14 +30,15 @@ class AAT_Admin {
     }
 
     public function register_settings() {
-        register_setting('aat_settings_group', AAT_OPTION, ['sanitize_callback' => ['AAT_Core', 'sanitize_settings']]);
+        register_setting('aat_settings_group', AAT_OPTION, ['sanitize_callback' => [Core::class, 'sanitize_settings']]);
     }
 
     private function color_field($key, $label, $value, $description = '') {
+        $opt = esc_attr(AAT_OPTION);
         echo '<div class="aat-color-setting">';
         echo '<label for="aat-' . esc_attr($key) . '"><span>' . esc_html($label) . '</span></label>';
         echo '<div class="aat-color-control">';
-        echo '<input id="aat-' . esc_attr($key) . '" type="text" class="aat-color-field" name="' . esc_attr(AAT_OPTION) . '[' . esc_attr($key) . ']" value="' . esc_attr($value) . '" data-default-color="' . esc_attr($value) . '" placeholder="#17243B">';
+        echo '<input id="aat-' . esc_attr($key) . '" type="text" class="aat-color-field" name="' . $opt . '[' . esc_attr($key) . ']" value="' . esc_attr($value) . '" data-default-color="' . esc_attr($value) . '" placeholder="#17243B">';
         echo '</div>';
         if ($description) echo '<p class="description">' . esc_html($description) . '</p>';
         echo '</div>';
@@ -49,15 +54,17 @@ class AAT_Admin {
         wp_localize_script('aat-admin', 'aatSupport', [
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('aat_support_nonce'),
+            'optionName' => AAT_OPTION,
         ]);
     }
 
     public function render() {
         if (!current_user_can(AAT_CAP)) wp_die('Access denied.');
-        $s = AAT_Core::get_settings();
+        $s = Core::get_settings();
         $roles = wp_roles()->roles;
         $hidden_menu = implode("\n", (array)$s['hidden_menu']);
         $restricted_pages = implode("\n", (array)$s['restricted_pages']);
+        $opt = esc_attr(AAT_OPTION);
         ?>
         <div class="wrap aat-wrap">
             <h1>WP Agency Admin Toolkit Pro</h1>
@@ -70,26 +77,27 @@ class AAT_Admin {
                 <a href="#aat-support-settings">Support</a>
                 <a href="#aat-integrations">Integrations</a>
                 <a href="#aat-tools">Tools</a>
-                <a href="#aat-license">Licence & Updates</a>
+                <a href="#aat-license">Licence &amp; Updates</a>
                 <a href="#aat-status">System Status</a>
             </div>
             <?php if (isset($_GET['aat_imported'])): ?><div class="notice notice-success"><p>Settings imported successfully.</p></div><?php endif; ?>
             <?php if (isset($_GET['aat_reset'])): ?><div class="notice notice-success"><p>Defaults restored successfully.</p></div><?php endif; ?>
             <?php if (isset($_GET['aat_update_cache_cleared'])): ?><div class="notice notice-success"><p>Update cache cleared. WordPress will check WP Client Tools again.</p></div><?php endif; ?>
             <?php if (isset($_GET['aat_license_saved'])): ?><div class="notice notice-success"><p>Licence settings updated.</p></div><?php endif; ?>
+            <?php if (isset($_GET['aat_support_log_cleared'])): ?><div class="notice notice-success"><p>Support request log cleared.</p></div><?php endif; ?>
 
             <form method="post" action="options.php">
                 <?php settings_fields('aat_settings_group'); ?>
                 <div class="aat-grid">
                     <section class="aat-card" id="aat-general">
                         <h2>General</h2>
-                        <label>Agency name shown to clients <input type="text" name="<?php echo AAT_OPTION; ?>[agency_name]" value="<?php echo esc_attr($s['agency_name']); ?>"></label>
-                        <label>Agency website shown to clients <input type="url" name="<?php echo AAT_OPTION; ?>[agency_url]" value="<?php echo esc_url($s['agency_url']); ?>"></label>
-                        <label>Support email <input type="email" name="<?php echo AAT_OPTION; ?>[support_email]" value="<?php echo esc_attr($s['support_email']); ?>"></label>
-                        <label>External support URL <input type="url" name="<?php echo AAT_OPTION; ?>[support_url]" value="<?php echo esc_url($s['support_url']); ?>"></label>
-                        <label>Webhook URL <input type="url" name="<?php echo AAT_OPTION; ?>[support_webhook]" value="<?php echo esc_url($s['support_webhook']); ?>"></label>
-                        <label>Support button label <input type="text" name="<?php echo AAT_OPTION; ?>[support_button_label]" value="<?php echo esc_attr($s['support_button_label']); ?>"></label>
-                        <label>Logout redirect URL <input type="url" name="<?php echo AAT_OPTION; ?>[logout_redirect_url]" value="<?php echo esc_url($s['logout_redirect_url']); ?>"></label>
+                        <label>Agency name shown to clients <input type="text" name="<?php echo $opt; ?>[agency_name]" value="<?php echo esc_attr($s['agency_name']); ?>"></label>
+                        <label>Agency website shown to clients <input type="url" name="<?php echo $opt; ?>[agency_url]" value="<?php echo esc_url($s['agency_url']); ?>"></label>
+                        <label>Support email <input type="email" name="<?php echo $opt; ?>[support_email]" value="<?php echo esc_attr($s['support_email']); ?>"></label>
+                        <label>External support URL <input type="url" name="<?php echo $opt; ?>[support_url]" value="<?php echo esc_url($s['support_url']); ?>"></label>
+                        <label>Webhook URL <input type="url" name="<?php echo $opt; ?>[support_webhook]" value="<?php echo esc_url($s['support_webhook']); ?>"></label>
+                        <label>Support button label <input type="text" name="<?php echo $opt; ?>[support_button_label]" value="<?php echo esc_attr($s['support_button_label']); ?>"></label>
+                        <label>Logout redirect URL <input type="url" name="<?php echo $opt; ?>[logout_redirect_url]" value="<?php echo esc_url($s['logout_redirect_url']); ?>"></label>
                         <p class="description">Where affected client users are sent after logging out. Leave as the website homepage unless a custom thank-you or support page is preferred.</p>
                     </section>
 
@@ -99,7 +107,7 @@ class AAT_Admin {
                             'client_safe_mode'=>'Client Safe Mode', 'hide_notices'=>'Hide noisy admin notices', 'enable_floating_support'=>'Floating request support button',
                             'enable_dashboard_widgets'=>'Fallback WordPress dashboard widgets', 'enable_custom_dashboard'=>'Custom client dashboard landing page', 'enable_site_snapshot'=>'Client dashboard site snapshot card', 'enable_recent_content'=>'Client dashboard recent content card', 'enable_login_branding'=>'Login page branding', 'enable_admin_branding'=>'Admin footer branding', 'enable_wp_admin_branding'=>'wp-admin visual branding', 'disable_admin_bar_for_clients'=>'Disable top admin bar for clients', 'hide_elementor_settings'=>'Hide Elementor settings from clients', 'hide_rank_math_overview'=>'Hide Rank Math Overview dashboard widget', 'hide_myparcel_overview'=>'Hide MyParcel dashboard widget', 'hide_yoast_overview'=>'Hide Yoast SEO dashboard widget', 'hide_wp_rocket_notices'=>'Hide WP Rocket client notices/widgets', 'hide_litespeed_notices'=>'Hide LiteSpeed Cache client notices/widgets', 'hide_acf_admin_from_clients'=>'Hide ACF field group admin from clients', 'enable_support_log'=>'Save support request log', 'login_hide_aux_links'=>'Hide lost password / return links on login'
                         ]; foreach ($checks as $key=>$label): ?>
-                            <label class="aat-check"><input type="checkbox" name="<?php echo AAT_OPTION; ?>[<?php echo esc_attr($key); ?>]" value="1" <?php checked(!empty($s[$key])); ?>> <?php echo esc_html($label); ?></label>
+                            <label class="aat-check"><input type="checkbox" name="<?php echo $opt; ?>[<?php echo esc_attr($key); ?>]" value="1" <?php checked(!empty($s[$key])); ?>> <?php echo esc_html($label); ?></label>
                         <?php endforeach; ?>
                     </section>
 
@@ -107,19 +115,19 @@ class AAT_Admin {
                         <h2>Affected roles</h2>
                         <p>Select client-facing roles. Administrators and agency toolkit managers are never restricted.</p>
                         <?php foreach ($roles as $role_key => $role): ?>
-                            <label class="aat-check"><input type="checkbox" name="<?php echo AAT_OPTION; ?>[affected_roles][]" value="<?php echo esc_attr($role_key); ?>" <?php checked(in_array($role_key, (array)$s['affected_roles'], true)); ?>> <?php echo esc_html($role['name']); ?></label>
+                            <label class="aat-check"><input type="checkbox" name="<?php echo $opt; ?>[affected_roles][]" value="<?php echo esc_attr($role_key); ?>" <?php checked(in_array($role_key, (array)$s['affected_roles'], true)); ?>> <?php echo esc_html($role['name']); ?></label>
                         <?php endforeach; ?>
                     </section>
 
                     <section class="aat-card" id="aat-branding">
                         <h2>Login branding</h2>
                         <p>This appears on <code>/wp-login.php</code>, before the user enters wp-admin. The main login logo automatically uses the current website logo/site icon.</p>
-                        <label>Agency/support footer logo URL <input type="url" name="<?php echo AAT_OPTION; ?>[login_logo_url]" value="<?php echo esc_url($s['login_logo_url']); ?>"></label>
+                        <label>Agency/support footer logo URL <input type="url" name="<?php echo $opt; ?>[login_logo_url]" value="<?php echo esc_url($s['login_logo_url']); ?>"></label>
                         <p class="description">Used for the agency logo in the support bar at the bottom of the login page and client dashboard. The main login logo is now pulled automatically from the current website logo.</p>
                         <label>Full-screen login background image</label>
                         <div class="aat-media-field">
-                            <input type="hidden" class="aat-media-id" name="<?php echo AAT_OPTION; ?>[login_background_image_id]" value="<?php echo esc_attr($s['login_background_image_id']); ?>">
-                            <input type="url" class="aat-media-url" name="<?php echo AAT_OPTION; ?>[login_background_image_url]" value="<?php echo esc_url($s['login_background_image_url']); ?>" placeholder="Upload or paste image URL">
+                            <input type="hidden" class="aat-media-id" name="<?php echo $opt; ?>[login_background_image_id]" value="<?php echo esc_attr($s['login_background_image_id']); ?>">
+                            <input type="url" class="aat-media-url" name="<?php echo $opt; ?>[login_background_image_url]" value="<?php echo esc_url($s['login_background_image_url']); ?>" placeholder="Upload or paste image URL">
                             <button type="button" class="button aat-media-upload" data-title="Choose login background" data-button="Use this background">Upload / choose image</button>
                             <button type="button" class="button aat-media-clear">Remove</button>
                         </div>
@@ -128,11 +136,11 @@ class AAT_Admin {
                         <?php endif; ?>
                         <p class="description">Recommended background size: <strong>1920 × 1080px</strong> minimum, ideally <strong>2560 × 1440px</strong> for large screens. Use WebP/JPG, compressed below 500KB where possible. The upload button stores the image in the WordPress Media Library.</p>
                         <?php $this->color_field('login_background', 'Login background colour', $s['login_background'], 'Choose from the picker or type a hex value.'); ?>
-                        <label>Background overlay <input type="text" name="<?php echo AAT_OPTION; ?>[login_background_overlay]" value="<?php echo esc_attr($s['login_background_overlay']); ?>" placeholder="rgba(23,36,59,0.28)"></label>
+                        <label>Background overlay <input type="text" name="<?php echo $opt; ?>[login_background_overlay]" value="<?php echo esc_attr($s['login_background_overlay']); ?>" placeholder="rgba(23,36,59,0.28)"></label>
                         <p class="description">Overlay accepts values such as <code>rgba(23,36,59,0.28)</code> so transparency can be controlled.</p>
                         <?php $this->color_field('login_button_color', 'Button colour', $s['login_button_color'], 'Used for the primary login button.'); ?>
                         <?php $this->color_field('login_accent_color', 'Accent colour', $s['login_accent_color'], 'Used for highlights and support accents.'); ?>
-                        <label>Admin footer text <input type="text" name="<?php echo AAT_OPTION; ?>[admin_footer_text]" value="<?php echo esc_attr($s['admin_footer_text']); ?>"></label>
+                        <label>Admin footer text <input type="text" name="<?php echo $opt; ?>[admin_footer_text]" value="<?php echo esc_attr($s['admin_footer_text']); ?>"></label>
                     </section>
 
                     <section class="aat-card">
@@ -143,29 +151,29 @@ class AAT_Admin {
                             <?php $this->color_field('admin_accent_color', 'Accent colour', $s['admin_accent_color'], 'Used for highlights, borders and secondary visual details.'); ?>
                             <?php $this->color_field('admin_background_color', 'Admin background', $s['admin_background_color'], 'Used behind the branded admin dashboard panels.'); ?>
                         </div>
-                        <label class="aat-check"><input type="checkbox" name="<?php echo AAT_OPTION; ?>[admin_branding_for_agency]" value="1" <?php checked(!empty($s['admin_branding_for_agency'])); ?>> Also apply admin branding to agency administrators</label>
+                        <label class="aat-check"><input type="checkbox" name="<?php echo $opt; ?>[admin_branding_for_agency]" value="1" <?php checked(!empty($s['admin_branding_for_agency'])); ?>> Also apply admin branding to agency administrators</label>
                         <p class="description">The WordPress admin bar logo is automatically hidden when wp-admin branding is active. Client roles can also have the full top WordPress admin bar removed from the Modules section.</p>
                     </section>
 
                     <section class="aat-card aat-wide" id="aat-cleanup">
                         <h2>Admin cleanup</h2>
                         <p>Enter one menu slug per line. Examples: <code>edit-comments.php</code>, <code>plugins.php</code>, <code>woocommerce-marketing</code>.</p>
-                        <textarea name="<?php echo AAT_OPTION; ?>[hidden_menu]" rows="9"><?php echo esc_textarea($hidden_menu); ?></textarea>
+                        <textarea name="<?php echo $opt; ?>[hidden_menu]" rows="9"><?php echo esc_textarea($hidden_menu); ?></textarea>
                     </section>
 
                     <section class="aat-card aat-wide">
                         <h2>Risky page restrictions</h2>
-                        <p>Enter one blocked admin page per line. Direct URL visits by affected roles will be blocked.</p>
-                        <textarea name="<?php echo AAT_OPTION; ?>[restricted_pages]" rows="9"><?php echo esc_textarea($restricted_pages); ?></textarea>
+                        <p>Enter one blocked admin page per line. Direct URL visits by affected roles will be blocked. Rules are matched exactly against <code>pagenow</code> and <code>admin.php?page=…</code> keys.</p>
+                        <textarea name="<?php echo $opt; ?>[restricted_pages]" rows="9"><?php echo esc_textarea($restricted_pages); ?></textarea>
                     </section>
 
                     <section class="aat-card aat-wide" id="aat-support-settings">
                         <h2>Support request system</h2>
                         <p>These options polish the Pro support workflow. Support requests can be sent by email, sent to a webhook and optionally saved in a local request log.</p>
-                        <label>Support categories <textarea name="<?php echo AAT_OPTION; ?>[support_categories]" rows="6"><?php echo esc_textarea($s['support_categories'] ?? ''); ?></textarea></label>
+                        <label>Support categories <textarea name="<?php echo $opt; ?>[support_categories]" rows="6"><?php echo esc_textarea($s['support_categories'] ?? ''); ?></textarea></label>
                         <p class="description">One category per line. These appear in the Request Support modal.</p>
                         <label>Webhook format
-                            <select name="<?php echo AAT_OPTION; ?>[support_webhook_template]">
+                            <select name="<?php echo $opt; ?>[support_webhook_template]">
                                 <option value="generic" <?php selected($s['support_webhook_template'] ?? 'generic', 'generic'); ?>>Generic JSON</option>
                                 <option value="slack" <?php selected($s['support_webhook_template'] ?? 'generic', 'slack'); ?>>Slack-style payload</option>
                                 <option value="discord" <?php selected($s['support_webhook_template'] ?? 'generic', 'discord'); ?>>Discord-style payload</option>
@@ -178,7 +186,7 @@ class AAT_Admin {
                         <h2>Plugin integrations</h2>
                         <p>Detected plugin cleanup packs. These settings only affect selected client roles after login.</p>
                         <div class="aat-status-grid aat-integration-grid">
-                            <?php foreach (AAT_Integrations::detected_plugins() as $plugin_name => $plugin_status): ?>
+                            <?php foreach (Integrations::detected_plugins() as $plugin_name => $plugin_status): ?>
                                 <div class="aat-status-row"><strong><?php echo esc_html($plugin_name); ?></strong><span><?php echo esc_html($plugin_status); ?></span></div>
                             <?php endforeach; ?>
                         </div>
@@ -187,19 +195,19 @@ class AAT_Admin {
 
                     <section class="aat-card aat-wide" id="aat-dashboard">
                         <h2>Client dashboard</h2>
-                        <label>Dashboard title <input type="text" name="<?php echo AAT_OPTION; ?>[dashboard_title]" value="<?php echo esc_attr($s['dashboard_title']); ?>"></label>
+                        <label>Dashboard title <input type="text" name="<?php echo $opt; ?>[dashboard_title]" value="<?php echo esc_attr($s['dashboard_title']); ?>"></label>
                         <label>Dashboard layout
-                            <select name="<?php echo AAT_OPTION; ?>[dashboard_layout]">
+                            <select name="<?php echo $opt; ?>[dashboard_layout]">
                                 <option value="balanced" <?php selected($s['dashboard_layout'], 'balanced'); ?>>Balanced client handover</option>
                                 <option value="commerce" <?php selected($s['dashboard_layout'], 'commerce'); ?>>WooCommerce focused</option>
                                 <option value="content" <?php selected($s['dashboard_layout'], 'content'); ?>>Content editing focused</option>
                             </select>
                         </label>
                         <p class="description">This changes the visual emphasis of the client dashboard without changing permissions or restrictions.</p>
-                        <label>Welcome message <textarea name="<?php echo AAT_OPTION; ?>[welcome_message]" rows="4"><?php echo esc_textarea($s['welcome_message']); ?></textarea></label>
+                        <label>Welcome message <textarea name="<?php echo $opt; ?>[welcome_message]" rows="4"><?php echo esc_textarea($s['welcome_message']); ?></textarea></label>
                         <h3>Instruction boxes</h3>
                         <?php foreach ((array)$s['instructions'] as $key => $value): ?>
-                            <label><?php echo esc_html(ucfirst($key)); ?> <textarea name="<?php echo AAT_OPTION; ?>[instructions][<?php echo esc_attr($key); ?>]" rows="3"><?php echo esc_textarea($value); ?></textarea></label>
+                            <label><?php echo esc_html(ucfirst($key)); ?> <textarea name="<?php echo $opt; ?>[instructions][<?php echo esc_attr($key); ?>]" rows="3"><?php echo esc_textarea($value); ?></textarea></label>
                         <?php endforeach; ?>
                     </section>
 
@@ -208,9 +216,10 @@ class AAT_Admin {
                         <div id="aat-shortcuts">
                             <?php foreach ((array)$s['shortcuts'] as $i => $shortcut): ?>
                                 <div class="aat-shortcut-row">
-                                    <input placeholder="Label" name="<?php echo AAT_OPTION; ?>[shortcuts][<?php echo esc_attr($i); ?>][label]" value="<?php echo esc_attr($shortcut['label']); ?>">
-                                    <input placeholder="URL" name="<?php echo AAT_OPTION; ?>[shortcuts][<?php echo esc_attr($i); ?>][url]" value="<?php echo esc_attr($shortcut['url']); ?>">
-                                    <input placeholder="Capability" name="<?php echo AAT_OPTION; ?>[shortcuts][<?php echo esc_attr($i); ?>][cap]" value="<?php echo esc_attr($shortcut['cap']); ?>">
+                                    <input placeholder="Label" name="<?php echo $opt; ?>[shortcuts][<?php echo esc_attr($i); ?>][label]" value="<?php echo esc_attr($shortcut['label']); ?>">
+                                    <input placeholder="URL" name="<?php echo $opt; ?>[shortcuts][<?php echo esc_attr($i); ?>][url]" value="<?php echo esc_attr($shortcut['url']); ?>">
+                                    <input placeholder="Capability" name="<?php echo $opt; ?>[shortcuts][<?php echo esc_attr($i); ?>][cap]" value="<?php echo esc_attr($shortcut['cap']); ?>">
+                                    <button type="button" class="button-link-delete aat-remove-shortcut" aria-label="Remove shortcut">&times;</button>
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -220,10 +229,8 @@ class AAT_Admin {
                 <?php submit_button('Save WP Agency Toolkit Settings'); ?>
             </form>
 
-
-
             <div class="aat-card aat-wide" id="aat-license">
-                <h2>Licence & Updates</h2>
+                <h2>Licence &amp; Updates</h2>
                 <p>WP Agency Admin Toolkit Pro receives protected updates through WP Client Tools. Enter the customer licence key once; GitHub stays private and is not configured on client websites.</p>
                 <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
                     <input type="hidden" name="action" value="aat_save_license">
@@ -232,7 +239,7 @@ class AAT_Admin {
                     <?php $licence_status = sanitize_key($s['licence_status'] ?? 'inactive'); ?>
                     <div class="aat-license-grid aat-pro-license-grid">
                         <label>Licence key
-                            <input type="password" name="<?php echo AAT_OPTION; ?>[licence_key]" value="<?php echo esc_attr($s['licence_key'] ?? ''); ?>" autocomplete="off" placeholder="Enter your WP Client Tools licence key">
+                            <input type="password" name="<?php echo $opt; ?>[licence_key]" value="<?php echo esc_attr($s['licence_key'] ?? ''); ?>" autocomplete="off" placeholder="Enter your WP Client Tools licence key">
                         </label>
                         <div class="aat-license-summary">
                             <strong>Status</strong>
@@ -242,7 +249,7 @@ class AAT_Admin {
                         <div class="aat-license-summary">
                             <strong>Product</strong>
                             <span><?php echo esc_html(defined('AAT_PRODUCT_SLUG') ? AAT_PRODUCT_SLUG : 'wp-agency-admin-toolkit-pro'); ?></span>
-                            <small>Update server: <?php echo esc_html(defined('AAT_LICENSE_SERVER') ? AAT_LICENSE_SERVER : 'https://wpclienttools.com'); ?></small>
+                            <small>Update server: <?php echo esc_html(Licence::licence_server()); ?></small>
                         </div>
                         <div class="aat-license-summary">
                             <strong>Activations</strong>
@@ -286,8 +293,13 @@ class AAT_Admin {
 
             <div class="aat-card aat-wide" id="aat-support-log">
                 <h2>Support request log</h2>
-                <p>Latest locally saved support requests. Disable “Save support request log” in Modules if you only want email/webhook delivery.</p>
+                <p>Latest locally saved support requests. Disable "Save support request log" in Modules if you only want email/webhook delivery.</p>
                 <?php $this->render_support_log(); ?>
+                <?php $log = get_option('aat_support_log', []); if (is_array($log) && !empty($log)): ?>
+                    <p>
+                        <a class="button button-secondary" href="<?php echo esc_url(wp_nonce_url(admin_url('admin-post.php?action=aat_clear_support_log'), 'aat_clear_support_log')); ?>" onclick="return confirm('Clear all locally saved support requests?');">Clear support log</a>
+                    </p>
+                <?php endif; ?>
             </div>
 
             <div class="aat-card aat-wide">
@@ -312,20 +324,19 @@ class AAT_Admin {
         <?php
     }
 
-
     public function save_license() {
         if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_save_license')) wp_die('Access denied.');
-        $settings = AAT_Core::get_settings();
+        $settings = Core::get_settings();
         $licence_key = sanitize_text_field($_POST[AAT_OPTION]['licence_key'] ?? '');
         $settings['licence_key'] = $licence_key;
         $settings['enable_private_updates'] = 1;
 
         if (isset($_POST['aat_activate_license'])) {
-            $response = AAT_License::remote_request('activate', $licence_key);
-            $settings = AAT_License::settings_from_licence_response($settings, $licence_key, $response);
+            $response = Licence::remote_request('activate', $licence_key);
+            $settings = Licence::settings_from_licence_response($settings, $licence_key, $response);
         } elseif (isset($_POST['aat_deactivate_license'])) {
             if ($licence_key) {
-                AAT_License::remote_request('deactivate', $licence_key);
+                Licence::remote_request('deactivate', $licence_key);
             }
             $settings['licence_status'] = 'inactive';
             $settings['licence_message'] = 'Licence deactivated on this website.';
@@ -340,7 +351,7 @@ class AAT_Admin {
             }
         }
 
-        AAT_Core::update_settings($settings);
+        Core::update_settings($settings);
         delete_site_transient('aat_remote_update_info');
         wp_clean_plugins_cache(true);
         wp_safe_redirect(admin_url('options-general.php?page=wp-agency-admin-toolkit&aat_license_saved=1#aat-license'));
@@ -349,7 +360,7 @@ class AAT_Admin {
 
     public function export() {
         if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_export')) wp_die('Access denied.');
-        $settings = AAT_Core::get_settings();
+        $settings = Core::get_settings();
         if (empty($_GET['include_sensitive'])) {
             $settings['support_webhook'] = '';
             $settings['licence_key'] = '';
@@ -390,15 +401,22 @@ class AAT_Admin {
         }
 
         unset($data['_exported_by'], $data['_exported_at']);
-        AAT_Core::update_settings(AAT_Core::sanitize_settings($data));
+        Core::update_settings(Core::sanitize_settings($data));
         wp_safe_redirect(admin_url('options-general.php?page=wp-agency-admin-toolkit&aat_imported=1'));
         exit;
     }
 
     public function reset_defaults() {
         if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_reset_defaults')) wp_die('Access denied.');
-        AAT_Core::update_settings(AAT_Core::defaults());
+        Core::update_settings(Core::defaults());
         wp_safe_redirect(admin_url('options-general.php?page=wp-agency-admin-toolkit&aat_reset=1'));
+        exit;
+    }
+
+    public function clear_support_log() {
+        if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_clear_support_log')) wp_die('Access denied.');
+        delete_option('aat_support_log');
+        wp_safe_redirect(admin_url('options-general.php?page=wp-agency-admin-toolkit&aat_support_log_cleared=1#aat-support-log'));
         exit;
     }
 
@@ -446,7 +464,7 @@ class AAT_Admin {
             'Affected roles' => implode(', ', (array) ($this->core->settings['affected_roles'] ?? [])),
             'Licence status' => ucfirst($this->core->settings['licence_status'] ?? 'inactive'),
             'Product slug' => defined('AAT_PRODUCT_SLUG') ? AAT_PRODUCT_SLUG : 'wp-agency-admin-toolkit-pro',
-            'Update server' => defined('AAT_LICENSE_SERVER') ? AAT_LICENSE_SERVER : 'https://wpclienttools.com',
+            'Update server' => Licence::licence_server(),
         ];
     }
 
@@ -457,5 +475,4 @@ class AAT_Admin {
         }
         return implode("\n", $lines);
     }
-
 }

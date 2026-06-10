@@ -1,10 +1,12 @@
 <?php
+namespace Aurismore\AAT;
+
 if (!defined('ABSPATH')) exit;
 
-class AAT_Integrations {
+class Integrations {
     private $core;
 
-    public function __construct($core) {
+    public function __construct(Core $core) {
         $this->core = $core;
         add_action('wp_dashboard_setup', [$this, 'hide_selected_dashboard_widgets'], 1000);
         add_action('admin_menu', [$this, 'hide_plugin_admin_pages'], 999);

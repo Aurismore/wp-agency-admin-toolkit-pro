@@ -1,11 +1,13 @@
 <?php
+namespace Aurismore\AAT;
+
 if (!defined('ABSPATH')) exit;
 
-class AAT_License {
+class Licence {
     private $core;
     private $cache_key = 'aat_remote_update_info';
 
-    public function __construct($core) {
+    public function __construct(Core $core) {
         $this->core = $core;
         add_filter('pre_set_site_transient_update_plugins', [$this, 'check_for_update']);
         add_filter('plugins_api', [$this, 'plugin_info'], 20, 3);
@@ -23,7 +25,9 @@ class AAT_License {
     }
 
     public static function licence_server() {
-        $server = defined('AAT_LICENSE_SERVER') ? AAT_LICENSE_SERVER : 'https://wpclienttools.com';
+        $server = defined('AAT_LICENCE_SERVER')
+            ? AAT_LICENCE_SERVER
+            : (defined('AAT_LICENSE_SERVER') ? AAT_LICENSE_SERVER : 'https://wpclienttools.com');
         return untrailingslashit(apply_filters('aat_licence_server', $server));
     }
 
@@ -73,7 +77,7 @@ class AAT_License {
     }
 
     public static function settings_from_licence_response($current_settings, $licence_key, $response) {
-        $settings = is_array($current_settings) ? $current_settings : AAT_Core::get_settings();
+        $settings = is_array($current_settings) ? $current_settings : Core::get_settings();
         $settings['licence_key'] = sanitize_text_field($licence_key);
         $settings['licence_status'] = !empty($response['success']) ? 'active' : 'inactive';
         $settings['licence_message'] = sanitize_text_field($response['message'] ?? '');
@@ -101,7 +105,7 @@ class AAT_License {
 
         if (version_compare(AAT_VERSION, $remote['version'], '<')) {
             $plugin_file = plugin_basename(AAT_FILE);
-            $item = new stdClass();
+            $item = new \stdClass();
             $item->id = $remote['slug'] ?? self::product_slug();
             $item->slug = $remote['slug'] ?? self::product_slug();
             $item->plugin = $plugin_file;
@@ -125,7 +129,7 @@ class AAT_License {
         $remote = $this->get_remote_info();
         if (!$remote) return $result;
 
-        $info = new stdClass();
+        $info = new \stdClass();
         $info->name = sanitize_text_field($remote['name'] ?? 'WP Agency Admin Toolkit Pro');
         $info->slug = sanitize_key($remote['slug'] ?? self::product_slug());
         $info->version = sanitize_text_field($remote['version'] ?? AAT_VERSION);
