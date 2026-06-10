@@ -1,11 +1,13 @@
 <?php
+namespace Aurismore\AAT;
+
 if (!defined('ABSPATH')) exit;
 
-class AAT_Cleanup {
+class Cleanup {
     private $core;
-    public function __construct($core) {
+
+    public function __construct(Core $core) {
         $this->core = $core;
-        add_action('admin_menu', [$this, 'hide_menus'], 999);
         add_action('admin_init', [$this, 'restrict_pages'], 1);
         add_action('wp_before_admin_bar_render', [$this, 'cleanup_admin_bar'], 999);
         add_action('admin_print_scripts', [$this, 'hide_notices'], 0);
@@ -13,24 +15,33 @@ class AAT_Cleanup {
         add_filter('show_admin_bar', [$this, 'maybe_disable_frontend_admin_bar'], 999);
     }
 
-    public function hide_menus() {
-        // WP Agency Admin Toolkit v1.17 keeps the left wp-admin menu intact for all users, including client roles and administrators.
-        // Risky direct-page blocking can still be handled by client_safe_mode below when enabled.
-        return;
-    }
-
+    /**
+     * Block direct visits to configured admin pages for affected client roles.
+     *
+     * Uses exact matching on {pagenow, ?page, ?post_type} keys rather than
+     * substring matches against REQUEST_URI, which historically over-blocked
+     * (e.g. a rule of `tools.php` matched any URL containing that string).
+     */
     public function restrict_pages() {
         if (!$this->core->user_is_affected() || empty($this->core->settings['client_safe_mode'])) return;
         global $pagenow;
-        $current = $pagenow;
-        if (!empty($_GET['page'])) {
-            $current .= '?page=' . sanitize_text_field(wp_unslash($_GET['page']));
+        if (!$pagenow) return;
+
+        $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
+        $post_type = isset($_GET['post_type']) ? sanitize_text_field(wp_unslash($_GET['post_type'])) : '';
+
+        $current_keys = [$pagenow];
+        if ($page !== '') {
+            $current_keys[] = $pagenow . '?page=' . $page;
+            // Many rules in the wild are written as "admin.php?page=..." even when WP
+            // routes the same page through a different $pagenow. Normalise both forms.
+            $current_keys[] = 'admin.php?page=' . $page;
         }
-        if (!empty($_GET['post_type'])) {
-            $current .= '?post_type=' . sanitize_text_field(wp_unslash($_GET['post_type']));
+        if ($post_type !== '') {
+            $current_keys[] = $pagenow . '?post_type=' . $post_type;
         }
 
-        $blocked = (array)$this->core->settings['restricted_pages'];
+        $blocked = (array) $this->core->settings['restricted_pages'];
         if (!empty($this->core->settings['hide_elementor_settings'])) {
             $blocked = array_merge($blocked, [
                 'admin.php?page=elementor',
@@ -39,10 +50,10 @@ class AAT_Cleanup {
                 'admin.php?page=elementor-role-manager',
             ]);
         }
+        $blocked = array_unique(array_filter(array_map('trim', $blocked)));
+
         foreach ($blocked as $rule) {
-            $rule = trim($rule);
-            if ($rule === '') continue;
-            if ($pagenow === $rule || $current === $rule || strpos($current, $rule) !== false || strpos($_SERVER['REQUEST_URI'] ?? '', $rule) !== false) {
+            if ($rule !== '' && in_array($rule, $current_keys, true)) {
                 wp_die(
                     '<h1>Protected agency setting</h1><p>This area can affect the website, payments, theme, plugins or store settings. Please request support before making changes here.</p><p><a class="button button-primary" href="' . esc_url(admin_url()) . '">Return to dashboard</a></p>',
                     'Protected Agency Setting',

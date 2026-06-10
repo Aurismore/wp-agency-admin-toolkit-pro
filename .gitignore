@@ -1,0 +1,19 @@
+# Composer (autoload is shipped via the plugin's own loader; vendor is dev-only)
+/vendor/
+composer.lock
+
+# Build artefacts
+/build/
+*.zip
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log

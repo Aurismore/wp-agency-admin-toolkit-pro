@@ -1,5 +1,8 @@
 (function($){
   if ($.fn.wpColorPicker) { $('.aat-color-field').wpColorPicker(); }
+
+  var optionName = (window.aatSupport && window.aatSupport.optionName) ? window.aatSupport.optionName : 'aat_settings';
+
   function openModal(){ $('#aat-support-modal').addClass('is-open').attr('aria-hidden','false'); }
   function closeModal(){ $('#aat-support-modal').removeClass('is-open').attr('aria-hidden','true'); }
   $(document).on('click','.aat-open-support,#wp-admin-bar-aat-support-request a',function(e){ e.preventDefault(); openModal(); });
@@ -49,7 +52,19 @@
   });
 
   $('#aat-add-shortcut').on('click',function(){
-    var i=$('#aat-shortcuts .aat-shortcut-row').length+100;
-    $('#aat-shortcuts').append('<div class="aat-shortcut-row"><input placeholder="Label" name="aat_settings[shortcuts]['+i+'][label]"><input placeholder="URL" name="aat_settings[shortcuts]['+i+'][url]"><input placeholder="Capability" name="aat_settings[shortcuts]['+i+'][cap]" value="read"></div>');
+    var i = $('#aat-shortcuts .aat-shortcut-row').length + 100;
+    var nameBase = optionName + '[shortcuts][' + i + ']';
+    var html = '<div class="aat-shortcut-row">'
+      + '<input placeholder="Label" name="' + nameBase + '[label]">'
+      + '<input placeholder="URL" name="' + nameBase + '[url]">'
+      + '<input placeholder="Capability" name="' + nameBase + '[cap]" value="read">'
+      + '<button type="button" class="button-link-delete aat-remove-shortcut" aria-label="Remove shortcut">&times;</button>'
+      + '</div>';
+    $('#aat-shortcuts').append(html);
+  });
+
+  $(document).on('click','.aat-remove-shortcut',function(e){
+    e.preventDefault();
+    $(this).closest('.aat-shortcut-row').remove();
   });
 })(jQuery);

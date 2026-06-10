@@ -4,7 +4,7 @@ Tags: admin, dashboard, agency, woocommerce, client dashboard, white label
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.21
+Stable tag: 1.22
 License: GPLv2 or later
 
 White-label WordPress and WooCommerce admin cleanup toolkit for agencies. Distributed through WP Client Tools and created by Creative Digital Media.
@@ -37,6 +37,23 @@ This product is distributed and supported through WP Client Tools. The plugin is
 * Dashboard site snapshot and recently edited content cards
 
 == Changelog ==
+
+= 1.22 =
+* Reorganised the source tree: plugin files now live at the repository root and the release ZIP is built into a `wp-agency-admin-toolkit-pro/` folder by the GitHub Actions workflow.
+* Modernised the codebase under the `Aurismore\AAT\` namespace with a PSR-4-style autoloader. `AAT_*` class names are preserved via aliases so existing hook callbacks and integrations keep working.
+* Standardised on the British "licence" spelling. Added `AAT_LICENCE_SERVER`; kept `AAT_LICENSE_SERVER` and `AAT_License` as aliases.
+* Hardened the page-restriction logic: rules are now matched exactly against `pagenow` and `admin.php?page=…` keys instead of substring-matching `REQUEST_URI`, fixing cases where rules like `tools.php` could over-block unrelated URLs.
+* Hardened branding output: option-name attributes are explicitly `esc_attr`-escaped, and CSS `url(...)` and `content` values use CSS-safe quoting.
+* Replaced the homegrown webhook host check with `wp_safe_remote_post`. The original `gethostbyname` filter was vulnerable to DNS rebinding and gave a false sense of security; WordPress's own host filter is the real defence.
+* Removed dead `hide_menus()` and `maybe_hide_wordpress_dashboard()` no-ops left over from 1.17.
+* De-duplicated `get_site_logo_url()` (it lived in two classes) into a single `Core::get_site_logo_url()` helper.
+* Admin-area hover colours are now derived from the configured primary colour instead of a hard-coded shade.
+* Site Snapshot widget caches `wp_count_posts` results in a 5-minute per-user transient.
+* Added Remove button to dashboard shortcuts editor and Clear button to the support log.
+* Added a Slack-style webhook payload that was previously listed in the UI but unimplemented.
+* Declared WooCommerce HPOS (custom order tables) compatibility.
+* Added `uninstall.php` so plugin options, the support log, the `aat_client_admin` role and the `manage_agency_toolkit` capability are removed when the plugin is deleted.
+* Added a strict `release.yml` workflow that verifies the tag matches the plugin header, the `AAT_VERSION` constant, and the readme `Stable tag` before publishing the ZIP.
 
 = 1.21 =
 * Renamed the product build to WP Agency Admin Toolkit Pro.

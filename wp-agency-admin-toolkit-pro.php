@@ -3,7 +3,7 @@
  * Plugin Name: WP Agency Admin Toolkit Pro
  * Plugin URI: https://wpclienttools.com/wp-agency-admin-toolkit-pro
  * Description: Pro white-label WordPress and WooCommerce admin dashboard, support and cleanup toolkit for agencies. Sold and supported through WP Client Tools, created by Creative Digital Media.
- * Version: 1.21
+ * Version: 1.22
  * Author: Creative Digital Media
  * Author URI: https://creativedigitalmedia.nl
  * Text Domain: wp-agency-admin-toolkit
@@ -17,27 +17,42 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('AAT_VERSION', '1.21');
+define('AAT_VERSION', '1.22');
 define('AAT_FILE', __FILE__);
 define('AAT_PATH', plugin_dir_path(__FILE__));
 define('AAT_URL', plugin_dir_url(__FILE__));
 define('AAT_OPTION', 'aat_settings');
 define('AAT_PRODUCT_SLUG', 'wp-agency-admin-toolkit-pro');
-define('AAT_LICENSE_SERVER', 'https://wpclienttools.com');
 define('AAT_CAP', 'manage_agency_toolkit');
 
-require_once AAT_PATH . 'includes/class-aat-core.php';
-require_once AAT_PATH . 'includes/class-aat-admin.php';
-require_once AAT_PATH . 'includes/class-aat-cleanup.php';
-require_once AAT_PATH . 'includes/class-aat-branding.php';
-require_once AAT_PATH . 'includes/class-aat-dashboard.php';
-require_once AAT_PATH . 'includes/class-aat-support.php';
-require_once AAT_PATH . 'includes/class-aat-integrations.php';
-require_once AAT_PATH . 'includes/class-aat-license.php';
+// Canonical name uses British spelling. The older AAT_LICENSE_SERVER stays defined
+// for any external code or filters that referenced it.
+define('AAT_LICENCE_SERVER', 'https://wpclienttools.com');
+if (!defined('AAT_LICENSE_SERVER')) {
+    define('AAT_LICENSE_SERVER', AAT_LICENCE_SERVER);
+}
 
-register_activation_hook(__FILE__, ['AAT_Core', 'activate']);
-register_deactivation_hook(__FILE__, ['AAT_Core', 'deactivate']);
+// PSR-4-style autoloader for Aurismore\AAT\* classes shipped in src/.
+spl_autoload_register(function ($class) {
+    $prefix = 'Aurismore\\AAT\\';
+    $base_dir = AAT_PATH . 'src/';
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) {
+        return;
+    }
+    $relative_class = substr($class, $len);
+    $file = $base_dir . str_replace('\\', DIRECTORY_SEPARATOR, $relative_class) . '.php';
+    if (is_readable($file)) {
+        require $file;
+    }
+});
+
+// Back-compat: register AAT_* class aliases so external code/hooks keep working.
+require_once AAT_PATH . 'includes/aliases.php';
+
+register_activation_hook(__FILE__, ['Aurismore\\AAT\\Core', 'activate']);
+register_deactivation_hook(__FILE__, ['Aurismore\\AAT\\Core', 'deactivate']);
 
 add_action('plugins_loaded', function () {
-    AAT_Core::instance();
+    Aurismore\AAT\Core::instance();
 });

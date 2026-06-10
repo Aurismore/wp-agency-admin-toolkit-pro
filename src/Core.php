@@ -1,7 +1,9 @@
 <?php
+namespace Aurismore\AAT;
+
 if (!defined('ABSPATH')) exit;
 
-class AAT_Core {
+class Core {
     private static $instance = null;
     public $settings = [];
 
@@ -17,17 +19,25 @@ class AAT_Core {
         add_action('init', [$this, 'load_textdomain']);
         add_action('init', [$this, 'maybe_migrate_product_brand_defaults']);
         add_action('init', [$this, 'ensure_admin_capability']);
-        new AAT_Admin($this);
-        new AAT_Cleanup($this);
-        new AAT_Branding($this);
-        new AAT_Dashboard($this);
-        new AAT_Support($this);
-        new AAT_Integrations($this);
-        new AAT_License($this);
+        add_action('before_woocommerce_init', [$this, 'declare_woocommerce_compatibility']);
+
+        new Admin($this);
+        new Cleanup($this);
+        new Branding($this);
+        new Dashboard($this);
+        new Support($this);
+        new Integrations($this);
+        new Licence($this);
     }
 
     public function load_textdomain() {
         load_plugin_textdomain('wp-agency-admin-toolkit', false, dirname(plugin_basename(AAT_FILE)) . '/languages');
+    }
+
+    public function declare_woocommerce_compatibility() {
+        if (class_exists('\\Automattic\\WooCommerce\\Utilities\\FeaturesUtil')) {
+            \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', AAT_FILE, true);
+        }
     }
 
     public function maybe_migrate_product_brand_defaults() {
@@ -43,23 +53,19 @@ class AAT_Core {
             $settings['agency_name'] = 'Your Agency';
             $changed = true;
         }
-
         if (($settings['agency_url'] ?? '') === 'https://creativedigitalmedia.nl') {
             $settings['agency_url'] = home_url('/');
             $changed = true;
         }
-
         if (($settings['admin_footer_text'] ?? '') === 'Managed with care by Creative Digital Media') {
             $settings['admin_footer_text'] = 'Managed with care by your website team';
             $changed = true;
         }
 
-
         if ($changed) {
             self::update_settings($settings);
             $this->settings = $settings;
         }
-
         update_option('aat_product_brand_version', AAT_VERSION, false);
     }
 
@@ -204,14 +210,10 @@ class AAT_Core {
             'read_shop_order' => true,
             'view_woocommerce_reports' => true,
         ]);
-
-        if (!defined('DISALLOW_FILE_EDIT')) {
-            // The plugin also blocks editor screens in admin, but agencies should define DISALLOW_FILE_EDIT in wp-config.php for full protection.
-        }
     }
 
     public static function deactivate() {
-        // Keep settings and custom role for safety. Agencies can remove manually if needed.
+        // Keep settings and custom role for safety. Use the uninstall.php removal path for full cleanup.
     }
 
     public function ensure_admin_capability() {
@@ -231,6 +233,47 @@ class AAT_Core {
         $user = wp_get_current_user();
         $roles = isset($this->settings['affected_roles']) && is_array($this->settings['affected_roles']) ? $this->settings['affected_roles'] : [];
         return (bool) array_intersect($roles, (array) $user->roles);
+    }
+
+    public static function get_site_logo_url() {
+        $custom_logo_id = function_exists('get_theme_mod') ? absint(get_theme_mod('custom_logo')) : 0;
+        if ($custom_logo_id) {
+            $logo = wp_get_attachment_image_url($custom_logo_id, 'full');
+            if ($logo) return $logo;
+        }
+        if (function_exists('get_site_icon_url') && get_site_icon_url(192)) {
+            return get_site_icon_url(192);
+        }
+        return '';
+    }
+
+    /**
+     * Return a hex colour darkened by the given ratio (0..1).
+     * Used to derive hover shades from the configured primary colour so the
+     * branding stays consistent without an extra setting.
+     */
+    public static function darken_hex_color($hex, $ratio = 0.25) {
+        $hex = ltrim((string) $hex, '#');
+        if (strlen($hex) === 3) {
+            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+        }
+        if (strlen($hex) !== 6 || !ctype_xdigit($hex)) {
+            return '#0f192b';
+        }
+        $ratio = max(0.0, min(1.0, (float) $ratio));
+        $r = max(0, (int) round(hexdec(substr($hex, 0, 2)) * (1 - $ratio)));
+        $g = max(0, (int) round(hexdec(substr($hex, 2, 2)) * (1 - $ratio)));
+        $b = max(0, (int) round(hexdec(substr($hex, 4, 2)) * (1 - $ratio)));
+        return sprintf('#%02x%02x%02x', $r, $g, $b);
+    }
+
+    /**
+     * CSS-safe single-quoted string for use inside a CSS value such as `content:` or `url()`.
+     */
+    public static function css_quote($value) {
+        $value = (string) $value;
+        $value = str_replace(["\\", "'", "\r", "\n"], ['\\\\', "\\'", '', ''], $value);
+        return "'" . $value . "'";
     }
 
     public static function sanitize_settings($input) {
@@ -263,7 +306,7 @@ class AAT_Core {
         $clean['login_logo_url'] = esc_url_raw($input['login_logo_url'] ?? '', ['http', 'https']);
         $clean['login_background_image_url'] = esc_url_raw($input['login_background_image_url'] ?? '', ['http', 'https']);
         $clean['login_background_image_id'] = absint($input['login_background_image_id'] ?? 0);
-        $clean['login_background_overlay'] = sanitize_text_field($input['login_background_overlay'] ?? $defaults['login_background_overlay']);
+        $clean['login_background_overlay'] = self::sanitize_css_color($input['login_background_overlay'] ?? $defaults['login_background_overlay'], $defaults['login_background_overlay']);
         $clean['login_background'] = sanitize_hex_color($input['login_background'] ?? '') ?: $defaults['login_background'];
         $clean['login_button_color'] = sanitize_hex_color($input['login_button_color'] ?? '') ?: $defaults['login_button_color'];
         $clean['login_accent_color'] = sanitize_hex_color($input['login_accent_color'] ?? '') ?: $defaults['login_accent_color'];
@@ -282,6 +325,7 @@ class AAT_Core {
         $clean['shortcuts'] = [];
         if (!empty($input['shortcuts']) && is_array($input['shortcuts'])) {
             foreach ($input['shortcuts'] as $shortcut) {
+                if (!is_array($shortcut)) continue;
                 if (empty($shortcut['label']) || empty($shortcut['url'])) continue;
                 $clean['shortcuts'][] = [
                     'label' => sanitize_text_field($shortcut['label']),
@@ -295,7 +339,7 @@ class AAT_Core {
 
     public static function sanitize_lines($value) {
         if (is_array($value)) return array_values(array_filter(array_map('sanitize_text_field', $value)));
-        $lines = preg_split('/\r\n|\r|\n/', (string)$value);
+        $lines = preg_split('/\r\n|\r|\n/', (string) $value);
         return array_values(array_filter(array_map('sanitize_text_field', $lines)));
     }
 
@@ -303,5 +347,20 @@ class AAT_Core {
         $lines = is_array($value) ? $value : preg_split('/\r\n|\r|\n/', (string) $value);
         $lines = array_values(array_filter(array_map('sanitize_text_field', (array) $lines)));
         return implode("\n", $lines);
+    }
+
+    /**
+     * Accept rgb()/rgba()/hex CSS colours. Returns the fallback for anything else.
+     */
+    public static function sanitize_css_color($value, $fallback = '#000000') {
+        $value = trim((string) $value);
+        if ($value === '') return $fallback;
+        if (preg_match('/^rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(,\s*(0|1|0?\.\d+))?\s*\)$/i', $value)) {
+            return $value;
+        }
+        if (preg_match('/^#[0-9a-f]{3,8}$/i', $value)) {
+            return $value;
+        }
+        return $fallback;
     }
 }

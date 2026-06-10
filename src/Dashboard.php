@@ -1,12 +1,14 @@
 <?php
+namespace Aurismore\AAT;
+
 if (!defined('ABSPATH')) exit;
 
-class AAT_Dashboard {
+class Dashboard {
     private $core;
-    public function __construct($core) {
+
+    public function __construct(Core $core) {
         $this->core = $core;
         add_action('admin_menu', [$this, 'client_dashboard_menu'], 5);
-        add_action('admin_menu', [$this, 'maybe_hide_wordpress_dashboard'], 998);
         add_action('admin_init', [$this, 'redirect_default_dashboard'], 0);
         add_filter('login_redirect', [$this, 'login_redirect'], 20, 3);
         add_filter('logout_redirect', [$this, 'logout_redirect'], 20, 3);
@@ -37,11 +39,6 @@ class AAT_Dashboard {
         );
     }
 
-    public function maybe_hide_wordpress_dashboard() {
-        // Keep the native Dashboard item visible so the left wp-admin menu remains intact for every role.
-        return;
-    }
-
     public function redirect_default_dashboard() {
         if (!$this->custom_dashboard_enabled()) return;
         if (wp_doing_ajax() || wp_doing_cron()) return;
@@ -58,7 +55,6 @@ class AAT_Dashboard {
         if (!empty($this->core->settings['enable_custom_dashboard']) && user_can($user, 'read')) {
             return $this->client_dashboard_url();
         }
-
         return $redirect_to;
     }
 
@@ -71,21 +67,6 @@ class AAT_Dashboard {
 
         $url = !empty($this->core->settings['logout_redirect_url']) ? $this->core->settings['logout_redirect_url'] : home_url('/');
         return esc_url_raw($url);
-    }
-
-
-    private function get_site_logo_url() {
-        $custom_logo_id = function_exists('get_theme_mod') ? absint(get_theme_mod('custom_logo')) : 0;
-        if ($custom_logo_id) {
-            $logo = wp_get_attachment_image_url($custom_logo_id, 'full');
-            if ($logo) return $logo;
-        }
-
-        if (function_exists('get_site_icon_url') && get_site_icon_url(192)) {
-            return get_site_icon_url(192);
-        }
-
-        return '';
     }
 
     private function render_dashboard_footer_card() {
@@ -113,7 +94,7 @@ class AAT_Dashboard {
     public function render_client_dashboard() {
         if (!$this->custom_dashboard_enabled()) wp_die('Access denied.');
         $s = $this->core->settings;
-        $site_logo = $this->get_site_logo_url();
+        $site_logo = Core::get_site_logo_url();
         ?>
         <div class="wrap aat-client-dashboard aat-dashboard-layout-<?php echo esc_attr($s['dashboard_layout'] ?? 'balanced'); ?>">
             <div class="aat-hero-card">
@@ -184,25 +165,36 @@ class AAT_Dashboard {
         <?php
     }
 
-
+    /**
+     * Snapshot items use wp_count_posts internally, which hits the DB for each
+     * post type and is not persistently cached. Wrap in a short transient so
+     * dashboard loads are cheap even on busy sites.
+     */
     public function site_snapshot_widget() {
-        $items = [];
-        if (current_user_can('edit_pages')) {
-            $counts = wp_count_posts('page');
-            $items[] = ['label' => 'Published pages', 'value' => isset($counts->publish) ? (int) $counts->publish : 0, 'url' => admin_url('edit.php?post_type=page')];
+        $cache_key = 'aat_site_snapshot_' . get_current_user_id();
+        $items = get_transient($cache_key);
+
+        if ($items === false) {
+            $items = [];
+            if (current_user_can('edit_pages')) {
+                $counts = wp_count_posts('page');
+                $items[] = ['label' => 'Published pages', 'value' => isset($counts->publish) ? (int) $counts->publish : 0, 'url' => admin_url('edit.php?post_type=page')];
+            }
+            if (current_user_can('upload_files')) {
+                $media_counts = wp_count_posts('attachment');
+                $items[] = ['label' => 'Media files', 'value' => isset($media_counts->inherit) ? (int) $media_counts->inherit : 0, 'url' => admin_url('upload.php')];
+            }
+            if (class_exists('WooCommerce') && current_user_can('edit_products')) {
+                $product_counts = wp_count_posts('product');
+                $items[] = ['label' => 'Published products', 'value' => isset($product_counts->publish) ? (int) $product_counts->publish : 0, 'url' => admin_url('edit.php?post_type=product')];
+            }
+            if (function_exists('wc_orders_count') && current_user_can('edit_shop_orders')) {
+                $processing_count = wc_orders_count('processing');
+                $items[] = ['label' => 'Processing orders', 'value' => (int) $processing_count, 'url' => admin_url('admin.php?page=wc-orders&status=wc-processing')];
+            }
+            set_transient($cache_key, $items, 5 * MINUTE_IN_SECONDS);
         }
-        if (current_user_can('upload_files')) {
-            $media_counts = wp_count_posts('attachment');
-            $items[] = ['label' => 'Media files', 'value' => isset($media_counts->inherit) ? (int) $media_counts->inherit : 0, 'url' => admin_url('upload.php')];
-        }
-        if (class_exists('WooCommerce') && current_user_can('edit_products')) {
-            $product_counts = wp_count_posts('product');
-            $items[] = ['label' => 'Published products', 'value' => isset($product_counts->publish) ? (int) $product_counts->publish : 0, 'url' => admin_url('edit.php?post_type=product')];
-        }
-        if (function_exists('wc_get_orders') && current_user_can('edit_shop_orders')) {
-            $processing_count = function_exists('wc_orders_count') ? wc_orders_count('processing') : 0;
-            $items[] = ['label' => 'Processing orders', 'value' => (int) $processing_count, 'url' => admin_url('admin.php?page=wc-orders&status=wc-processing')];
-        }
+
         if (empty($items)) {
             echo '<p>No snapshot items are available for this user role.</p>';
             return;
@@ -225,7 +217,7 @@ class AAT_Dashboard {
             return;
         }
 
-        $query = new WP_Query([
+        $query = new \WP_Query([
             'post_type' => $post_types,
             'post_status' => ['publish', 'draft', 'pending', 'private'],
             'posts_per_page' => 5,
@@ -261,7 +253,6 @@ class AAT_Dashboard {
         }
     }
 
-
     public function maybe_hide_rank_math_overview() {
         if (!$this->core->user_is_affected() || empty($this->core->settings['hide_rank_math_overview'])) return;
 
@@ -294,7 +285,6 @@ class AAT_Dashboard {
             }
         }
     }
-
 
     public function maybe_hide_myparcel_overview() {
         if (!$this->core->user_is_affected() || empty($this->core->settings['hide_myparcel_overview'])) return;

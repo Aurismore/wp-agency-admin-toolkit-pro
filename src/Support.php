@@ -1,10 +1,12 @@
 <?php
+namespace Aurismore\AAT;
+
 if (!defined('ABSPATH')) exit;
 
-class AAT_Support {
+class Support {
     private $core;
 
-    public function __construct($core) {
+    public function __construct(Core $core) {
         $this->core = $core;
         add_action('admin_footer', [$this, 'admin_modal']);
         add_action('wp_ajax_aat_send_support', [$this, 'send_support']);
@@ -25,14 +27,12 @@ class AAT_Support {
         if (isset($_GET['page']) && sanitize_key(wp_unslash($_GET['page'])) === 'wp-agency-admin-dashboard') {
             return true;
         }
-
         if (function_exists('get_current_screen')) {
             $screen = get_current_screen();
             if ($screen && $screen->id === 'toplevel_page_wp-agency-admin-dashboard') {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -43,7 +43,6 @@ class AAT_Support {
         if ($show_floating_button) {
             echo '<button type="button" class="aat-floating-support aat-open-support">' . esc_html($this->core->settings['support_button_label']) . '</button>';
         }
-
         $this->render_modal();
     }
 
@@ -51,7 +50,7 @@ class AAT_Support {
         ?>
         <div id="aat-support-modal" class="aat-modal" aria-hidden="true">
             <div class="aat-modal-panel" role="dialog" aria-modal="true" aria-labelledby="aat-support-title">
-                <button type="button" class="aat-modal-close" aria-label="Close">×</button>
+                <button type="button" class="aat-modal-close" aria-label="Close">&times;</button>
                 <h2 id="aat-support-title">Request Support</h2>
                 <p>Describe what you need help with. The request will include the current page and basic site details.</p>
                 <form id="aat-support-form">
@@ -113,20 +112,6 @@ class AAT_Support {
         return preg_replace('/[^0-9a-fA-F:\.]/', '', (string) $ip);
     }
 
-
-    private function webhook_url_is_allowed($url) {
-        $url = esc_url_raw((string) $url, ['http', 'https']);
-        if (!$url || !wp_http_validate_url($url)) return false;
-        $host = wp_parse_url($url, PHP_URL_HOST);
-        if (!$host) return false;
-        $ip = gethostbyname($host);
-        if ($ip && filter_var($ip, FILTER_VALIDATE_IP)) {
-            $private = !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
-            if ($private) return false;
-        }
-        return $url;
-    }
-
     private function webhook_payload($body, $subject, $category, $priority) {
         $template = $this->core->settings['support_webhook_template'] ?? 'generic';
         if ($template === 'discord') {
@@ -139,6 +124,20 @@ class AAT_Support {
                         ['name' => 'Category', 'value' => $category, 'inline' => true],
                         ['name' => 'Priority', 'value' => $priority, 'inline' => true],
                         ['name' => 'Site', 'value' => home_url('/'), 'inline' => false],
+                    ],
+                ]],
+            ];
+        }
+        if ($template === 'slack') {
+            return [
+                'text' => '*' . $subject . '*',
+                'attachments' => [[
+                    'fallback' => $subject,
+                    'text' => $body,
+                    'fields' => [
+                        ['title' => 'Category', 'value' => $category, 'short' => true],
+                        ['title' => 'Priority', 'value' => $priority, 'short' => true],
+                        ['title' => 'Site', 'value' => home_url('/'), 'short' => false],
                     ],
                 ]],
             ];
@@ -159,12 +158,11 @@ class AAT_Support {
 
         check_ajax_referer('aat_support_nonce', 'nonce');
 
-        $is_logged_in = is_user_logged_in();
-        if (!$is_logged_in || !current_user_can('read')) {
+        if (!is_user_logged_in() || !current_user_can('read')) {
             wp_send_json_error(['message' => 'Please log in to request support.'], 403);
         }
 
-        $user = $is_logged_in ? wp_get_current_user() : null;
+        $user = wp_get_current_user();
         $subject = sanitize_text_field(wp_unslash($_POST['subject'] ?? 'Website support request'));
         $subject = $subject ? substr($subject, 0, 120) : 'Website support request';
         $message = sanitize_textarea_field(wp_unslash($_POST['message'] ?? ''));
@@ -210,8 +208,13 @@ class AAT_Support {
             $headers = ['Reply-To: ' . $user->user_email];
             $sent = wp_mail($s['support_email'], '[' . get_bloginfo('name') . '] ' . $subject, $body, $headers);
         }
-        if (!empty($s['support_webhook']) && ($webhook_url = $this->webhook_url_is_allowed($s['support_webhook']))) {
-            $response = wp_safe_remote_post($webhook_url, [
+        if (!empty($s['support_webhook'])) {
+            // wp_safe_remote_post applies WP's own host filter, blocking loopback
+            // and private-range destinations through http_request_host_is_external /
+            // wp_http_validate_url. We rely on that rather than maintaining a
+            // duplicate gethostbyname/private-range check that gave a false sense
+            // of security against DNS rebinding.
+            $response = wp_safe_remote_post(esc_url_raw($s['support_webhook']), [
                 'timeout' => 8,
                 'redirection' => 2,
                 'headers' => ['Content-Type' => 'application/json'],
