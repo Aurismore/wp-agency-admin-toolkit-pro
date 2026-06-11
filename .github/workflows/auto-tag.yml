@@ -1,0 +1,77 @@
+name: Auto-tag on version bump
+
+# Watches main for changes to the plugin header version. When the header,
+# AAT_VERSION constant, and readme.txt Stable tag all agree on a new version
+# and the matching tag does not yet exist, creates and pushes v{version}.
+# That tag triggers .github/workflows/release.yml which builds and uploads
+# the customer ZIP.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'wp-agency-admin-toolkit-pro.php'
+      - 'readme.txt'
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    name: Tag release if version changed
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read versions from working tree
+        id: versions
+        run: |
+          PLUGIN_VERSION="$(grep -E '^[[:space:]]*\*[[:space:]]*Version:' wp-agency-admin-toolkit-pro.php | head -n1 | awk -F: '{print $2}' | tr -d ' ')"
+          CONST_VERSION="$(grep -E "define\('AAT_VERSION'" wp-agency-admin-toolkit-pro.php | head -n1 | sed -E "s/.*'([^']+)'\);/\1/")"
+          README_VERSION="$(grep -E '^Stable tag:' readme.txt | awk -F: '{print $2}' | tr -d ' ')"
+
+          echo "Header:    $PLUGIN_VERSION"
+          echo "Constant:  $CONST_VERSION"
+          echo "Readme:    $README_VERSION"
+
+          if [ -z "$PLUGIN_VERSION" ]; then
+            echo "::error::Could not read Version: from plugin header"
+            exit 1
+          fi
+          if [ "$PLUGIN_VERSION" != "$CONST_VERSION" ] || [ "$PLUGIN_VERSION" != "$README_VERSION" ]; then
+            echo "::warning::Version mismatch between plugin header ($PLUGIN_VERSION), AAT_VERSION ($CONST_VERSION) and readme Stable tag ($README_VERSION). Skipping auto-tag."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "version=$PLUGIN_VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$PLUGIN_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Check whether tag already exists
+        if: steps.versions.outputs.skip != 'true'
+        id: tagcheck
+        run: |
+          TAG="${{ steps.versions.outputs.tag }}"
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "Tag $TAG already exists; nothing to do."
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Tag $TAG does not exist; will create."
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create and push tag
+        if: steps.versions.outputs.skip != 'true' && steps.tagcheck.outputs.exists == 'false'
+        env:
+          TAG: ${{ steps.versions.outputs.tag }}
+          VERSION: ${{ steps.versions.outputs.version }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git tag -a "$TAG" -m "Release $VERSION"
+          git push origin "$TAG"
