@@ -232,53 +232,39 @@ class Admin {
 
             <div class="aat-card aat-wide" id="aat-license">
                 <h2>Licence &amp; Updates</h2>
-                <p>WP Agency Admin Toolkit Pro receives protected updates through WP Client Tools. Enter the customer licence key once; GitHub stays private and is not configured on client websites.</p>
+                <p>Enter your WP Client Tools licence key to enable protected updates.</p>
                 <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
                     <input type="hidden" name="action" value="aat_save_license">
                     <?php wp_nonce_field('aat_save_license'); ?>
-                    <?php $latest_update = get_site_transient('aat_remote_update_info'); ?>
-                    <?php $licence_status = sanitize_key($s['licence_status'] ?? 'inactive'); ?>
+                    <?php
+                        $licence_status = sanitize_key($s['licence_status'] ?? 'inactive');
+                        $licence_active = ($licence_status === 'active');
+                        $licence_key = $s['licence_key'] ?? '';
+                        $expires = $s['licence_expires_at'] ?? '';
+                    ?>
                     <div class="aat-license-grid aat-pro-license-grid">
                         <label>Licence key
-                            <input type="password" name="<?php echo $opt; ?>[licence_key]" value="<?php echo esc_attr($s['licence_key'] ?? ''); ?>" autocomplete="off" placeholder="Enter your WP Client Tools licence key">
+                            <input type="password" name="<?php echo $opt; ?>[licence_key]" value="<?php echo esc_attr($licence_key); ?>" autocomplete="off" placeholder="Enter your WP Client Tools licence key">
                         </label>
                         <div class="aat-license-summary">
                             <strong>Status</strong>
-                            <span class="<?php echo $licence_status === 'active' ? 'aat-status-good' : 'aat-status-bad'; ?>"><?php echo esc_html(ucfirst($licence_status)); ?></span>
-                            <?php if (!empty($s['licence_message'])): ?><small><?php echo esc_html($s['licence_message']); ?></small><?php endif; ?>
-                        </div>
-                        <div class="aat-license-summary">
-                            <strong>Product</strong>
-                            <span><?php echo esc_html(defined('AAT_PRODUCT_SLUG') ? AAT_PRODUCT_SLUG : 'wp-agency-admin-toolkit-pro'); ?></span>
-                            <small>Update server: <?php echo esc_html(Licence::licence_server()); ?></small>
-                        </div>
-                        <div class="aat-license-summary">
-                            <strong>Activations</strong>
-                            <span><?php echo esc_html((int)($s['licence_activations_used'] ?? 0)); ?> / <?php echo !empty($s['licence_activation_limit']) ? esc_html((int)$s['licence_activation_limit']) : 'Unlimited'; ?></span>
-                            <?php if (!empty($s['licence_expires_at'])): ?><small>Expires: <?php echo esc_html($s['licence_expires_at']); ?></small><?php else: ?><small>Lifetime or not yet confirmed</small><?php endif; ?>
+                            <span class="<?php echo $licence_active ? 'aat-status-good' : 'aat-status-bad'; ?>">
+                                <?php echo $licence_active ? 'Active' : ($licence_key ? 'Not active' : 'Not activated'); ?>
+                            </span>
+                            <?php if ($licence_active && $expires): ?>
+                                <small>Expires: <?php echo esc_html($expires); ?></small>
+                            <?php elseif (!$licence_active && !empty($s['licence_message']) && $licence_key): ?>
+                                <small><?php echo esc_html($s['licence_message']); ?></small>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <p>
-                        <?php submit_button('Save key', 'secondary', 'aat_save_license_key', false); ?>
-                        <?php submit_button('Activate licence', 'primary', 'aat_activate_license', false); ?>
-                        <?php submit_button('Deactivate licence', 'secondary', 'aat_deactivate_license', false); ?>
+                        <?php submit_button($licence_active ? 'Re-activate licence' : 'Activate licence', 'primary', 'aat_activate_license', false); ?>
+                        <?php if ($licence_active): ?>
+                            <?php submit_button('Deactivate licence', 'secondary', 'aat_deactivate_license', false); ?>
+                        <?php endif; ?>
                     </p>
                 </form>
-                <div class="aat-update-status">
-                    <strong>Latest WP Client Tools update check:</strong>
-                    <?php if (is_array($latest_update) && !empty($latest_update['checked_at'])): ?>
-                        <span><?php echo esc_html($latest_update['checked_at']); ?></span>
-                        <?php if (!empty($latest_update['error'])): ?><span class="aat-status-bad">Error: <?php echo esc_html($latest_update['error']); ?></span><?php endif; ?>
-                        <?php if (!empty($latest_update['version'])): ?><span>Remote version: <?php echo esc_html($latest_update['version']); ?></span><?php endif; ?>
-                    <?php else: ?>
-                        <span>No protected update check has been cached yet.</span>
-                    <?php endif; ?>
-                </div>
-                <p>
-                    <a class="button button-secondary" href="<?php echo esc_url(wp_nonce_url(admin_url('admin-post.php?action=aat_check_licence_now'), 'aat_check_licence_now')); ?>">Check licence now</a>
-                    <a class="button button-secondary" href="<?php echo esc_url(wp_nonce_url(admin_url('admin-post.php?action=aat_clear_update_cache'), 'aat_clear_update_cache')); ?>">Clear update cache</a>
-                </p>
-                <p class="description">"Check licence now" calls the WP Client Tools <code>/check</code> endpoint immediately. A daily background job does the same automatically so an expired or remotely-deactivated licence is reflected without a manual visit.</p>
             </div>
 
             <div class="aat-card aat-wide" id="aat-tools">

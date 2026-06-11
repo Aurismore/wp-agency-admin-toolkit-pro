@@ -4,7 +4,7 @@ Tags: admin, dashboard, agency, woocommerce, client dashboard, white label
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.22
+Stable tag: 1.23
 License: GPLv2 or later
 
 White-label WordPress and WooCommerce admin cleanup toolkit for agencies. Distributed through WP Client Tools and created by Creative Digital Media.
@@ -37,6 +37,10 @@ This product is distributed and supported through WP Client Tools. The plugin is
 * Dashboard site snapshot and recently edited content cards
 
 == Changelog ==
+
+= 1.23 =
+* Simplified the customer-facing Licence & Updates panel. Removed the Product slug, Update server, Activations, "Latest update check" diagnostic block, and the "Check licence now" / "Clear update cache" operator buttons. Status now shows a clean "Active" / "Not active" / "Not activated" with the expiry date when available. The same diagnostics are still surfaced in the System Status tab for operators.
+* Dropped the redundant "Save key" button; entering a key and clicking "Activate licence" saves and activates in one step.
 
 = 1.22 =
 * Reorganised the source tree: plugin files now live at the repository root and the release ZIP is built into a `wp-agency-admin-toolkit-pro/` folder by the GitHub Actions workflow.
