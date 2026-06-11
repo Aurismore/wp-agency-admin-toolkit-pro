@@ -1,25 +1,29 @@
-name: Auto-tag on version bump
+name: Release on version bump
 
-# Watches main for changes to the plugin header version. When the header,
-# AAT_VERSION constant, and readme.txt Stable tag all agree on a new version
-# and the matching tag does not yet exist, creates and pushes v{version}.
-# That tag triggers .github/workflows/release.yml which builds and uploads
-# the customer ZIP.
+# Runs on every push to main (and on manual workflow_dispatch). Detects the
+# plugin version, and:
+#   - skips if header / AAT_VERSION / readme Stable tag disagree
+#   - skips if the version's tag already has a published release
+#   - otherwise: builds the customer ZIP, creates v{version} if missing,
+#     and publishes a release with the ZIP attached
+#
+# We do the tag and the release in the same workflow run because the default
+# GITHUB_TOKEN does not trigger downstream workflows. The standalone
+# release.yml workflow (tag-triggered) stays in place as a fallback for
+# `git tag vX.Y && git push origin vX.Y` invocations done by hand.
 
 on:
   push:
     branches:
       - main
-    paths:
-      - 'wp-agency-admin-toolkit-pro.php'
-      - 'readme.txt'
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  tag:
-    name: Tag release if version changed
+  release:
+    name: Release if version bumped
     runs-on: ubuntu-latest
 
     steps:
@@ -44,7 +48,7 @@ jobs:
             exit 1
           fi
           if [ "$PLUGIN_VERSION" != "$CONST_VERSION" ] || [ "$PLUGIN_VERSION" != "$README_VERSION" ]; then
-            echo "::warning::Version mismatch between plugin header ($PLUGIN_VERSION), AAT_VERSION ($CONST_VERSION) and readme Stable tag ($README_VERSION). Skipping auto-tag."
+            echo "::warning::Version mismatch between plugin header ($PLUGIN_VERSION), AAT_VERSION ($CONST_VERSION) and readme Stable tag ($README_VERSION). Skipping."
             echo "skip=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -52,26 +56,71 @@ jobs:
           echo "version=$PLUGIN_VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=v$PLUGIN_VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Check whether tag already exists
+      - name: Check tag and release state
         if: steps.versions.outputs.skip != 'true'
-        id: tagcheck
+        id: state
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG="${{ steps.versions.outputs.tag }}"
+          TAG_EXISTS=false
+          REL_EXISTS=false
           if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
-            echo "Tag $TAG already exists; nothing to do."
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "Tag $TAG does not exist; will create."
-            echo "exists=false" >> "$GITHUB_OUTPUT"
+            TAG_EXISTS=true
+          fi
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            REL_EXISTS=true
+          fi
+          echo "Tag exists: $TAG_EXISTS"
+          echo "Release exists: $REL_EXISTS"
+          echo "tag_exists=$TAG_EXISTS" >> "$GITHUB_OUTPUT"
+          echo "release_exists=$REL_EXISTS" >> "$GITHUB_OUTPUT"
+          if [ "$REL_EXISTS" = "true" ]; then
+            echo "Release for $TAG already exists; nothing to do."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Configure git identity
+        if: steps.versions.outputs.skip != 'true' && steps.state.outputs.skip != 'true' && steps.state.outputs.tag_exists != 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
       - name: Create and push tag
-        if: steps.versions.outputs.skip != 'true' && steps.tagcheck.outputs.exists == 'false'
+        if: steps.versions.outputs.skip != 'true' && steps.state.outputs.skip != 'true' && steps.state.outputs.tag_exists != 'true'
         env:
           TAG: ${{ steps.versions.outputs.tag }}
           VERSION: ${{ steps.versions.outputs.version }}
         run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git tag -a "$TAG" -m "Release $VERSION"
           git push origin "$TAG"
+
+      - name: Stage plugin folder
+        if: steps.versions.outputs.skip != 'true' && steps.state.outputs.skip != 'true'
+        run: |
+          mkdir -p build/wp-agency-admin-toolkit-pro
+          rsync -av \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.gitignore' \
+            --exclude='build' \
+            --exclude='vendor' \
+            --exclude='composer.lock' \
+            --exclude='RELEASE-WORKFLOW.md' \
+            --exclude='*.zip' \
+            ./ build/wp-agency-admin-toolkit-pro/
+
+      - name: Create release ZIP
+        if: steps.versions.outputs.skip != 'true' && steps.state.outputs.skip != 'true'
+        working-directory: build
+        run: zip -rq ../wp-agency-admin-toolkit-pro.zip wp-agency-admin-toolkit-pro
+
+      - name: Create or update GitHub release
+        if: steps.versions.outputs.skip != 'true' && steps.state.outputs.skip != 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.versions.outputs.tag }}
+          name: ${{ steps.versions.outputs.version }}
+          files: wp-agency-admin-toolkit-pro.zip
+          fail_on_unmatched_files: true
+          generate_release_notes: true
