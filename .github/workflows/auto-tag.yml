@@ -1,16 +1,22 @@
 name: Release on version bump
 
-# Runs on every push to main (and on manual workflow_dispatch). Detects the
-# plugin version, and:
-#   - skips if header / AAT_VERSION / readme Stable tag disagree
-#   - skips if the version's tag already has a published release
-#   - otherwise: builds the customer ZIP, creates v{version} if missing,
-#     and publishes a release with the ZIP attached
+# Runs on every push to main (and on manual workflow_dispatch). For the current
+# plugin version, this workflow will:
 #
-# We do the tag and the release in the same workflow run because the default
-# GITHUB_TOKEN does not trigger downstream workflows. The standalone
-# release.yml workflow (tag-triggered) stays in place as a fallback for
-# `git tag vX.Y && git push origin vX.Y` invocations done by hand.
+#   1. Refuse to do anything if header / AAT_VERSION / readme Stable tag disagree
+#   2. Create v{version} tag if missing
+#   3. Build the customer ZIP
+#   4. Publish to GitHub releases if no release exists for the tag
+#   5. POST the release to the WCTLM publish endpoint so client sites pick it
+#      up on their next licence check
+#
+# Steps 4 and 5 are independent — re-running on a version that already has a
+# GitHub release will still re-publish to WCTLM (the WCTLM endpoint upserts on
+# product_slug+channel+version, so re-runs are safe).
+#
+# WCTLM publish is skipped silently if WCTLM_PUBLISH_KEY_ID / WCTLM_PUBLISH_SECRET
+# repo secrets are not configured, so this workflow keeps working before those
+# are in place.
 
 on:
   push:
@@ -75,19 +81,15 @@ jobs:
           echo "Release exists: $REL_EXISTS"
           echo "tag_exists=$TAG_EXISTS" >> "$GITHUB_OUTPUT"
           echo "release_exists=$REL_EXISTS" >> "$GITHUB_OUTPUT"
-          if [ "$REL_EXISTS" = "true" ]; then
-            echo "Release for $TAG already exists; nothing to do."
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-          fi
 
       - name: Configure git identity
-        if: steps.versions.outputs.skip != 'true' && steps.state.outputs.skip != 'true' && steps.state.outputs.tag_exists != 'true'
+        if: steps.versions.outputs.skip != 'true' && steps.state.outputs.tag_exists != 'true'
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
       - name: Create and push tag
-        if: steps.versions.outputs.skip != 'true' && steps.state.outputs.skip != 'true' && steps.state.outputs.tag_exists != 'true'
+        if: steps.versions.outputs.skip != 'true' && steps.state.outputs.tag_exists != 'true'
         env:
           TAG: ${{ steps.versions.outputs.tag }}
           VERSION: ${{ steps.versions.outputs.version }}
@@ -96,7 +98,7 @@ jobs:
           git push origin "$TAG"
 
       - name: Stage plugin folder
-        if: steps.versions.outputs.skip != 'true' && steps.state.outputs.skip != 'true'
+        if: steps.versions.outputs.skip != 'true'
         run: |
           mkdir -p build/wp-agency-admin-toolkit-pro
           rsync -av \
@@ -111,12 +113,12 @@ jobs:
             ./ build/wp-agency-admin-toolkit-pro/
 
       - name: Create release ZIP
-        if: steps.versions.outputs.skip != 'true' && steps.state.outputs.skip != 'true'
+        if: steps.versions.outputs.skip != 'true'
         working-directory: build
         run: zip -rq ../wp-agency-admin-toolkit-pro.zip wp-agency-admin-toolkit-pro
 
-      - name: Create or update GitHub release
-        if: steps.versions.outputs.skip != 'true' && steps.state.outputs.skip != 'true'
+      - name: Publish GitHub release
+        if: steps.versions.outputs.skip != 'true' && steps.state.outputs.release_exists != 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.versions.outputs.tag }}
@@ -124,3 +126,98 @@ jobs:
           files: wp-agency-admin-toolkit-pro.zip
           fail_on_unmatched_files: true
           generate_release_notes: true
+
+      - name: Publish release to WP Client Tools Licence Manager
+        if: steps.versions.outputs.skip != 'true'
+        env:
+          WCTLM_KEY_ID: ${{ secrets.WCTLM_PUBLISH_KEY_ID }}
+          WCTLM_SECRET: ${{ secrets.WCTLM_PUBLISH_SECRET }}
+          WCTLM_SERVER: ${{ vars.WCTLM_SERVER || 'https://wpclienttools.com' }}
+          VERSION: ${{ steps.versions.outputs.version }}
+          TAG: ${{ steps.versions.outputs.tag }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [ -z "$WCTLM_KEY_ID" ] || [ -z "$WCTLM_SECRET" ]; then
+            echo "::warning::WCTLM_PUBLISH_KEY_ID or WCTLM_PUBLISH_SECRET not set; skipping WCTLM publish."
+            exit 0
+          fi
+
+          ZIP=wp-agency-admin-toolkit-pro.zip
+          if [ ! -f "$ZIP" ]; then
+            echo "::error::Expected $ZIP to exist by this step but it does not."
+            exit 1
+          fi
+
+          SHA256=$(sha256sum "$ZIP" | awk '{print $1}')
+          DOWNLOAD_URL="https://github.com/${REPO}/releases/download/${TAG}/${ZIP}"
+
+          # Pull the version's changelog block out of readme.txt so the WCTLM
+          # admin can show "what's new" without us hand-copying it. Stops at
+          # the next `= X.Y =` block.
+          CHANGELOG=$(awk -v ver="= ${VERSION} =" '
+            $0 == ver { capture=1; next }
+            capture && /^= [0-9]/ { exit }
+            capture { print }
+          ' readme.txt)
+
+          REQUIRES=$(grep -E '^Requires at least:' readme.txt | head -n1 | awk -F: '{print $2}' | tr -d ' ')
+          REQUIRES_PHP=$(grep -E '^Requires PHP:' readme.txt | head -n1 | awk -F: '{print $2}' | tr -d ' ')
+          TESTED=$(grep -E '^Tested up to:' readme.txt | head -n1 | awk -F: '{print $2}' | tr -d ' ')
+
+          BODY=$(jq -n \
+            --arg product_slug "wp-agency-admin-toolkit-pro" \
+            --arg version "$VERSION" \
+            --arg channel "stable" \
+            --arg requires "$REQUIRES" \
+            --arg requires_php "$REQUIRES_PHP" \
+            --arg tested "$TESTED" \
+            --arg changelog_md "$CHANGELOG" \
+            --arg url "$DOWNLOAD_URL" \
+            --arg sha256 "$SHA256" \
+            '{
+              product_slug: $product_slug,
+              version: $version,
+              channel: $channel,
+              requires: $requires,
+              requires_php: $requires_php,
+              tested: $tested,
+              changelog_md: $changelog_md,
+              package: { transport: "url", url: $url, sha256: $sha256 }
+            }')
+
+          # Write the body to disk so the bytes we sign match the bytes we send.
+          # `printf %s` avoids the trailing newline `echo` adds.
+          printf '%s' "$BODY" > /tmp/wctlm_body.json
+          BODY_SHA=$(sha256sum /tmp/wctlm_body.json | awk '{print $1}')
+
+          TIMESTAMP=$(date +%s)
+          NONCE=$(openssl rand -hex 16)
+
+          # Canonical signing string per class-wctlm-publish-keys.php:
+          #   "v1\nMETHOD\nPATH\nTS\nNONCE\nsha256(body)"
+          SIGNATURE=$(printf 'v1\nPOST\n/wctlm/v1/releases\n%s\n%s\n%s' \
+            "$TIMESTAMP" "$NONCE" "$BODY_SHA" \
+            | openssl dgst -sha256 -hmac "$WCTLM_SECRET" | awk '{print $NF}')
+
+          echo "Publishing ${VERSION} to ${WCTLM_SERVER}/wp-json/wctlm/v1/releases"
+          echo "  download_url: ${DOWNLOAD_URL}"
+          echo "  sha256:       ${SHA256}"
+
+          HTTP_CODE=$(curl -sS -o /tmp/wctlm_response.json -w "%{http_code}" -X POST \
+            "${WCTLM_SERVER}/wp-json/wctlm/v1/releases" \
+            -H "Content-Type: application/json" \
+            -H "X-WCTLM-Key-Id: ${WCTLM_KEY_ID}" \
+            -H "X-WCTLM-Timestamp: ${TIMESTAMP}" \
+            -H "X-WCTLM-Nonce: ${NONCE}" \
+            -H "X-WCTLM-Signature: ${SIGNATURE}" \
+            --data-binary @/tmp/wctlm_body.json)
+
+          echo "WCTLM response (HTTP ${HTTP_CODE}):"
+          cat /tmp/wctlm_response.json || true
+          echo
+
+          if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "201" ]; then
+            echo "::error::WCTLM publish failed (HTTP $HTTP_CODE)"
+            exit 1
+          fi
+          echo "::notice::WCTLM publish succeeded for ${VERSION}."
