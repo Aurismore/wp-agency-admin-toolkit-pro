@@ -213,7 +213,10 @@ class Core {
     }
 
     public static function deactivate() {
-        // Keep settings and custom role for safety. Use the uninstall.php removal path for full cleanup.
+        // Keep settings and custom role for safety. Use the uninstall.php removal
+        // path for full cleanup. The daily licence revalidation cron is unscheduled
+        // here so it doesn't keep firing into a missing callback.
+        wp_clear_scheduled_hook(Licence::DAILY_CRON_HOOK);
     }
 
     public function ensure_admin_capability() {

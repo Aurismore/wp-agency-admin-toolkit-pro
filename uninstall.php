@@ -31,6 +31,11 @@ function aat_uninstall_cleanup() {
     delete_option('aat_product_brand_version');
     delete_site_transient('aat_remote_update_info');
 
+    // Clear the daily WCTLM /check revalidation cron, if scheduled.
+    if (function_exists('wp_clear_scheduled_hook')) {
+        wp_clear_scheduled_hook('aat_licence_daily_check');
+    }
+
     if (function_exists('remove_role')) {
         remove_role('aat_client_admin');
     }

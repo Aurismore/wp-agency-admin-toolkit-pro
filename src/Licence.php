@@ -6,12 +6,22 @@ if (!defined('ABSPATH')) exit;
 class Licence {
     private $core;
     private $cache_key = 'aat_remote_update_info';
+    const DAILY_CRON_HOOK = 'aat_licence_daily_check';
 
     public function __construct(Core $core) {
         $this->core = $core;
         add_filter('pre_set_site_transient_update_plugins', [$this, 'check_for_update']);
         add_filter('plugins_api', [$this, 'plugin_info'], 20, 3);
         add_action('admin_post_aat_clear_update_cache', [$this, 'clear_update_cache']);
+        add_action('admin_post_aat_check_licence_now', [$this, 'check_licence_now']);
+
+        // Daily background revalidation against the WCTLM /check endpoint so an
+        // expired or remotely-deactivated licence is reflected in the admin UI
+        // without waiting for the customer to revisit the settings panel.
+        add_action(self::DAILY_CRON_HOOK, [$this, 'cron_revalidate']);
+        if (!wp_next_scheduled(self::DAILY_CRON_HOOK)) {
+            wp_schedule_event(time() + HOUR_IN_SECONDS, 'daily', self::DAILY_CRON_HOOK);
+        }
     }
 
     public function clear_update_cache() {
@@ -22,6 +32,31 @@ class Licence {
         wp_clean_plugins_cache(true);
         wp_safe_redirect(admin_url('options-general.php?page=wp-agency-admin-toolkit&aat_update_cache_cleared=1#aat-license'));
         exit;
+    }
+
+    public function check_licence_now() {
+        if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_check_licence_now')) {
+            wp_die('Access denied.');
+        }
+        $settings = Core::get_settings();
+        $licence_key = $settings['licence_key'] ?? '';
+        if ($licence_key !== '') {
+            $response = self::remote_request('check', $licence_key, 'POST');
+            $settings = self::settings_from_licence_response($settings, $licence_key, $response);
+            Core::update_settings($settings);
+        }
+        delete_site_transient($this->cache_key);
+        wp_safe_redirect(admin_url('options-general.php?page=wp-agency-admin-toolkit&aat_licence_checked=1#aat-license'));
+        exit;
+    }
+
+    public function cron_revalidate() {
+        $settings = Core::get_settings();
+        $licence_key = $settings['licence_key'] ?? '';
+        if ($licence_key === '') return;
+        $response = self::remote_request('check', $licence_key, 'POST');
+        $settings = self::settings_from_licence_response($settings, $licence_key, $response);
+        Core::update_settings($settings);
     }
 
     public static function licence_server() {
@@ -43,7 +78,18 @@ class Licence {
             return ['success' => false, 'message' => 'Please enter a licence key.'];
         }
 
+        global $wp_version;
         $url = self::licence_server() . '/wp-json/wctlm/v1/' . $endpoint;
+        $body = [
+            'licence_key' => $licence_key,
+            'product_slug' => self::product_slug(),
+            'site_url' => home_url('/'),
+            'version' => AAT_VERSION,
+            // Telemetry the WCTLM server records on the activation row. Helpful for
+            // the agency when triaging "doesn't update on this client" tickets.
+            'wp_version' => isset($wp_version) ? (string) $wp_version : get_bloginfo('version'),
+            'php_version' => PHP_VERSION,
+        ];
         $args = [
             'timeout' => 20,
             'redirection' => 3,
@@ -51,31 +97,43 @@ class Licence {
                 'Accept' => 'application/json',
                 'User-Agent' => 'WP Agency Admin Toolkit Pro/' . AAT_VERSION . '; ' . home_url('/'),
             ],
-            'body' => [
-                'licence_key' => $licence_key,
-                'product_slug' => self::product_slug(),
-                'site_url' => home_url('/'),
-                'version' => AAT_VERSION,
-            ],
+            'body' => $body,
         ];
 
-        $response = strtoupper($method) === 'GET' ? wp_remote_get(add_query_arg($args['body'], $url), $args) : wp_remote_post($url, $args);
+        $response = strtoupper($method) === 'GET'
+            ? wp_remote_get(add_query_arg($body, $url), $args)
+            : wp_remote_post($url, $args);
+
         if (is_wp_error($response)) {
             return ['success' => false, 'message' => $response->get_error_message()];
         }
 
         $code = wp_remote_retrieve_response_code($response);
-        $body = json_decode(wp_remote_retrieve_body($response), true);
-        if (!is_array($body)) {
+        $body_text = wp_remote_retrieve_body($response);
+        $decoded = json_decode($body_text, true);
+        if (!is_array($decoded)) {
             return ['success' => false, 'message' => 'Invalid response from WP Client Tools.'];
         }
         if ($code < 200 || $code >= 300) {
-            $body['success'] = false;
-            $body['message'] = $body['message'] ?? ('WP Client Tools returned HTTP ' . (int) $code . '.');
+            $decoded['success'] = false;
+            // The server now returns {success:false, code, message} on errors.
+            // Surface the code in the message when no human-readable one came back.
+            if (empty($decoded['message'])) {
+                $decoded['message'] = !empty($decoded['code'])
+                    ? 'WP Client Tools error: ' . $decoded['code']
+                    : ('WP Client Tools returned HTTP ' . (int) $code . '.');
+            }
         }
-        return $body;
+        return $decoded;
     }
 
+    /**
+     * Map a WCTLM activate/check response onto the plugin settings array.
+     *
+     * Used by both the manual save_license flow and the daily revalidation
+     * cron. Deactivate responses don't include a licence block — that path
+     * is handled separately in Admin::save_license().
+     */
     public static function settings_from_licence_response($current_settings, $licence_key, $response) {
         $settings = is_array($current_settings) ? $current_settings : Core::get_settings();
         $settings['licence_key'] = sanitize_text_field($licence_key);
@@ -103,7 +161,14 @@ class Licence {
         $remote = $this->get_remote_info();
         if (!$remote || empty($remote['version']) || empty($remote['download_url'])) return $transient;
 
-        if (version_compare(AAT_VERSION, $remote['version'], '<')) {
+        // The server tells us authoritatively whether an update is available.
+        // Fall back to a local version_compare if the flag is missing on older
+        // server builds.
+        $update_available = isset($remote['update_available'])
+            ? (bool) $remote['update_available']
+            : version_compare(AAT_VERSION, $remote['version'], '<');
+
+        if ($update_available) {
             $plugin_file = plugin_basename(AAT_FILE);
             $item = new \stdClass();
             $item->id = $remote['slug'] ?? self::product_slug();
@@ -164,15 +229,43 @@ class Licence {
             return false;
         }
 
+        // The server returns both `download_url` and `package` (mirror), and a
+        // package_available flag that's authoritative for whether a real ZIP
+        // exists. We treat package_available === false as "no update yet".
+        $download_url = '';
+        foreach (['download_url', 'package'] as $field) {
+            if (!empty($response[$field])) {
+                $download_url = esc_url_raw($response[$field], ['http', 'https']);
+                break;
+            }
+        }
+
+        $package_available = isset($response['package_available'])
+            ? (bool) $response['package_available']
+            : !empty($download_url);
+
         $clean = [
             'name' => 'WP Agency Admin Toolkit Pro',
-            'slug' => self::product_slug(),
-            'version' => sanitize_text_field($response['latest_version'] ?? AAT_VERSION),
-            'download_url' => esc_url_raw($response['download_url'] ?? '', ['http', 'https']),
+            'slug' => sanitize_title($response['product_slug'] ?? self::product_slug()),
+            'version' => sanitize_text_field($response['latest_version'] ?? $response['new_version'] ?? AAT_VERSION),
+            'current_version' => sanitize_text_field($response['current_version'] ?? AAT_VERSION),
+            'channel' => sanitize_key($response['channel'] ?? 'stable'),
+            'download_url' => $download_url,
             'homepage' => 'https://wpclienttools.com/wp-agency-admin-toolkit-pro',
             'requires' => sanitize_text_field($response['requires'] ?? '6.0'),
             'requires_php' => sanitize_text_field($response['requires_php'] ?? '7.4'),
             'tested' => sanitize_text_field($response['tested'] ?? ''),
+            'update_available' => !empty($response['update_available']),
+            'update_message' => sanitize_text_field($response['update_message'] ?? ''),
+            'package_available' => $package_available,
+            'package_status' => sanitize_text_field($response['package_status'] ?? ''),
+            'package_message' => sanitize_text_field($response['package_message'] ?? ''),
+            'package_source' => sanitize_text_field($response['package_source'] ?? ''),
+            // Integrity metadata. Surfaced in System Status so an operator can
+            // verify what the server claims about the ZIP before installing.
+            'package_sha256' => preg_replace('/[^a-f0-9]/i', '', (string) ($response['package_sha256'] ?? '')),
+            'package_signature_ed25519' => preg_replace('/[^A-Za-z0-9+\/=]/', '', (string) ($response['package_signature_ed25519'] ?? '')),
+            'package_size_bytes' => absint($response['package_size_bytes'] ?? 0),
             'sections' => [
                 'description' => 'WP Agency Admin Toolkit Pro updates are delivered through WP Client Tools after licence validation.',
                 'changelog' => !empty($response['changelog']) ? wp_kses_post($response['changelog']) : 'No changelog supplied.',
@@ -182,8 +275,8 @@ class Licence {
             'source' => 'wpclienttools',
         ];
 
-        if (empty($clean['version']) || empty($clean['download_url'])) {
-            $this->cache_error('WP Client Tools responded but no downloadable package was available.');
+        if (empty($clean['version']) || empty($clean['download_url']) || !$clean['package_available']) {
+            $this->cache_error($clean['package_message'] ?: ($clean['update_message'] ?: 'WP Client Tools responded but no downloadable package was available.'));
             return false;
         }
 

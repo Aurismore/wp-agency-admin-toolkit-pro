@@ -53,7 +53,10 @@ This product is distributed and supported through WP Client Tools. The plugin is
 * Added a Slack-style webhook payload that was previously listed in the UI but unimplemented.
 * Declared WooCommerce HPOS (custom order tables) compatibility.
 * Added `uninstall.php` so plugin options, the support log, the `aat_client_admin` role and the `manage_agency_toolkit` capability are removed when the plugin is deleted.
-* Added a strict `release.yml` workflow that verifies the tag matches the plugin header, the `AAT_VERSION` constant, and the readme `Stable tag` before publishing the ZIP.
+* Added a strict `release.yml` workflow that verifies the tag matches the plugin header, the `AAT_VERSION` constant, and the readme `Stable tag` before publishing the ZIP. Added an `auto-tag.yml` workflow that creates the `v{version}` tag automatically on push to `main` so version bumps publish a release without manual tagging.
+* Updated the WP Client Tools Licence Manager (WCTLM) client to match the v1.4.9 server contract: licence-check requests now include `wp_version` and `php_version` telemetry that the server records on the activation row; the `update-check` response is parsed for the new `update_available`, `channel`, `package`, `package_available`, `package_status`, `package_message`, `package_sha256`, `package_signature_ed25519` and `package_size_bytes` fields; and a daily background revalidation job calls the new `/wctlm/v1/check` endpoint so an expired or remotely-deactivated licence is reflected in the admin without a manual visit.
+* Added a "Check licence now" admin button (next to "Clear update cache") that calls `/check` immediately.
+* System Status now surfaces the cached remote version, update channel, last-checked timestamp and a truncated package SHA-256 so the operator can verify what the server claims about the ZIP before installing.
 
 = 1.21 =
 * Renamed the product build to WP Agency Admin Toolkit Pro.

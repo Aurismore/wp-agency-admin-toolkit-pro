@@ -84,6 +84,7 @@ class Admin {
             <?php if (isset($_GET['aat_reset'])): ?><div class="notice notice-success"><p>Defaults restored successfully.</p></div><?php endif; ?>
             <?php if (isset($_GET['aat_update_cache_cleared'])): ?><div class="notice notice-success"><p>Update cache cleared. WordPress will check WP Client Tools again.</p></div><?php endif; ?>
             <?php if (isset($_GET['aat_license_saved'])): ?><div class="notice notice-success"><p>Licence settings updated.</p></div><?php endif; ?>
+            <?php if (isset($_GET['aat_licence_checked'])): ?><div class="notice notice-success"><p>Licence revalidated against WP Client Tools.</p></div><?php endif; ?>
             <?php if (isset($_GET['aat_support_log_cleared'])): ?><div class="notice notice-success"><p>Support request log cleared.</p></div><?php endif; ?>
 
             <form method="post" action="options.php">
@@ -273,7 +274,11 @@ class Admin {
                         <span>No protected update check has been cached yet.</span>
                     <?php endif; ?>
                 </div>
-                <p><a class="button button-secondary" href="<?php echo esc_url(wp_nonce_url(admin_url('admin-post.php?action=aat_clear_update_cache'), 'aat_clear_update_cache')); ?>">Clear update cache</a></p>
+                <p>
+                    <a class="button button-secondary" href="<?php echo esc_url(wp_nonce_url(admin_url('admin-post.php?action=aat_check_licence_now'), 'aat_check_licence_now')); ?>">Check licence now</a>
+                    <a class="button button-secondary" href="<?php echo esc_url(wp_nonce_url(admin_url('admin-post.php?action=aat_clear_update_cache'), 'aat_clear_update_cache')); ?>">Clear update cache</a>
+                </p>
+                <p class="description">"Check licence now" calls the WP Client Tools <code>/check</code> endpoint immediately. A daily background job does the same automatically so an expired or remotely-deactivated licence is reflected without a manual visit.</p>
             </div>
 
             <div class="aat-card aat-wide" id="aat-tools">
@@ -442,6 +447,10 @@ class Admin {
         global $wp_version;
         $theme = wp_get_theme();
         $uploads = wp_upload_dir();
+        $update_info = get_site_transient('aat_remote_update_info');
+        $remote_version = is_array($update_info) ? ($update_info['version'] ?? '') : '';
+        $remote_channel = is_array($update_info) ? ($update_info['channel'] ?? '') : '';
+        $remote_sha = is_array($update_info) && !empty($update_info['package_sha256']) ? substr($update_info['package_sha256'], 0, 12) . '…' : '';
         return [
             'Plugin version' => AAT_VERSION,
             'WordPress version' => $wp_version,
@@ -463,8 +472,12 @@ class Admin {
             'DISALLOW_FILE_EDIT' => defined('DISALLOW_FILE_EDIT') && DISALLOW_FILE_EDIT ? 'Enabled' : 'Not enabled',
             'Affected roles' => implode(', ', (array) ($this->core->settings['affected_roles'] ?? [])),
             'Licence status' => ucfirst($this->core->settings['licence_status'] ?? 'inactive'),
+            'Licence last checked' => $this->core->settings['licence_checked_at'] ?? '',
             'Product slug' => defined('AAT_PRODUCT_SLUG') ? AAT_PRODUCT_SLUG : 'wp-agency-admin-toolkit-pro',
             'Update server' => Licence::licence_server(),
+            'Remote version' => $remote_version ?: 'Not cached',
+            'Update channel' => $remote_channel ?: '(default)',
+            'Package SHA-256' => $remote_sha ?: 'Not advertised',
         ];
     }
 
