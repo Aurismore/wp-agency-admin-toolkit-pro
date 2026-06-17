@@ -118,7 +118,14 @@ jobs:
         run: zip -rq ../wp-agency-admin-toolkit-pro.zip wp-agency-admin-toolkit-pro
 
       - name: Publish GitHub release
-        if: steps.versions.outputs.skip != 'true' && steps.state.outputs.release_exists != 'true'
+        # Re-runs of an already-released version need to re-upload the asset.
+        # The locally-built ZIP's SHA changes every run (zip embeds file
+        # timestamps), so if we skip this step on a re-run, the bytes on the
+        # GitHub release stay frozen from the first run while the SHA we send
+        # to WCTLM in the next step is the freshly-built ZIP's SHA. WCTLM
+        # downloads from the GitHub release URL, hashes, mismatch, 502
+        # sha256_mismatch. Always upload and let the action overwrite.
+        if: steps.versions.outputs.skip != 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.versions.outputs.tag }}
@@ -126,6 +133,7 @@ jobs:
           files: wp-agency-admin-toolkit-pro.zip
           fail_on_unmatched_files: true
           generate_release_notes: true
+          overwrite_files: true
 
       - name: Publish release to WP Client Tools Licence Manager
         if: steps.versions.outputs.skip != 'true'
