@@ -14,6 +14,12 @@ class Branding {
         add_action('login_footer', [$this, 'login_footer_bar'], 9);
         add_filter('login_headerurl', [$this, 'login_url'], 999);
         add_filter('login_headertext', [$this, 'login_title'], 999);
+        // Multilingual sites get a Language dropdown above the login form in
+        // WP 5.9+. Agencies running client sites in a single language asked
+        // for it to be hidden — the branding's whole point is one consistent
+        // experience and the dropdown reflows the form when WP swaps it for
+        // the localised string assets.
+        add_filter('login_display_language_dropdown', '__return_false', 999);
 
         add_filter('admin_footer_text', [$this, 'footer_text'], PHP_INT_MAX);
         add_filter('update_footer', [$this, 'footer_version'], PHP_INT_MAX);
@@ -152,26 +158,64 @@ class Branding {
                 border-color: <?php echo esc_attr($accent); ?> !important;
                 box-shadow: 0 0 0 1px <?php echo esc_attr($accent); ?> !important;
             }
+            /* "You are now logged out.", "Check your email for the
+               confirmation link.", password-reset confirmation, etc. Default
+               WP renders these as a flat .message box that looks foreign
+               next to the rounded, shadowed form. Match the form's radius +
+               soft shadow and use the accent colour as the left rule so the
+               status box reads as part of the same panel. #login_error gets
+               the same treatment with a red rule. */
+            body.login .message,
+            body.login #login_error,
+            body.login .notice {
+                width: 100% !important;
+                margin: 0 0 22px !important;
+                padding: 14px 18px !important;
+                background: #fff !important;
+                border: 0 !important;
+                border-left: 4px solid <?php echo esc_attr($accent); ?> !important;
+                border-radius: 14px !important;
+                box-shadow: 0 20px 60px rgba(23,36,59,.12) !important;
+                color: <?php echo esc_attr($button); ?> !important;
+                font-weight: 600 !important;
+                line-height: 1.4 !important;
+            }
+            body.login #login_error {
+                border-left-color: #b91c1c !important;
+            }
+            body.login .message a,
+            body.login #login_error a,
+            body.login .notice a {
+                color: <?php echo esc_attr($button); ?> !important;
+                text-decoration: underline !important;
+            }
             .aat-login-footer-card {
                 position: fixed !important;
                 left: 50% !important;
                 bottom: 22px !important;
                 transform: translateX(-50%) !important;
-                width: min(760px, calc(100vw - 32px)) !important;
+                width: 360px !important;
+                max-width: calc(100vw - 32px) !important;
                 display: flex !important;
                 align-items: center !important;
-                justify-content: space-between !important;
-                gap: 20px !important;
+                justify-content: center !important;
                 background: #fff !important;
                 border: 1px solid #dcdcde !important;
                 border-radius: 18px !important;
-                padding: 18px 20px !important;
+                padding: 16px !important;
                 box-shadow: 0 12px 30px rgba(23,36,59,.12) !important;
                 z-index: 9999 !important;
+            }
+            .aat-login-footer-brand {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 100% !important;
             }
             .aat-login-footer-logo-link {
                 display: inline-flex !important;
                 align-items: center !important;
+                justify-content: center !important;
                 text-decoration: none !important;
                 color: <?php echo esc_attr($button); ?> !important;
                 font-weight: 900 !important;
@@ -180,8 +224,8 @@ class Branding {
             }
             .aat-login-footer-logo-link img {
                 display: block !important;
-                max-width: 220px !important;
-                max-height: 56px !important;
+                max-width: 100% !important;
+                max-height: 48px !important;
                 width: auto !important;
                 height: auto !important;
             }
