@@ -161,12 +161,15 @@ class Licence {
         $remote = $this->get_remote_info();
         if (!$remote || empty($remote['version']) || empty($remote['download_url'])) return $transient;
 
-        // The server tells us authoritatively whether an update is available.
-        // Fall back to a local version_compare if the flag is missing on older
-        // server builds.
-        $update_available = isset($remote['update_available'])
-            ? (bool) $remote['update_available']
-            : version_compare(AAT_VERSION, $remote['version'], '<');
+        // Always recompute against the installed plugin version. We used to
+        // trust $remote['update_available'] from the server, but the remote
+        // payload is cached for 6 hours and that flag is computed against
+        // whatever AAT_VERSION the server saw on the last /update-check
+        // round-trip. After a successful upgrade the cache still says
+        // "update available -> 1.24" until it expires, so the plugin offers
+        // an upgrade to a version it's already running. version_compare with
+        // the current AAT_VERSION is the source of truth.
+        $update_available = version_compare(AAT_VERSION, $remote['version'], '<');
 
         if ($update_available) {
             $plugin_file = plugin_basename(AAT_FILE);
@@ -220,7 +223,16 @@ class Licence {
         }
         if (!$force) {
             $cached = get_site_transient($this->cache_key);
-            if (is_array($cached)) return $cached;
+            // Treat a cache that was written against a different AAT_VERSION
+            // as stale. The cached payload includes the server-computed
+            // current_version + update_available + download_url + SHA, all
+            // bound to whatever version was running at cache-write time.
+            // After an in-place upgrade those are misleading until the
+            // transient expires (up to 6 hours), so force a fresh check
+            // whenever the installed version moved on.
+            if (is_array($cached) && isset($cached['current_version']) && (string) $cached['current_version'] === AAT_VERSION) {
+                return $cached;
+            }
         }
 
         $response = self::remote_request('update-check', $this->core->settings['licence_key']);

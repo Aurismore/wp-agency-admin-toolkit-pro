@@ -4,7 +4,7 @@ Tags: admin, dashboard, agency, woocommerce, client dashboard, white label
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.24
+Stable tag: 1.25
 License: GPLv2 or later
 
 White-label WordPress and WooCommerce admin cleanup toolkit for agencies. Distributed through WP Client Tools and created by Creative Digital Media.
@@ -37,6 +37,9 @@ This product is distributed and supported through WP Client Tools. The plugin is
 * Dashboard site snapshot and recently edited content cards
 
 == Changelog ==
+
+= 1.25 =
+* **Bug fix: "Update available" kept appearing after the plugin was already updated.** When AAT 1.23 polled /update-check, the WCTLM server replied with `{update_available: true, version: "1.24"}` and the response was cached in the `aat_remote_update_info` site transient for 6 hours. After the user installed 1.24, the next render of WP's update list read the cached payload, saw `update_available: true`, and offered an upgrade to a version that was already running. The flag was authoritative at cache-write time but stale after the in-place upgrade. Two-part fix: (1) `check_for_update()` now always recomputes `update_available` from `version_compare(AAT_VERSION, $remote['version'], '<')`, ignoring the cached server flag. (2) `get_remote_info()` treats the cache as stale when `$cached['current_version']` differs from the running `AAT_VERSION`, so the cache refreshes on the very next call after an upgrade rather than after a 6-hour timeout. Operators who want to force the refresh immediately can still use the existing "Clear update cache" button in the Licence & Updates panel.
 
 = 1.24 =
 * Login page footer card is now sized to match the login form width (360px) and uses equal padding on all sides so the agency logo sits centred with even space around it, instead of stretching to ~760px wide with an off-balance interior.
