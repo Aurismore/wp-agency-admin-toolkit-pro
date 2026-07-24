@@ -1,19 +1,19 @@
 === WP Admin Toolkit Pro ===
-Contributors: wpclienttools, creativedigitalmedia
+Contributors: wpclienttools, lubiesfactory
 Tags: admin, dashboard, agency, woocommerce, client dashboard, white label
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.29
+Stable tag: 1.30
 License: GPLv2 or later
 
-White-label WordPress and WooCommerce admin cleanup toolkit for agencies. Distributed through WP Client Tools and created by Creative Digital Media.
+White-label WordPress and WooCommerce admin cleanup toolkit for agencies. Distributed through WP Client Tools and created by Lubies Factory.
 
 == Description ==
 
 WP Admin Toolkit Pro helps agencies create cleaner, safer client admin experiences in WordPress. It can add a custom client dashboard, hide unnecessary admin areas, restrict risky settings, brand the login/admin experience, and run a database-backed support ticket workflow.
 
-This product is distributed and supported through WP Client Tools. The plugin is created by Creative Digital Media, keeping the agency brand separate from the software sales and licensing brand.
+This product is distributed and supported through WP Client Tools. The plugin is created by Lubies Factory, keeping the agency brand separate from the software sales and licensing brand.
 
 == Features ==
 
@@ -41,6 +41,12 @@ This product is distributed and supported through WP Client Tools. The plugin is
 * Fully translation-ready: every screen follows each admin user's own profile language, with Dutch (nl_NL) included
 
 == Changelog ==
+
+= 1.30 =
+* Rebranded the plugin creator from Creative Digital Media to Lubies Factory across the plugin header (Author and Description), readme, the "created by" note on the General settings page, and the author link shown in the WordPress update-info popup. The Author URI is now https://lubies.nl.
+* WP Client Tools remains the distribution, sales and licensing brand — the licence server, the "My Account" link and the product page are unchanged. Only the creator credit changed.
+* Historical changelog entries and the one-time brand-default migration (which matches values saved by older versions) are intentionally left as-is so existing installs migrate correctly.
+* Updated the Dutch (nl_NL) translation for the two affected sentences.
 
 = 1.29 =
 * The Licence & Updates panel's Subscription row now shows the real purchased product name returned by the WP Client Tools Licence Manager (server 1.4.14+), instead of a hardcoded product name. It falls back to "WP Admin Toolkit Pro" until the licence has been checked against a server that supplies the name.

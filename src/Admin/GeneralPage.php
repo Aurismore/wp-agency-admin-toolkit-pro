@@ -25,7 +25,7 @@ class GeneralPage extends Page {
             <div class="aat-grid">
                 <section class="aat-card">
                     <h2><?php esc_html_e('Agency details', 'wp-agency-admin-toolkit'); ?></h2>
-                    <p class="aat-product-note"><strong><?php esc_html_e('WP Client Tools Pro product.', 'wp-agency-admin-toolkit'); ?></strong> <?php esc_html_e('WP Admin Toolkit Pro is distributed through WP Client Tools and created by Creative Digital Media. Your own agency details below are what clients see inside their dashboard and support areas.', 'wp-agency-admin-toolkit'); ?></p>
+                    <p class="aat-product-note"><strong><?php esc_html_e('WP Client Tools Pro product.', 'wp-agency-admin-toolkit'); ?></strong> <?php esc_html_e('WP Admin Toolkit Pro is distributed through WP Client Tools and created by Lubies Factory. Your own agency details below are what clients see inside their dashboard and support areas.', 'wp-agency-admin-toolkit'); ?></p>
                     <label><?php esc_html_e('Agency name shown to clients', 'wp-agency-admin-toolkit'); ?> <input type="text" name="<?php echo $opt; ?>[agency_name]" value="<?php echo esc_attr($s['agency_name']); ?>"></label>
                     <label><?php esc_html_e('Agency website shown to clients', 'wp-agency-admin-toolkit'); ?> <input type="url" name="<?php echo $opt; ?>[agency_url]" value="<?php echo esc_url($s['agency_url']); ?>"></label>
                     <label><?php esc_html_e('Logout redirect URL', 'wp-agency-admin-toolkit'); ?> <input type="url" name="<?php echo $opt; ?>[logout_redirect_url]" value="<?php echo esc_url($s['logout_redirect_url']); ?>"></label>

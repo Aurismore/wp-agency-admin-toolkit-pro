@@ -1,8 +1,8 @@
-# Copyright (C) 2026 Creative Digital Media
+# Copyright (C) 2026 Lubies Factory
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Admin Toolkit Pro 1.29\n"
+"Project-Id-Version: WP Admin Toolkit Pro 1.30\n"
 "Report-Msgid-Bugs-To: https://wpclienttools.com\n"
 "Last-Translator: Creative Digital Media <paul@creativedigitalmedia.nl>\n"
 "Language-Team: Dutch <paul@creativedigitalmedia.nl>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-24T10:52:46+00:00\n"
+"POT-Creation-Date: 2026-07-24T11:01:12+00:00\n"
 "PO-Revision-Date: 2026-07-24 12:00+0000\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wp-agency-admin-toolkit\n"
@@ -28,18 +28,18 @@ msgstr "https://wpclienttools.com/wp-agency-admin-toolkit-pro"
 
 #. Description of the plugin
 #: wp-agency-admin-toolkit-pro.php
-msgid "Pro white-label WordPress and WooCommerce admin dashboard, support ticket and cleanup toolkit for agencies. Sold and supported through WP Client Tools, created by Creative Digital Media."
-msgstr "Pro white-label toolkit voor WordPress- en WooCommerce-beheer, supporttickets en opschoning, gemaakt voor bureaus. Verkocht en ondersteund via WP Client Tools, ontwikkeld door Creative Digital Media."
+msgid "Pro white-label WordPress and WooCommerce admin dashboard, support ticket and cleanup toolkit for agencies. Sold and supported through WP Client Tools, created by Lubies Factory."
+msgstr "Pro white-label toolkit voor WordPress- en WooCommerce-beheer, supporttickets en opschoning, gemaakt voor bureaus. Verkocht en ondersteund via WP Client Tools, ontwikkeld door Lubies Factory."
 
 #. Author of the plugin
 #: wp-agency-admin-toolkit-pro.php
-msgid "Creative Digital Media"
-msgstr "Creative Digital Media"
+msgid "Lubies Factory"
+msgstr "Lubies Factory"
 
 #. Author URI of the plugin
 #: wp-agency-admin-toolkit-pro.php
-msgid "https://creativedigitalmedia.nl"
-msgstr "https://creativedigitalmedia.nl"
+msgid "https://lubies.nl"
+msgstr "https://lubies.nl"
 
 #. translators: %s: page name.
 #: src/Admin.php:44
@@ -451,8 +451,8 @@ msgid "WP Client Tools Pro product."
 msgstr "WP Client Tools Pro-product."
 
 #: src/Admin/GeneralPage.php:28
-msgid "WP Admin Toolkit Pro is distributed through WP Client Tools and created by Creative Digital Media. Your own agency details below are what clients see inside their dashboard and support areas."
-msgstr "WP Admin Toolkit Pro wordt gedistribueerd via WP Client Tools en is ontwikkeld door Creative Digital Media. De bureaugegevens hieronder zijn wat klanten zien in hun dashboard en supportonderdelen."
+msgid "WP Admin Toolkit Pro is distributed through WP Client Tools and created by Lubies Factory. Your own agency details below are what clients see inside their dashboard and support areas."
+msgstr "WP Admin Toolkit Pro wordt gedistribueerd via WP Client Tools en is ontwikkeld door Lubies Factory. De bureaugegevens hieronder zijn wat klanten zien in hun dashboard en supportonderdelen."
 
 #: src/Admin/GeneralPage.php:29
 msgid "Agency name shown to clients"

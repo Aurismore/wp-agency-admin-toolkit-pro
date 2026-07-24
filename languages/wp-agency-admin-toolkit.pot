@@ -1,15 +1,15 @@
-# Copyright (C) 2026 Creative Digital Media
+# Copyright (C) 2026 Lubies Factory
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Admin Toolkit Pro 1.29\n"
+"Project-Id-Version: WP Admin Toolkit Pro 1.30\n"
 "Report-Msgid-Bugs-To: https://wpclienttools.com\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-24T10:52:46+00:00\n"
+"POT-Creation-Date: 2026-07-24T11:01:12+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wp-agency-admin-toolkit\n"
@@ -26,17 +26,17 @@ msgstr ""
 
 #. Description of the plugin
 #: wp-agency-admin-toolkit-pro.php
-msgid "Pro white-label WordPress and WooCommerce admin dashboard, support ticket and cleanup toolkit for agencies. Sold and supported through WP Client Tools, created by Creative Digital Media."
+msgid "Pro white-label WordPress and WooCommerce admin dashboard, support ticket and cleanup toolkit for agencies. Sold and supported through WP Client Tools, created by Lubies Factory."
 msgstr ""
 
 #. Author of the plugin
 #: wp-agency-admin-toolkit-pro.php
-msgid "Creative Digital Media"
+msgid "Lubies Factory"
 msgstr ""
 
 #. Author URI of the plugin
 #: wp-agency-admin-toolkit-pro.php
-msgid "https://creativedigitalmedia.nl"
+msgid "https://lubies.nl"
 msgstr ""
 
 #. translators: %s: page name.
@@ -449,7 +449,7 @@ msgid "WP Client Tools Pro product."
 msgstr ""
 
 #: src/Admin/GeneralPage.php:28
-msgid "WP Admin Toolkit Pro is distributed through WP Client Tools and created by Creative Digital Media. Your own agency details below are what clients see inside their dashboard and support areas."
+msgid "WP Admin Toolkit Pro is distributed through WP Client Tools and created by Lubies Factory. Your own agency details below are what clients see inside their dashboard and support areas."
 msgstr ""
 
 #: src/Admin/GeneralPage.php:29

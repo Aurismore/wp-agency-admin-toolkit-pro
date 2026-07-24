@@ -214,7 +214,7 @@ class Licence {
         $info->name = sanitize_text_field($remote['name'] ?? 'WP Admin Toolkit Pro');
         $info->slug = sanitize_key($remote['slug'] ?? self::product_slug());
         $info->version = sanitize_text_field($remote['version'] ?? AAT_VERSION);
-        $info->author = '<a href="https://creativedigitalmedia.nl" target="_blank" rel="noopener noreferrer">Creative Digital Media</a>';
+        $info->author = '<a href="https://lubies.nl" target="_blank" rel="noopener noreferrer">Lubies Factory</a>';
         $info->homepage = esc_url_raw($remote['homepage'] ?? 'https://wpclienttools.com/wp-agency-admin-toolkit-pro');
         $info->requires = sanitize_text_field($remote['requires'] ?? '6.0');
         $info->tested = sanitize_text_field($remote['tested'] ?? '');
