@@ -90,23 +90,6 @@ class Support {
         return $lines ?: ['General website help'];
     }
 
-    private function log_request($item) {
-        if (empty($this->core->settings['enable_support_log'])) return;
-        $log = get_option('aat_support_log', []);
-        if (!is_array($log)) $log = [];
-        $log[] = [
-            'created_at' => current_time('mysql'),
-            'subject' => sanitize_text_field($item['subject'] ?? ''),
-            'category' => sanitize_text_field($item['category'] ?? ''),
-            'priority' => sanitize_text_field($item['priority'] ?? ''),
-            'message' => sanitize_textarea_field($item['message'] ?? ''),
-            'user' => sanitize_text_field($item['user'] ?? ''),
-            'page' => esc_url_raw($item['page'] ?? ''),
-        ];
-        $log = array_slice($log, -50);
-        update_option('aat_support_log', $log, false);
-    }
-
     private function get_request_ip() {
         $ip = $_SERVER['REMOTE_ADDR'] ?? '';
         return preg_replace('/[^0-9a-fA-F:\.]/', '', (string) $ip);
@@ -191,7 +174,27 @@ class Support {
             'PHP' => PHP_VERSION,
             'Browser' => sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'] ?? '')),
         ];
+        // The ticket is stored before delivery is attempted so a request is
+        // never lost when email/webhook delivery fails or is unconfigured.
+        $ticket_id = 0;
+        if (!empty($s['enable_support_log'])) {
+            $ticket_id = Tickets::create([
+                'user_id' => $user->ID,
+                'user_name' => $user->display_name,
+                'user_email' => $user->user_email,
+                'subject' => $subject,
+                'message' => $message,
+                'category' => $category,
+                'priority' => $priority,
+                'page_url' => $referer ? esc_url_raw($referer) : home_url('/'),
+                'diagnostics' => $include_diagnostics ? (string) wp_json_encode($details) : '',
+            ]);
+        }
+
         $body = "Support request from " . home_url('/') . "\n\n";
+        if ($ticket_id) {
+            $body .= "Ticket: #" . $ticket_id . "\n";
+        }
         $body .= "Subject: " . $subject . "\n";
         $body .= "Category: " . $category . "\n";
         $body .= "Priority: " . $priority . "\n\n";
@@ -206,7 +209,8 @@ class Support {
         $sent = false;
         if (!empty($s['support_email'])) {
             $headers = ['Reply-To: ' . $user->user_email];
-            $sent = wp_mail($s['support_email'], '[' . get_bloginfo('name') . '] ' . $subject, $body, $headers);
+            $mail_subject = '[' . get_bloginfo('name') . ']' . ($ticket_id ? ' [#' . $ticket_id . ']' : '') . ' ' . $subject;
+            $sent = wp_mail($s['support_email'], $mail_subject, $body, $headers);
         }
         if (!empty($s['support_webhook'])) {
             // wp_safe_remote_post applies WP's own host filter, blocking loopback
@@ -225,15 +229,10 @@ class Support {
             }
         }
         if ($sent) {
-            $this->log_request([
-                'subject' => $subject,
-                'category' => $category,
-                'priority' => $priority,
-                'message' => $message,
-                'user' => $user->display_name . ' (' . $user->user_email . ')',
-                'page' => $referer ? esc_url_raw($referer) : home_url('/'),
-            ]);
-            wp_send_json_success(['message' => 'Support request sent.']);
+            wp_send_json_success(['message' => 'Support request sent.', 'ticket_id' => $ticket_id]);
+        }
+        if ($ticket_id) {
+            wp_send_json_success(['message' => 'Support request saved as ticket #' . $ticket_id . '. Your team will pick it up from the ticket list.', 'ticket_id' => $ticket_id]);
         }
         wp_send_json_error(['message' => 'The request could not be sent. Check the support email/webhook settings.'], 500);
     }

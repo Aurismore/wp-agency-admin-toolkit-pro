@@ -173,3 +173,36 @@
 .aat-status-good{color:#067647!important}
 .aat-status-bad{color:#b42318!important}
 @media(max-width:960px){.aat-pro-license-grid{grid-template-columns:1fr}}
+
+/* v1.26 separate admin pages + ticket system */
+.aat-admin-tabs a.aat-tab-current{background:#17243B;color:#fff;border-color:#17243B}
+.aat-wrap>.aat-card.aat-tickets-card{margin-top:24px}
+.aat-ticket-filters{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 12px}
+.aat-ticket-filters a{display:inline-flex;align-items:center;gap:5px;text-decoration:none;background:#f7f8fb;border:1px solid #dcdcde;border-radius:999px;padding:6px 13px;font-weight:800;color:#17243B}
+.aat-ticket-filters a:hover,.aat-ticket-filters a:focus{background:#17243B;color:#fff;border-color:#17243B}
+.aat-ticket-filters a.aat-tab-current{background:#17243B;color:#fff;border-color:#17243B}
+.aat-ticket-filters a span{font-weight:600;opacity:.75}
+.aat-ticket-search{display:flex;gap:8px;margin:0 0 14px;max-width:460px}
+.aat-ticket-search input[type=search]{flex:1;border-radius:8px;border:1px solid #c3c4c7}
+.aat-ticket-toolbar{display:flex;gap:8px;align-items:center;margin:0 0 10px}
+.aat-ticket-toolbar select{min-height:34px;border-radius:8px;border:1px solid #c3c4c7}
+.aat-tickets-table .aat-col-id{width:64px}
+.aat-tickets-table .aat-col-priority{width:90px}
+.aat-tickets-table .aat-col-status{width:120px}
+.aat-tickets-table td small{color:#6b7280}
+.aat-ticket-status{display:inline-block;padding:3px 11px;border-radius:999px;font-weight:800;font-size:12px;line-height:1.6}
+.aat-ticket-status-new{background:#fde8ef;color:#b4356c}
+.aat-ticket-status-in_progress{background:#e3ecfd;color:#1d4ed8}
+.aat-ticket-status-resolved{background:#e2f6e9;color:#067647}
+.aat-ticket-status-closed{background:#eceef2;color:#4b5565}
+.aat-ticket-pagination{margin-top:14px}
+.aat-ticket-detail h3{margin:22px 0 10px;color:#17243B}
+.aat-ticket-message{background:#f7f8fb;border:1px solid #eceef2;border-radius:14px;padding:16px 18px}
+.aat-ticket-message p:first-child{margin-top:0}
+.aat-ticket-message p:last-child{margin-bottom:0}
+.aat-ticket-diagnostics{background:#f7f8fb;border:1px solid #eceef2;border-radius:14px;padding:16px 18px;overflow-x:auto;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px}
+.aat-ticket-status-form{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:22px;padding-top:18px;border-top:1px solid #eceef2}
+.aat-ticket-status-form label{font-weight:800;color:#17243B;margin:0}
+.aat-ticket-status-form select{min-height:34px;border-radius:8px;border:1px solid #c3c4c7}
+.aat-ticket-status-form .button-link-delete{margin-left:auto}
+@media(max-width:782px){.aat-ticket-search{max-width:100%}.aat-ticket-status-form .button-link-delete{margin-left:0}}

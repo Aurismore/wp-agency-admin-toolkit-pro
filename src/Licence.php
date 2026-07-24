@@ -30,7 +30,7 @@ class Licence {
         }
         delete_site_transient($this->cache_key);
         wp_clean_plugins_cache(true);
-        wp_safe_redirect(admin_url('options-general.php?page=wp-agency-admin-toolkit&aat_update_cache_cleared=1#aat-license'));
+        wp_safe_redirect(admin_url('admin.php?page=wp-admin-toolkit-tools&aat_update_cache_cleared=1#aat-status'));
         exit;
     }
 
@@ -46,7 +46,7 @@ class Licence {
             Core::update_settings($settings);
         }
         delete_site_transient($this->cache_key);
-        wp_safe_redirect(admin_url('options-general.php?page=wp-agency-admin-toolkit&aat_licence_checked=1#aat-license'));
+        wp_safe_redirect(admin_url('admin.php?page=wp-admin-toolkit-tools&aat_licence_checked=1#aat-status'));
         exit;
     }
 
@@ -95,7 +95,7 @@ class Licence {
             'redirection' => 3,
             'headers' => [
                 'Accept' => 'application/json',
-                'User-Agent' => 'WP Agency Admin Toolkit Pro/' . AAT_VERSION . '; ' . home_url('/'),
+                'User-Agent' => 'WP Admin Toolkit Pro/' . AAT_VERSION . '; ' . home_url('/'),
             ],
             'body' => $body,
         ];
@@ -198,7 +198,7 @@ class Licence {
         if (!$remote) return $result;
 
         $info = new \stdClass();
-        $info->name = sanitize_text_field($remote['name'] ?? 'WP Agency Admin Toolkit Pro');
+        $info->name = sanitize_text_field($remote['name'] ?? 'WP Admin Toolkit Pro');
         $info->slug = sanitize_key($remote['slug'] ?? self::product_slug());
         $info->version = sanitize_text_field($remote['version'] ?? AAT_VERSION);
         $info->author = '<a href="https://creativedigitalmedia.nl" target="_blank" rel="noopener noreferrer">Creative Digital Media</a>';
@@ -210,7 +210,7 @@ class Licence {
         $info->sections = $this->sanitize_sections($remote['sections'] ?? []);
         if (empty($info->sections)) {
             $info->sections = [
-                'description' => 'WP Agency Admin Toolkit Pro updates are delivered through WP Client Tools after licence validation.',
+                'description' => 'WP Admin Toolkit Pro updates are delivered through WP Client Tools after licence validation.',
                 'changelog' => !empty($remote['changelog']) ? wp_kses_post($remote['changelog']) : 'No changelog supplied.',
             ];
         }
@@ -257,7 +257,7 @@ class Licence {
             : !empty($download_url);
 
         $clean = [
-            'name' => 'WP Agency Admin Toolkit Pro',
+            'name' => 'WP Admin Toolkit Pro',
             'slug' => sanitize_title($response['product_slug'] ?? self::product_slug()),
             'version' => sanitize_text_field($response['latest_version'] ?? $response['new_version'] ?? AAT_VERSION),
             'current_version' => sanitize_text_field($response['current_version'] ?? AAT_VERSION),
@@ -279,7 +279,7 @@ class Licence {
             'package_signature_ed25519' => preg_replace('/[^A-Za-z0-9+\/=]/', '', (string) ($response['package_signature_ed25519'] ?? '')),
             'package_size_bytes' => absint($response['package_size_bytes'] ?? 0),
             'sections' => [
-                'description' => 'WP Agency Admin Toolkit Pro updates are delivered through WP Client Tools after licence validation.',
+                'description' => 'WP Admin Toolkit Pro updates are delivered through WP Client Tools after licence validation.',
                 'changelog' => !empty($response['changelog']) ? wp_kses_post($response['changelog']) : 'No changelog supplied.',
             ],
             'changelog' => !empty($response['changelog']) ? wp_kses_post($response['changelog']) : '',

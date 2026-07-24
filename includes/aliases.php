@@ -17,6 +17,7 @@ $aat_class_aliases = [
     'AAT_Dashboard'    => Aurismore\AAT\Dashboard::class,
     'AAT_Support'      => Aurismore\AAT\Support::class,
     'AAT_Integrations' => Aurismore\AAT\Integrations::class,
+    'AAT_Tickets'      => Aurismore\AAT\Tickets::class,
     // Both spellings are aliased to the same namespaced class so existing
     // configs (AAT_License) and the new canonical name (AAT_Licence) work.
     'AAT_License'      => Aurismore\AAT\Licence::class,

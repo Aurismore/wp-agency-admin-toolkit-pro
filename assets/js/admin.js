@@ -67,4 +67,8 @@
     e.preventDefault();
     $(this).closest('.aat-shortcut-row').remove();
   });
+
+  $(document).on('change','#aat-tickets-select-all',function(){
+    $('.aat-ticket-cb').prop('checked', this.checked);
+  });
 })(jQuery);

@@ -9,10 +9,27 @@ class Cleanup {
     public function __construct(Core $core) {
         $this->core = $core;
         add_action('admin_init', [$this, 'restrict_pages'], 1);
+        add_action('admin_menu', [$this, 'hide_admin_menus'], 999);
         add_action('wp_before_admin_bar_render', [$this, 'cleanup_admin_bar'], 999);
         add_action('admin_print_scripts', [$this, 'hide_notices'], 0);
         add_action('admin_head', [$this, 'admin_head_css']);
         add_filter('show_admin_bar', [$this, 'maybe_disable_frontend_admin_bar'], 999);
+    }
+
+    /**
+     * Remove configured admin menus for affected client roles.
+     *
+     * The hidden_menu setting existed since 1.x but its consumer was removed
+     * as a dead no-op in v1.22, leaving the textarea saved-but-ignored. Late
+     * priority so menus registered by other plugins are present for removal.
+     */
+    public function hide_admin_menus() {
+        if (!$this->core->user_is_affected()) return;
+        foreach ((array) $this->core->settings['hidden_menu'] as $slug) {
+            $slug = trim((string) $slug);
+            if ($slug === '') continue;
+            remove_menu_page($slug);
+        }
     }
 
     /**

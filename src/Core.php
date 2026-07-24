@@ -28,6 +28,7 @@ class Core {
         new Support($this);
         new Integrations($this);
         new Licence($this);
+        new Tickets($this);
     }
 
     public function load_textdomain() {
@@ -191,6 +192,8 @@ class Core {
             self::update_settings(self::defaults());
         }
 
+        Tickets::install();
+
         $admin = get_role('administrator');
         if ($admin && !$admin->has_cap(AAT_CAP)) {
             $admin->add_cap(AAT_CAP);
@@ -279,7 +282,43 @@ class Core {
         return "'" . $value . "'";
     }
 
+    /**
+     * Map of settings screen => the option keys that screen's form owns.
+     *
+     * Each admin page submits only its own fields plus a hidden `_aat_screen`
+     * marker. The sanitizer uses this map to update just that screen's keys and
+     * keep every other saved value intact — without it, a partial submit would
+     * reset absent fields (and every unchecked checkbox) to defaults.
+     */
+    public static function screen_fields() {
+        return [
+            'general' => ['agency_name', 'agency_url', 'logout_redirect_url', 'affected_roles'],
+            'dashboard' => ['enable_custom_dashboard', 'enable_dashboard_widgets', 'enable_site_snapshot', 'enable_recent_content', 'dashboard_title', 'dashboard_layout', 'welcome_message', 'instructions', 'shortcuts'],
+            'branding' => ['enable_login_branding', 'enable_admin_branding', 'enable_wp_admin_branding', 'admin_branding_for_agency', 'login_hide_aux_links', 'login_logo_url', 'login_background_image_url', 'login_background_image_id', 'login_background_overlay', 'login_background', 'login_button_color', 'login_accent_color', 'admin_footer_text', 'admin_primary_color', 'admin_accent_color', 'admin_background_color'],
+            'cleanup' => ['client_safe_mode', 'hide_notices', 'disable_admin_bar_for_clients', 'hidden_menu', 'restricted_pages'],
+            'support' => ['support_email', 'support_url', 'support_webhook', 'support_button_label', 'enable_floating_support', 'enable_support_log', 'support_categories', 'support_webhook_template'],
+            'integrations' => ['hide_elementor_settings', 'hide_rank_math_overview', 'hide_myparcel_overview', 'hide_yoast_overview', 'hide_wp_rocket_notices', 'hide_litespeed_notices', 'hide_acf_admin_from_clients'],
+        ];
+    }
+
     public static function sanitize_settings($input) {
+        if (!is_array($input)) {
+            $input = [];
+        }
+        $screen = isset($input['_aat_screen']) ? sanitize_key($input['_aat_screen']) : '';
+        $screens = self::screen_fields();
+        $clean = self::sanitize_all($input);
+        if ($screen !== '' && isset($screens[$screen])) {
+            $settings = self::get_settings();
+            foreach ($screens[$screen] as $key) {
+                $settings[$key] = $clean[$key];
+            }
+            return $settings;
+        }
+        return $clean;
+    }
+
+    public static function sanitize_all($input) {
         $defaults = self::defaults();
         $clean = [];
         $clean['agency_name'] = sanitize_text_field($input['agency_name'] ?? $defaults['agency_name']);

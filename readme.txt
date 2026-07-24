@@ -1,17 +1,17 @@
-=== WP Agency Admin Toolkit Pro ===
+=== WP Admin Toolkit Pro ===
 Contributors: wpclienttools, creativedigitalmedia
 Tags: admin, dashboard, agency, woocommerce, client dashboard, white label
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.25
+Stable tag: 1.26
 License: GPLv2 or later
 
 White-label WordPress and WooCommerce admin cleanup toolkit for agencies. Distributed through WP Client Tools and created by Creative Digital Media.
 
 == Description ==
 
-WP Agency Admin Toolkit Pro helps agencies create cleaner, safer client admin experiences in WordPress. It can add a custom client dashboard, hide unnecessary admin areas, restrict risky settings, brand the login/admin experience, and add support request workflows.
+WP Admin Toolkit Pro helps agencies create cleaner, safer client admin experiences in WordPress. It can add a custom client dashboard, hide unnecessary admin areas, restrict risky settings, brand the login/admin experience, and run a database-backed support ticket workflow.
 
 This product is distributed and supported through WP Client Tools. The plugin is created by Creative Digital Media, keeping the agency brand separate from the software sales and licensing brand.
 
@@ -21,11 +21,14 @@ This product is distributed and supported through WP Client Tools. The plugin is
 * Role-based client safe mode
 * Admin menu cleanup
 * Risky admin page restrictions
+* Separate admin pages per settings area under a top-level WP Admin Toolkit menu
 * Login page branding with site logo and agency support bar
 * Full-screen login background image option
 * Floating support request button on client admin pages
 * Support modal with email and optional webhook delivery
-* Support categories, priority selector and local request log
+* Support requests stored as database tickets with a status workflow (New, In progress, Resolved, Closed)
+* Tickets admin page with status filters, bulk actions and a detail view
+* Support categories and priority selector
 * Generic, Slack-style and Discord-style webhook payloads
 * WooCommerce-aware shortcuts and widgets
 * Elementor settings hiding
@@ -37,6 +40,17 @@ This product is distributed and supported through WP Client Tools. The plugin is
 * Dashboard site snapshot and recently edited content cards
 
 == Changelog ==
+
+= 1.26 =
+* **Renamed the product to WP Admin Toolkit Pro.** The plugin file name, folder, product slug, option names and text domain are intentionally unchanged so existing installs keep receiving updates through WP Client Tools without re-activation.
+* **Separate admin pages.** The single settings screen is replaced by a top-level "WP Admin Toolkit" menu with dedicated pages: General, Client Dashboard, Branding, Cleanup, Support, Tickets, Integrations, Tools and Licence & Updates. The old Settings > WP Agency Toolkit URL redirects to the new menu, and the pill navigation now links between real pages.
+* Settings saves are per-page: each page submits a screen marker and the sanitizer only updates that page's fields, so saving one page can no longer reset another page's values (including unchecked checkboxes).
+* **Support tickets are now stored in the database.** Requests are saved to a dedicated `aat_tickets` table with a status workflow (New, In progress, Resolved, Closed) *before* email/webhook delivery is attempted, so a request is no longer lost when delivery fails or nothing is configured. Delivered emails and ticket confirmations include the ticket number.
+* New Tickets admin page with status filter views and counts, search, bulk status changes, delete, a detail view showing the full message and consented diagnostics, and a "new tickets" count bubble on the admin menu.
+* Entries in the old option-based support request log are migrated into the tickets table on upgrade (original dates kept, status New) and the old log option is removed. The tickets table is created via an `aat_db_version` upgrade gate, so sites that update in place get it without re-activating.
+* Fixed: the "Admin menu cleanup" hidden-menu list is enforced again for affected client roles. The setting was saved but ignored since its consumer was removed as a dead no-op in v1.22.
+* The operator buttons "Check licence now" and "Clear update cache" are available on the Tools page next to System Status.
+* Uninstall now also drops the tickets table and the `aat_db_version` option.
 
 = 1.25 =
 * **Bug fix: "Update available" kept appearing after the plugin was already updated.** When AAT 1.23 polled /update-check, the WCTLM server replied with `{update_available: true, version: "1.24"}` and the response was cached in the `aat_remote_update_info` site transient for 6 hours. After the user installed 1.24, the next render of WP's update list read the cached payload, saw `update_available: true`, and offered an upgrade to a version that was already running. The flag was authoritative at cache-write time but stale after the in-place upgrade. Two-part fix: (1) `check_for_update()` now always recomputes `update_available` from `version_compare(AAT_VERSION, $remote['version'], '<')`, ignoring the cached server flag. (2) `get_remote_info()` treats the cache as stale when `$cached['current_version']` differs from the running `AAT_VERSION`, so the cache refreshes on the very next call after an upgrade rather than after a 6-hour timeout. Operators who want to force the refresh immediately can still use the existing "Clear update cache" button in the Licence & Updates panel.
@@ -158,6 +172,6 @@ This product is distributed and supported through WP Client Tools. The plugin is
 == Installation ==
 
 1. Upload the plugin ZIP via Plugins > Add New > Upload Plugin.
-2. Activate WP Agency Admin Toolkit Pro.
-3. Configure settings under Settings > WP Agency Toolkit.
+2. Activate WP Admin Toolkit Pro.
+3. Configure settings under the WP Admin Toolkit admin menu.
 4. Select affected client roles and enable the modules you need.
