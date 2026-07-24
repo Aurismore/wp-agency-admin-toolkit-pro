@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: WP Agency Admin Toolkit Pro
+ * Plugin Name: WP Admin Toolkit Pro
  * Plugin URI: https://wpclienttools.com/wp-agency-admin-toolkit-pro
- * Description: Pro white-label WordPress and WooCommerce admin dashboard, support and cleanup toolkit for agencies. Sold and supported through WP Client Tools, created by Creative Digital Media.
- * Version: 1.25
+ * Description: Pro white-label WordPress and WooCommerce admin dashboard, support ticket and cleanup toolkit for agencies. Sold and supported through WP Client Tools, created by Creative Digital Media.
+ * Version: 1.26
  * Author: Creative Digital Media
  * Author URI: https://creativedigitalmedia.nl
  * Text Domain: wp-agency-admin-toolkit
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('AAT_VERSION', '1.25');
+define('AAT_VERSION', '1.26');
 define('AAT_FILE', __FILE__);
 define('AAT_PATH', plugin_dir_path(__FILE__));
 define('AAT_URL', plugin_dir_url(__FILE__));

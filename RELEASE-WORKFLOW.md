@@ -1,6 +1,11 @@
-# WP Agency Admin Toolkit Pro Release Workflow
+# WP Admin Toolkit Pro Release Workflow
 
 This repository ships a GitHub Actions workflow that builds the customer install ZIP when a version tag is pushed.
+
+Note: since v1.26 the product's display name is **WP Admin Toolkit Pro**, but the
+file name, folder and product slug deliberately remain
+`wp-agency-admin-toolkit-pro` — changing them would break the update pipeline on
+installed client sites and the WCTLM product mapping.
 
 ## Repository layout
 
