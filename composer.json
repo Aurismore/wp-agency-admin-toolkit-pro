@@ -3,7 +3,7 @@
     "description": "WP Admin Toolkit Pro: white-label WordPress and WooCommerce admin dashboard, support ticket and cleanup toolkit for agencies. Distributed through WP Client Tools.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
-    "homepage": "https://wpclienttools.com/wp-agency-admin-toolkit-pro",
+    "homepage": "https://lubies.shop",
     "require": {
         "php": ">=7.4"
     },

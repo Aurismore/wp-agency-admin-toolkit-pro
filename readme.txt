@@ -4,7 +4,7 @@ Tags: admin, dashboard, agency, woocommerce, client dashboard, white label
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.30
+Stable tag: 1.31
 License: GPLv2 or later
 
 White-label WordPress and WooCommerce admin cleanup toolkit for agencies. Distributed through WP Client Tools and created by Lubies Factory.
@@ -41,6 +41,10 @@ This product is distributed and supported through WP Client Tools. The plugin is
 * Fully translation-ready: every screen follows each admin user's own profile language, with Dutch (nl_NL) included
 
 == Changelog ==
+
+= 1.31 =
+* Pointed the plugin site to https://lubies.shop: the Plugin URI header, the composer homepage, and the plugin homepage shown in the WordPress update-info popup now use lubies.shop instead of the old wpclienttools.com product page.
+* The WP Client Tools licensing endpoints are unchanged — the licence server, the "My Account" account link and the release-publish target still use wpclienttools.com. Only the public plugin-site/product links moved.
 
 = 1.30 =
 * Rebranded the plugin creator from Creative Digital Media to Lubies Factory across the plugin header (Author and Description), readme, the "created by" note on the General settings page, and the author link shown in the WordPress update-info popup. The Author URI is now https://lubies.nl.

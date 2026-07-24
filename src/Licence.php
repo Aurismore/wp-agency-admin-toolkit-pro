@@ -191,7 +191,7 @@ class Licence {
             $item->slug = $remote['slug'] ?? self::product_slug();
             $item->plugin = $plugin_file;
             $item->new_version = sanitize_text_field($remote['version']);
-            $item->url = esc_url_raw($remote['homepage'] ?? 'https://wpclienttools.com/wp-agency-admin-toolkit-pro');
+            $item->url = esc_url_raw($remote['homepage'] ?? 'https://lubies.shop');
             $item->package = esc_url_raw($remote['download_url']);
             if (!empty($remote['tested'])) $item->tested = sanitize_text_field($remote['tested']);
             if (!empty($remote['requires'])) $item->requires = sanitize_text_field($remote['requires']);
@@ -215,7 +215,7 @@ class Licence {
         $info->slug = sanitize_key($remote['slug'] ?? self::product_slug());
         $info->version = sanitize_text_field($remote['version'] ?? AAT_VERSION);
         $info->author = '<a href="https://lubies.nl" target="_blank" rel="noopener noreferrer">Lubies Factory</a>';
-        $info->homepage = esc_url_raw($remote['homepage'] ?? 'https://wpclienttools.com/wp-agency-admin-toolkit-pro');
+        $info->homepage = esc_url_raw($remote['homepage'] ?? 'https://lubies.shop');
         $info->requires = sanitize_text_field($remote['requires'] ?? '6.0');
         $info->tested = sanitize_text_field($remote['tested'] ?? '');
         $info->requires_php = sanitize_text_field($remote['requires_php'] ?? '7.4');
@@ -276,7 +276,7 @@ class Licence {
             'current_version' => sanitize_text_field($response['current_version'] ?? AAT_VERSION),
             'channel' => sanitize_key($response['channel'] ?? 'stable'),
             'download_url' => $download_url,
-            'homepage' => 'https://wpclienttools.com/wp-agency-admin-toolkit-pro',
+            'homepage' => 'https://lubies.shop',
             'requires' => sanitize_text_field($response['requires'] ?? '6.0'),
             'requires_php' => sanitize_text_field($response['requires_php'] ?? '7.4'),
             'tested' => sanitize_text_field($response['tested'] ?? ''),
