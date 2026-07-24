@@ -380,10 +380,11 @@ class Branding {
     private function get_footer_html() {
         $agency = esc_html($this->core->settings['agency_name'] ?? '');
         $url = esc_url($this->core->settings['agency_url'] ?? '');
-        $footer = esc_html($this->core->settings['admin_footer_text'] ?? '');
+        $footer = esc_html(Core::translated_setting($this->core->settings, 'admin_footer_text'));
 
         if (!$footer) {
-            $footer = $agency ? 'Managed by ' . $agency : '';
+            /* translators: %s: agency name. */
+            $footer = $agency ? sprintf(esc_html__('Managed by %s', 'wp-agency-admin-toolkit'), $agency) : '';
         }
 
         if ($url && $agency) {

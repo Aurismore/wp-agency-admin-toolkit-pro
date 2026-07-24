@@ -40,7 +40,7 @@ abstract class Page {
     }
 
     public function render() {
-        if (!current_user_can(AAT_CAP)) wp_die('Access denied.');
+        if (!current_user_can(AAT_CAP)) wp_die(esc_html__('Access denied.', 'wp-agency-admin-toolkit'));
         $s = Core::get_settings();
         echo '<div class="wrap aat-wrap">';
         echo '<h1>' . esc_html($this->title()) . '</h1>';
@@ -52,7 +52,7 @@ abstract class Page {
 
     protected function nav() {
         $current = $this->slug();
-        echo '<div class="aat-admin-tabs" role="navigation" aria-label="WP Admin Toolkit pages">';
+        echo '<div class="aat-admin-tabs" role="navigation" aria-label="' . esc_attr__('WP Admin Toolkit pages', 'wp-agency-admin-toolkit') . '">';
         foreach (Admin::pages_nav() as $slug => $label) {
             $class = $slug === $current ? ' class="aat-tab-current"' : '';
             echo '<a' . $class . ' href="' . esc_url(admin_url('admin.php?page=' . $slug)) . '">' . esc_html($label) . '</a>';
@@ -62,7 +62,7 @@ abstract class Page {
 
     protected function notices() {
         if (isset($_GET['settings-updated'])) {
-            $this->notice('Settings saved.');
+            $this->notice(__('Settings saved.', 'wp-agency-admin-toolkit'));
         }
     }
 
@@ -73,12 +73,12 @@ abstract class Page {
     /**
      * Wrap fields in an options.php form carrying this page's screen marker.
      */
-    protected function settings_form(callable $render_fields, $button_label = 'Save changes') {
+    protected function settings_form(callable $render_fields, $button_label = '') {
         echo '<form method="post" action="' . esc_url(admin_url('options.php')) . '">';
         settings_fields('aat_settings_group');
         echo '<input type="hidden" name="' . esc_attr(AAT_OPTION) . '[_aat_screen]" value="' . esc_attr($this->screen()) . '">';
         $render_fields();
-        submit_button($button_label);
+        submit_button($button_label !== '' ? $button_label : __('Save changes', 'wp-agency-admin-toolkit'));
         echo '</form>';
     }
 

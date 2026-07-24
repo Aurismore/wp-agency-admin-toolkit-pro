@@ -72,8 +72,8 @@ class Cleanup {
         foreach ($blocked as $rule) {
             if ($rule !== '' && in_array($rule, $current_keys, true)) {
                 wp_die(
-                    '<h1>Protected agency setting</h1><p>This area can affect the website, payments, theme, plugins or store settings. Please request support before making changes here.</p><p><a class="button button-primary" href="' . esc_url(admin_url()) . '">Return to dashboard</a></p>',
-                    'Protected Agency Setting',
+                    '<h1>' . esc_html__('Protected agency setting', 'wp-agency-admin-toolkit') . '</h1><p>' . esc_html__('This area can affect the website, payments, theme, plugins or store settings. Please request support before making changes here.', 'wp-agency-admin-toolkit') . '</p><p><a class="button button-primary" href="' . esc_url(admin_url()) . '">' . esc_html__('Return to dashboard', 'wp-agency-admin-toolkit') . '</a></p>',
+                    esc_html__('Protected agency setting', 'wp-agency-admin-toolkit'),
                     ['response' => 403]
                 );
             }

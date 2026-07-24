@@ -14,15 +14,17 @@ class Integrations {
     }
 
     public static function detected_plugins() {
+        $active = __('Active', 'wp-agency-admin-toolkit');
+        $not_active = __('Not active', 'wp-agency-admin-toolkit');
         return [
-            'WooCommerce' => class_exists('WooCommerce') ? (defined('WC_VERSION') ? WC_VERSION : 'Active') : 'Not active',
-            'Elementor' => defined('ELEMENTOR_VERSION') ? ELEMENTOR_VERSION : 'Not active',
-            'Rank Math' => defined('RANK_MATH_VERSION') ? RANK_MATH_VERSION : 'Not active',
-            'MyParcel' => defined('MYPARCEL_VERSION') ? MYPARCEL_VERSION : (class_exists('WC_MyParcel') ? 'Active' : 'Not active'),
-            'Yoast SEO' => defined('WPSEO_VERSION') ? WPSEO_VERSION : 'Not active',
-            'WP Rocket' => defined('WP_ROCKET_VERSION') ? WP_ROCKET_VERSION : 'Not active',
-            'LiteSpeed Cache' => defined('LSCWP_V') ? LSCWP_V : (defined('LSCWP_VERSION') ? LSCWP_VERSION : 'Not active'),
-            'Advanced Custom Fields' => defined('ACF_VERSION') ? ACF_VERSION : 'Not active',
+            'WooCommerce' => class_exists('WooCommerce') ? (defined('WC_VERSION') ? WC_VERSION : $active) : $not_active,
+            'Elementor' => defined('ELEMENTOR_VERSION') ? ELEMENTOR_VERSION : $not_active,
+            'Rank Math' => defined('RANK_MATH_VERSION') ? RANK_MATH_VERSION : $not_active,
+            'MyParcel' => defined('MYPARCEL_VERSION') ? MYPARCEL_VERSION : (class_exists('WC_MyParcel') ? $active : $not_active),
+            'Yoast SEO' => defined('WPSEO_VERSION') ? WPSEO_VERSION : $not_active,
+            'WP Rocket' => defined('WP_ROCKET_VERSION') ? WP_ROCKET_VERSION : $not_active,
+            'LiteSpeed Cache' => defined('LSCWP_V') ? LSCWP_V : (defined('LSCWP_VERSION') ? LSCWP_VERSION : $not_active),
+            'Advanced Custom Fields' => defined('ACF_VERSION') ? ACF_VERSION : $not_active,
         ];
     }
 

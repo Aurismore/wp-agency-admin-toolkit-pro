@@ -26,7 +26,7 @@ class Licence {
 
     public function clear_update_cache() {
         if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_clear_update_cache')) {
-            wp_die('Access denied.');
+            wp_die(esc_html__('Access denied.', 'wp-agency-admin-toolkit'));
         }
         delete_site_transient($this->cache_key);
         wp_clean_plugins_cache(true);
@@ -36,7 +36,7 @@ class Licence {
 
     public function check_licence_now() {
         if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_check_licence_now')) {
-            wp_die('Access denied.');
+            wp_die(esc_html__('Access denied.', 'wp-agency-admin-toolkit'));
         }
         $settings = Core::get_settings();
         $licence_key = $settings['licence_key'] ?? '';
@@ -75,7 +75,7 @@ class Licence {
         $endpoint = sanitize_key($endpoint);
         $licence_key = sanitize_text_field($licence_key);
         if (!$licence_key) {
-            return ['success' => false, 'message' => 'Please enter a licence key.'];
+            return ['success' => false, 'message' => __('Please enter a licence key.', 'wp-agency-admin-toolkit')];
         }
 
         global $wp_version;
@@ -112,7 +112,7 @@ class Licence {
         $body_text = wp_remote_retrieve_body($response);
         $decoded = json_decode($body_text, true);
         if (!is_array($decoded)) {
-            return ['success' => false, 'message' => 'Invalid response from WP Client Tools.'];
+            return ['success' => false, 'message' => __('Invalid response from WP Client Tools.', 'wp-agency-admin-toolkit')];
         }
         if ($code < 200 || $code >= 300) {
             $decoded['success'] = false;
@@ -120,8 +120,10 @@ class Licence {
             // Surface the code in the message when no human-readable one came back.
             if (empty($decoded['message'])) {
                 $decoded['message'] = !empty($decoded['code'])
-                    ? 'WP Client Tools error: ' . $decoded['code']
-                    : ('WP Client Tools returned HTTP ' . (int) $code . '.');
+                    /* translators: %s: error code returned by the licence server. */
+                    ? sprintf(__('WP Client Tools error: %s', 'wp-agency-admin-toolkit'), $decoded['code'])
+                    /* translators: %d: HTTP status code. */
+                    : sprintf(__('WP Client Tools returned HTTP %d.', 'wp-agency-admin-toolkit'), (int) $code);
             }
         }
         return $decoded;
@@ -210,8 +212,8 @@ class Licence {
         $info->sections = $this->sanitize_sections($remote['sections'] ?? []);
         if (empty($info->sections)) {
             $info->sections = [
-                'description' => 'WP Admin Toolkit Pro updates are delivered through WP Client Tools after licence validation.',
-                'changelog' => !empty($remote['changelog']) ? wp_kses_post($remote['changelog']) : 'No changelog supplied.',
+                'description' => __('WP Admin Toolkit Pro updates are delivered through WP Client Tools after licence validation.', 'wp-agency-admin-toolkit'),
+                'changelog' => !empty($remote['changelog']) ? wp_kses_post($remote['changelog']) : __('No changelog supplied.', 'wp-agency-admin-toolkit'),
             ];
         }
         return $info;
@@ -237,7 +239,7 @@ class Licence {
 
         $response = self::remote_request('update-check', $this->core->settings['licence_key']);
         if (empty($response['success'])) {
-            $this->cache_error($response['message'] ?? 'Update check failed.');
+            $this->cache_error($response['message'] ?? __('Update check failed.', 'wp-agency-admin-toolkit'));
             return false;
         }
 
@@ -279,8 +281,8 @@ class Licence {
             'package_signature_ed25519' => preg_replace('/[^A-Za-z0-9+\/=]/', '', (string) ($response['package_signature_ed25519'] ?? '')),
             'package_size_bytes' => absint($response['package_size_bytes'] ?? 0),
             'sections' => [
-                'description' => 'WP Admin Toolkit Pro updates are delivered through WP Client Tools after licence validation.',
-                'changelog' => !empty($response['changelog']) ? wp_kses_post($response['changelog']) : 'No changelog supplied.',
+                'description' => __('WP Admin Toolkit Pro updates are delivered through WP Client Tools after licence validation.', 'wp-agency-admin-toolkit'),
+                'changelog' => !empty($response['changelog']) ? wp_kses_post($response['changelog']) : __('No changelog supplied.', 'wp-agency-admin-toolkit'),
             ],
             'changelog' => !empty($response['changelog']) ? wp_kses_post($response['changelog']) : '',
             'checked_at' => gmdate('c'),
@@ -288,7 +290,7 @@ class Licence {
         ];
 
         if (empty($clean['version']) || empty($clean['download_url']) || !$clean['package_available']) {
-            $this->cache_error($clean['package_message'] ?: ($clean['update_message'] ?: 'WP Client Tools responded but no downloadable package was available.'));
+            $this->cache_error($clean['package_message'] ?: ($clean['update_message'] ?: __('WP Client Tools responded but no downloadable package was available.', 'wp-agency-admin-toolkit')));
             return false;
         }
 

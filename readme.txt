@@ -4,7 +4,7 @@ Tags: admin, dashboard, agency, woocommerce, client dashboard, white label
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.26
+Stable tag: 1.27
 License: GPLv2 or later
 
 White-label WordPress and WooCommerce admin cleanup toolkit for agencies. Distributed through WP Client Tools and created by Creative Digital Media.
@@ -38,8 +38,18 @@ This product is distributed and supported through WP Client Tools. The plugin is
 * Import/export settings
 * System Status diagnostics page
 * Dashboard site snapshot and recently edited content cards
+* Fully translation-ready: every screen follows each admin user's own profile language, with Dutch (nl_NL) included
 
 == Changelog ==
+
+= 1.27 =
+* **The dashboard and all plugin screens now automatically show in each admin user's own language.** Every plugin string (~320) is wrapped in WordPress translation functions under the `wp-agency-admin-toolkit` text domain, so the per-user profile language (Users > Profile > Language) that WordPress already resolves for wp-admin now applies to the client dashboard, all nine settings pages, the support modal and its responses, the ticket screens, and the protected-page block screen. Users without a profile language get the site language, as always.
+* Ships a complete Dutch (nl_NL) translation (`.po`, `.mo` and the WP 6.5+ `.l10n.php` performance format) plus the POT template in `languages/` for adding further languages.
+* Untouched default content still translates: the welcome message, instruction boxes, dashboard title, shortcut labels, support categories, footer text and support button label are operator content and stay exactly as typed — but while they are byte-identical to the shipped English default, they render in the viewing user's language instead.
+* Ticket statuses and priorities keep their stored database values and translate for display only, so existing tickets and filters are unaffected. The site snapshot cache now stores label keys instead of label text, so cached labels follow the viewer's language.
+* Support emails and webhook payloads to the agency are composed in the site's default language regardless of which language the submitting client uses; the on-screen confirmation the client sees stays in their own language. Delivered emails keep the ticket number.
+* The handful of JavaScript strings (sending/sent/error states, shortcut editor placeholders) are translated server-side and passed to the script.
+* Client Admin role name, licence/update messages and WooCommerce webhook field labels are translated at generation time.
 
 = 1.26 =
 * **Renamed the product to WP Admin Toolkit Pro.** The plugin file name, folder, product slug, option names and text domain are intentionally unchanged so existing installs keep receiving updates through WP Client Tools without re-activation.

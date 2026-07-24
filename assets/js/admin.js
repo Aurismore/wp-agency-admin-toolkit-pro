@@ -2,6 +2,7 @@
   if ($.fn.wpColorPicker) { $('.aat-color-field').wpColorPicker(); }
 
   var optionName = (window.aatSupport && window.aatSupport.optionName) ? window.aatSupport.optionName : 'aat_settings';
+  var i18n = (window.aatSupport && window.aatSupport.strings) ? window.aatSupport.strings : {};
 
   function openModal(){ $('#aat-support-modal').addClass('is-open').attr('aria-hidden','false'); }
   function closeModal(){ $('#aat-support-modal').removeClass('is-open').attr('aria-hidden','true'); }
@@ -11,13 +12,13 @@
   $(document).on('submit','#aat-support-form',function(e){
     e.preventDefault();
     var $form=$(this), $status=$form.find('.aat-support-status');
-    $status.text('Sending...');
+    $status.text(i18n.sending || 'Sending...');
     $.post((window.ajaxurl || (window.aatSupport && window.aatSupport.ajaxUrl)), $form.serialize()).done(function(resp){
-      $status.text(resp && resp.data && resp.data.message ? resp.data.message : 'Sent.');
+      $status.text(resp && resp.data && resp.data.message ? resp.data.message : (i18n.sent || 'Sent.'));
       $form[0].reset();
       setTimeout(closeModal, 1000);
     }).fail(function(xhr){
-      var msg='Could not send request.';
+      var msg=i18n.sendError || 'Could not send request.';
       if(xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) msg=xhr.responseJSON.data.message;
       $status.text(msg);
     });
@@ -38,7 +39,7 @@
       $field.find('.aat-media-id').val(attachment.id || 0);
       $field.find('.aat-media-url').val(attachment.url || '');
       var $preview=$field.next('.aat-media-preview');
-      if(!$preview.length){ $preview=$('<div class="aat-media-preview"><img alt="Login background preview"></div>').insertAfter($field); }
+      if(!$preview.length){ $preview=$('<div class="aat-media-preview"><img alt=""></div>').insertAfter($field); }
       $preview.find('img').attr('src', attachment.url || '');
     });
     frame.open();
@@ -55,10 +56,10 @@
     var i = $('#aat-shortcuts .aat-shortcut-row').length + 100;
     var nameBase = optionName + '[shortcuts][' + i + ']';
     var html = '<div class="aat-shortcut-row">'
-      + '<input placeholder="Label" name="' + nameBase + '[label]">'
-      + '<input placeholder="URL" name="' + nameBase + '[url]">'
-      + '<input placeholder="Capability" name="' + nameBase + '[cap]" value="read">'
-      + '<button type="button" class="button-link-delete aat-remove-shortcut" aria-label="Remove shortcut">&times;</button>'
+      + '<input placeholder="' + (i18n.label || 'Label') + '" name="' + nameBase + '[label]">'
+      + '<input placeholder="' + (i18n.url || 'URL') + '" name="' + nameBase + '[url]">'
+      + '<input placeholder="' + (i18n.capability || 'Capability') + '" name="' + nameBase + '[cap]" value="read">'
+      + '<button type="button" class="button-link-delete aat-remove-shortcut" aria-label="' + (i18n.removeShortcut || 'Remove shortcut') + '">&times;</button>'
       + '</div>';
     $('#aat-shortcuts').append(html);
   });

@@ -26,11 +26,15 @@ class Dashboard {
         return admin_url('admin.php?page=wp-agency-admin-dashboard');
     }
 
+    private function dashboard_title() {
+        return Core::translated_setting($this->core->settings, 'dashboard_title');
+    }
+
     public function client_dashboard_menu() {
         if (!$this->custom_dashboard_enabled()) return;
         add_menu_page(
-            esc_html($this->core->settings['dashboard_title']),
-            esc_html($this->core->settings['dashboard_title']),
+            esc_html($this->dashboard_title()),
+            esc_html($this->dashboard_title()),
             'read',
             'wp-agency-admin-dashboard',
             [$this, 'render_client_dashboard'],
@@ -85,14 +89,14 @@ class Dashboard {
                 </a>
             </div>
             <div class="aat-dashboard-footer-action">
-                <button type="button" class="button button-primary aat-open-support"><?php echo esc_html($s['support_button_label']); ?></button>
+                <button type="button" class="button button-primary aat-open-support"><?php echo esc_html(Core::translated_setting($s, 'support_button_label')); ?></button>
             </div>
         </div>
         <?php
     }
 
     public function render_client_dashboard() {
-        if (!$this->custom_dashboard_enabled()) wp_die('Access denied.');
+        if (!$this->custom_dashboard_enabled()) wp_die(esc_html__('Access denied.', 'wp-agency-admin-toolkit'));
         $s = $this->core->settings;
         $site_logo = Core::get_site_logo_url();
         ?>
@@ -106,54 +110,54 @@ class Dashboard {
                             <span><?php echo esc_html(get_bloginfo('name')); ?></span>
                         <?php endif; ?>
                     </div>
-                    <h1><?php echo esc_html($s['dashboard_title']); ?></h1>
-                    <div class="aat-welcome-copy"><?php echo wp_kses_post(wpautop($s['welcome_message'])); ?></div>
+                    <h1><?php echo esc_html($this->dashboard_title()); ?></h1>
+                    <div class="aat-welcome-copy"><?php echo wp_kses_post(wpautop(Core::translated_setting($s, 'welcome_message'))); ?></div>
                 </div>
                 <div class="aat-hero-actions">
-                    <a class="button aat-logout-button" href="<?php echo esc_url(wp_logout_url(!empty($s['logout_redirect_url']) ? $s['logout_redirect_url'] : home_url('/'))); ?>">Log out</a>
+                    <a class="button aat-logout-button" href="<?php echo esc_url(wp_logout_url(!empty($s['logout_redirect_url']) ? $s['logout_redirect_url'] : home_url('/'))); ?>"><?php esc_html_e('Log out', 'wp-agency-admin-toolkit'); ?></a>
                 </div>
             </div>
 
             <div class="aat-dashboard-grid">
                 <?php if (!empty($s['enable_site_snapshot'])): ?>
                     <section class="aat-panel aat-site-snapshot-panel">
-                        <h2>Site snapshot</h2>
+                        <h2><?php esc_html_e('Site snapshot', 'wp-agency-admin-toolkit'); ?></h2>
                         <?php $this->site_snapshot_widget(); ?>
                     </section>
                 <?php endif; ?>
 
                 <section class="aat-panel aat-panel-wide">
-                    <h2>Common tasks</h2>
+                    <h2><?php esc_html_e('Common tasks', 'wp-agency-admin-toolkit'); ?></h2>
                     <?php $this->shortcuts_widget(); ?>
                 </section>
 
                 <?php if (class_exists('WooCommerce')): ?>
                     <section class="aat-panel">
-                        <h2>Recent orders</h2>
+                        <h2><?php esc_html_e('Recent orders', 'wp-agency-admin-toolkit'); ?></h2>
                         <?php $this->woocommerce_widget(); ?>
                     </section>
                 <?php endif; ?>
 
                 <?php if (!empty($s['enable_recent_content'])): ?>
                     <section class="aat-panel">
-                        <h2>Recently edited content</h2>
+                        <h2><?php esc_html_e('Recently edited content', 'wp-agency-admin-toolkit'); ?></h2>
                         <?php $this->recent_content_widget(); ?>
                     </section>
                 <?php endif; ?>
 
                 <section class="aat-panel">
-                    <h2>Support</h2>
+                    <h2><?php esc_html_e('Support', 'wp-agency-admin-toolkit'); ?></h2>
                     <?php $this->support_widget(); ?>
                 </section>
 
                 <section class="aat-panel aat-panel-wide">
-                    <h2>Client instructions</h2>
+                    <h2><?php esc_html_e('Client instructions', 'wp-agency-admin-toolkit'); ?></h2>
                     <div class="aat-instruction-grid">
                         <?php foreach ((array)$s['instructions'] as $key => $message): ?>
                             <?php if (!$message) continue; ?>
                             <div class="aat-instruction-card">
-                                <h3><?php echo esc_html(ucfirst(str_replace('_', ' ', $key))); ?></h3>
-                                <p><?php echo wp_kses_post($message); ?></p>
+                                <h3><?php echo esc_html(Core::instruction_heading($key)); ?></h3>
+                                <p><?php echo wp_kses_post(Core::translated_instruction($key, $message)); ?></p>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -165,10 +169,25 @@ class Dashboard {
         <?php
     }
 
+    private function snapshot_label($key) {
+        switch ($key) {
+            case 'pages':
+                return __('Published pages', 'wp-agency-admin-toolkit');
+            case 'media':
+                return __('Media files', 'wp-agency-admin-toolkit');
+            case 'products':
+                return __('Published products', 'wp-agency-admin-toolkit');
+            case 'orders':
+                return __('Processing orders', 'wp-agency-admin-toolkit');
+        }
+        return (string) $key;
+    }
+
     /**
      * Snapshot items use wp_count_posts internally, which hits the DB for each
      * post type and is not persistently cached. Wrap in a short transient so
-     * dashboard loads are cheap even on busy sites.
+     * dashboard loads are cheap even on busy sites. Only label *keys* are
+     * cached; labels resolve per request so they follow the viewer's language.
      */
     public function site_snapshot_widget() {
         $cache_key = 'aat_site_snapshot_' . get_current_user_id();
@@ -178,30 +197,32 @@ class Dashboard {
             $items = [];
             if (current_user_can('edit_pages')) {
                 $counts = wp_count_posts('page');
-                $items[] = ['label' => 'Published pages', 'value' => isset($counts->publish) ? (int) $counts->publish : 0, 'url' => admin_url('edit.php?post_type=page')];
+                $items[] = ['label_key' => 'pages', 'value' => isset($counts->publish) ? (int) $counts->publish : 0, 'url' => admin_url('edit.php?post_type=page')];
             }
             if (current_user_can('upload_files')) {
                 $media_counts = wp_count_posts('attachment');
-                $items[] = ['label' => 'Media files', 'value' => isset($media_counts->inherit) ? (int) $media_counts->inherit : 0, 'url' => admin_url('upload.php')];
+                $items[] = ['label_key' => 'media', 'value' => isset($media_counts->inherit) ? (int) $media_counts->inherit : 0, 'url' => admin_url('upload.php')];
             }
             if (class_exists('WooCommerce') && current_user_can('edit_products')) {
                 $product_counts = wp_count_posts('product');
-                $items[] = ['label' => 'Published products', 'value' => isset($product_counts->publish) ? (int) $product_counts->publish : 0, 'url' => admin_url('edit.php?post_type=product')];
+                $items[] = ['label_key' => 'products', 'value' => isset($product_counts->publish) ? (int) $product_counts->publish : 0, 'url' => admin_url('edit.php?post_type=product')];
             }
             if (function_exists('wc_orders_count') && current_user_can('edit_shop_orders')) {
                 $processing_count = wc_orders_count('processing');
-                $items[] = ['label' => 'Processing orders', 'value' => (int) $processing_count, 'url' => admin_url('admin.php?page=wc-orders&status=wc-processing')];
+                $items[] = ['label_key' => 'orders', 'value' => (int) $processing_count, 'url' => admin_url('admin.php?page=wc-orders&status=wc-processing')];
             }
             set_transient($cache_key, $items, 5 * MINUTE_IN_SECONDS);
         }
 
         if (empty($items)) {
-            echo '<p>No snapshot items are available for this user role.</p>';
+            echo '<p>' . esc_html__('No snapshot items are available for this user role.', 'wp-agency-admin-toolkit') . '</p>';
             return;
         }
         echo '<div class="aat-snapshot-grid">';
         foreach ($items as $item) {
-            echo '<a class="aat-snapshot-item" href="' . esc_url($item['url']) . '"><strong>' . esc_html($item['value']) . '</strong><span>' . esc_html($item['label']) . '</span></a>';
+            // Pre-1.27 transients cached the label text itself; fall back to it.
+            $label = isset($item['label_key']) ? $this->snapshot_label($item['label_key']) : ($item['label'] ?? '');
+            echo '<a class="aat-snapshot-item" href="' . esc_url($item['url']) . '"><strong>' . esc_html(number_format_i18n($item['value'])) . '</strong><span>' . esc_html($label) . '</span></a>';
         }
         echo '</div>';
     }
@@ -213,7 +234,7 @@ class Dashboard {
         if (post_type_exists('product') && current_user_can('edit_products')) $post_types[] = 'product';
 
         if (empty($post_types)) {
-            echo '<p>No editable content is available for this user role.</p>';
+            echo '<p>' . esc_html__('No editable content is available for this user role.', 'wp-agency-admin-toolkit') . '</p>';
             return;
         }
 
@@ -228,7 +249,7 @@ class Dashboard {
         ]);
 
         if (!$query->have_posts()) {
-            echo '<p>No recent content found.</p>';
+            echo '<p>' . esc_html__('No recent content found.', 'wp-agency-admin-toolkit') . '</p>';
             return;
         }
 
@@ -237,7 +258,7 @@ class Dashboard {
             $query->the_post();
             $edit_url = get_edit_post_link(get_the_ID(), 'raw');
             $type = get_post_type_object(get_post_type());
-            echo '<li><a href="' . esc_url($edit_url) . '">' . esc_html(get_the_title() ?: '(no title)') . '</a><span>' . esc_html($type ? $type->labels->singular_name : get_post_type()) . ' · ' . esc_html(get_the_modified_date()) . '</span></li>';
+            echo '<li><a href="' . esc_url($edit_url) . '">' . esc_html(get_the_title() ?: __('(no title)', 'wp-agency-admin-toolkit')) . '</a><span>' . esc_html($type ? $type->labels->singular_name : get_post_type()) . ' · ' . esc_html(get_the_modified_date()) . '</span></li>';
         }
         wp_reset_postdata();
         echo '</ul>';
@@ -245,11 +266,11 @@ class Dashboard {
 
     public function widgets() {
         if (!$this->core->user_is_affected() || empty($this->core->settings['enable_dashboard_widgets'])) return;
-        wp_add_dashboard_widget('aat_welcome', esc_html($this->core->settings['dashboard_title']), [$this, 'welcome_widget']);
-        wp_add_dashboard_widget('aat_shortcuts', 'Website Shortcuts', [$this, 'shortcuts_widget']);
-        wp_add_dashboard_widget('aat_support', 'Agency Support', [$this, 'support_widget']);
+        wp_add_dashboard_widget('aat_welcome', esc_html($this->dashboard_title()), [$this, 'welcome_widget']);
+        wp_add_dashboard_widget('aat_shortcuts', esc_html__('Website Shortcuts', 'wp-agency-admin-toolkit'), [$this, 'shortcuts_widget']);
+        wp_add_dashboard_widget('aat_support', esc_html__('Agency Support', 'wp-agency-admin-toolkit'), [$this, 'support_widget']);
         if (class_exists('WooCommerce')) {
-            wp_add_dashboard_widget('aat_woocommerce_snapshot', 'Store Snapshot', [$this, 'woocommerce_widget']);
+            wp_add_dashboard_widget('aat_woocommerce_snapshot', esc_html__('Store Snapshot', 'wp-agency-admin-toolkit'), [$this, 'woocommerce_widget']);
         }
     }
 
@@ -322,7 +343,8 @@ class Dashboard {
     }
 
     public function welcome_widget() {
-        echo '<div class="aat-widget">' . wp_kses_post(wpautop($this->core->settings['welcome_message'])) . '<p><strong>Tip:</strong> When in doubt, use the support button before changing technical settings.</p></div>';
+        echo '<div class="aat-widget">' . wp_kses_post(wpautop(Core::translated_setting($this->core->settings, 'welcome_message')));
+        echo '<p><strong>' . esc_html__('Tip:', 'wp-agency-admin-toolkit') . '</strong> ' . esc_html__('When in doubt, use the support button before changing technical settings.', 'wp-agency-admin-toolkit') . '</p></div>';
     }
 
     public function shortcuts_widget() {
@@ -334,34 +356,36 @@ class Dashboard {
             if (!current_user_can($cap)) continue;
             $url = $shortcut['url'];
             if (strpos($url, 'http') !== 0) $url = admin_url($url);
-            echo '<a class="aat-shortcut" href="' . esc_url($url) . '">' . esc_html($shortcut['label']) . '</a>';
+            echo '<a class="aat-shortcut" href="' . esc_url($url) . '">' . esc_html(Core::translated_shortcut_label($label)) . '</a>';
         }
         echo '</div>';
     }
 
     public function support_widget() {
         $s = $this->core->settings;
-        echo '<div class="aat-widget"><p>Need help with the website? Send a request with page context so your agency can respond faster.</p>';
-        echo '<button type="button" class="button button-primary aat-open-support">' . esc_html($s['support_button_label']) . '</button>';
+        echo '<div class="aat-widget"><p>' . esc_html__('Need help with the website? Send a request with page context so your agency can respond faster.', 'wp-agency-admin-toolkit') . '</p>';
+        echo '<button type="button" class="button button-primary aat-open-support">' . esc_html(Core::translated_setting($s, 'support_button_label')) . '</button>';
         if (!empty($s['support_url'])) {
-            echo ' <a class="button" target="_blank" rel="noopener noreferrer" href="' . esc_url($s['support_url']) . '">Open Support Portal</a>';
+            echo ' <a class="button" target="_blank" rel="noopener noreferrer" href="' . esc_url($s['support_url']) . '">' . esc_html__('Open Support Portal', 'wp-agency-admin-toolkit') . '</a>';
         }
         echo '</div>';
     }
 
     public function woocommerce_widget() {
         if (!function_exists('wc_get_orders')) {
-            echo '<p>WooCommerce is active, but order helper functions are not available.</p>';
+            echo '<p>' . esc_html__('WooCommerce is active, but order helper functions are not available.', 'wp-agency-admin-toolkit') . '</p>';
             return;
         }
         $orders = wc_get_orders(['limit' => 5, 'orderby' => 'date', 'order' => 'DESC', 'return' => 'objects']);
         if (empty($orders)) {
-            echo '<p>No recent orders found.</p>';
+            echo '<p>' . esc_html__('No recent orders found.', 'wp-agency-admin-toolkit') . '</p>';
             return;
         }
         echo '<ul class="aat-order-list">';
         foreach ($orders as $order) {
-            echo '<li><a href="' . esc_url($order->get_edit_order_url()) . '">Order #' . esc_html($order->get_order_number()) . '</a> · ' . esc_html(wc_get_order_status_name($order->get_status())) . ' · ' . wp_kses_post($order->get_formatted_order_total()) . '</li>';
+            /* translators: %s: order number. */
+            $order_label = sprintf(__('Order #%s', 'wp-agency-admin-toolkit'), $order->get_order_number());
+            echo '<li><a href="' . esc_url($order->get_edit_order_url()) . '">' . esc_html($order_label) . '</a> · ' . esc_html(wc_get_order_status_name($order->get_status())) . ' · ' . wp_kses_post($order->get_formatted_order_total()) . '</li>';
         }
         echo '</ul>';
     }
@@ -372,10 +396,10 @@ class Dashboard {
         if (!$screen) return;
         $instructions = (array)$this->core->settings['instructions'];
         $message = '';
-        if ($screen->id === 'edit-product' || $screen->post_type === 'product') $message = $instructions['products'] ?? '';
-        if ($screen->id === 'edit-shop_order' || $screen->id === 'woocommerce_page_wc-orders') $message = $instructions['orders'] ?? '';
-        if ($screen->id === 'edit-page' || $screen->post_type === 'page') $message = $instructions['pages'] ?? '';
-        if ($screen->id === 'upload') $message = $instructions['media'] ?? '';
+        if ($screen->id === 'edit-product' || $screen->post_type === 'product') $message = Core::translated_instruction('products', $instructions['products'] ?? '');
+        if ($screen->id === 'edit-shop_order' || $screen->id === 'woocommerce_page_wc-orders') $message = Core::translated_instruction('orders', $instructions['orders'] ?? '');
+        if ($screen->id === 'edit-page' || $screen->post_type === 'page') $message = Core::translated_instruction('pages', $instructions['pages'] ?? '');
+        if ($screen->id === 'upload') $message = Core::translated_instruction('media', $instructions['media'] ?? '');
         if ($message) echo '<div class="notice aat-client-note"><p>' . wp_kses_post($message) . '</p></div>';
     }
 }

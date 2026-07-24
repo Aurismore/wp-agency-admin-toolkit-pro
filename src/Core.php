@@ -199,7 +199,7 @@ class Core {
             $admin->add_cap(AAT_CAP);
         }
 
-        add_role('aat_client_admin', 'Client Admin', [
+        add_role('aat_client_admin', __('Client Admin', 'wp-agency-admin-toolkit'), [
             'read' => true,
             'upload_files' => true,
             'edit_posts' => true,
@@ -239,6 +239,88 @@ class Core {
         $user = wp_get_current_user();
         $roles = isset($this->settings['affected_roles']) && is_array($this->settings['affected_roles']) ? $this->settings['affected_roles'] : [];
         return (bool) array_intersect($roles, (array) $user->roles);
+    }
+
+    /**
+     * Translated mirrors of the default client-facing content settings.
+     *
+     * Stored settings are operator content and stay exactly as typed. But a
+     * value that is still byte-identical to the shipped English default was
+     * never customised, so it can safely render in the viewing user's
+     * language. defaults() intentionally stays untranslated: it is the saved
+     * (canonical) form and the comparison baseline. The literals here must
+     * mirror defaults() — if they drift, the only effect is that the saved
+     * English default renders untranslated.
+     */
+    public static function translated_content_defaults() {
+        return [
+            'dashboard_title' => __('Client Dashboard', 'wp-agency-admin-toolkit'),
+            'welcome_message' => __('Welcome. Use the shortcuts below for the most common website tasks. If anything feels unclear, request support before changing technical settings.', 'wp-agency-admin-toolkit'),
+            'admin_footer_text' => __('Managed with care by your website team', 'wp-agency-admin-toolkit'),
+            'support_button_label' => __('Request Support', 'wp-agency-admin-toolkit'),
+        ];
+    }
+
+    /**
+     * Render-time value for a content setting: the translated default when the
+     * saved value is still the untouched English default, the operator's own
+     * text otherwise.
+     */
+    public static function translated_setting($settings, $key) {
+        $value = $settings[$key] ?? '';
+        $defaults = self::defaults();
+        $translated = self::translated_content_defaults();
+        if (isset($translated[$key], $defaults[$key]) && $value === $defaults[$key]) {
+            return $translated[$key];
+        }
+        return $value;
+    }
+
+    public static function translated_instruction($key, $text) {
+        $defaults = self::defaults();
+        $translated = [
+            'products' => __('Use Products to add or update store items. Avoid changing tax, payment, shipping or advanced WooCommerce settings unless your agency asks you to.', 'wp-agency-admin-toolkit'),
+            'orders' => __('Use Orders to review, process and update customer purchases. Always double-check payment and shipping details before changing an order status.', 'wp-agency-admin-toolkit'),
+            'pages' => __('Use Pages to edit website content. Make small changes and preview before publishing.', 'wp-agency-admin-toolkit'),
+            'media' => __('Upload clear, compressed images. Avoid very large files because they can slow down the website.', 'wp-agency-admin-toolkit'),
+        ];
+        if (isset($translated[$key], $defaults['instructions'][$key]) && $text === $defaults['instructions'][$key]) {
+            return $translated[$key];
+        }
+        return $text;
+    }
+
+    public static function instruction_heading($key) {
+        $map = [
+            'products' => __('Products', 'wp-agency-admin-toolkit'),
+            'orders' => __('Orders', 'wp-agency-admin-toolkit'),
+            'pages' => __('Pages', 'wp-agency-admin-toolkit'),
+            'media' => __('Media', 'wp-agency-admin-toolkit'),
+        ];
+        return $map[$key] ?? ucfirst(str_replace('_', ' ', (string) $key));
+    }
+
+    public static function translated_shortcut_label($label) {
+        $map = [
+            'View Orders' => __('View Orders', 'wp-agency-admin-toolkit'),
+            'Add Product' => __('Add Product', 'wp-agency-admin-toolkit'),
+            'Products' => __('Products', 'wp-agency-admin-toolkit'),
+            'Pages' => __('Pages', 'wp-agency-admin-toolkit'),
+            'Media Library' => __('Media Library', 'wp-agency-admin-toolkit'),
+            'View Website' => __('View Website', 'wp-agency-admin-toolkit'),
+        ];
+        return $map[$label] ?? $label;
+    }
+
+    public static function translated_support_category($category) {
+        $map = [
+            'General website help' => __('General website help', 'wp-agency-admin-toolkit'),
+            'Content change' => __('Content change', 'wp-agency-admin-toolkit'),
+            'WooCommerce / orders' => __('WooCommerce / orders', 'wp-agency-admin-toolkit'),
+            'Technical issue' => __('Technical issue', 'wp-agency-admin-toolkit'),
+            'Urgent issue' => __('Urgent issue', 'wp-agency-admin-toolkit'),
+        ];
+        return $map[$category] ?? $category;
     }
 
     public static function get_site_logo_url() {

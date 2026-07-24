@@ -24,6 +24,19 @@ The plugin source lives at the repository root. The release workflow stages the
 files into a `wp-agency-admin-toolkit-pro/` folder at build time so the
 delivered ZIP unpacks into the correct WordPress plugin directory.
 
+## Translations
+
+Plugin strings use the `wp-agency-admin-toolkit` text domain; translation files
+live in `languages/` and ship inside the customer ZIP. After adding or changing
+user-facing strings, regenerate with WP-CLI:
+
+```bash
+wp i18n make-pot . languages/wp-agency-admin-toolkit.pot --domain=wp-agency-admin-toolkit --exclude=.github,build
+# update each languages/wp-agency-admin-toolkit-{locale}.po against the new POT, then:
+wp i18n make-mo languages
+wp i18n make-php languages   # WP 6.5+ performance format
+```
+
 ## How to release a new version
 
 1. Update the plugin version in `wp-agency-admin-toolkit-pro.php` (both the

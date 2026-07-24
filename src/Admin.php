@@ -41,21 +41,21 @@ class Admin {
      */
     public static function pages_nav() {
         return [
-            'wp-admin-toolkit' => 'General',
-            'wp-admin-toolkit-dashboard' => 'Client Dashboard',
-            'wp-admin-toolkit-branding' => 'Branding',
-            'wp-admin-toolkit-cleanup' => 'Cleanup',
-            'wp-admin-toolkit-support' => 'Support',
-            'wp-admin-toolkit-tickets' => 'Tickets',
-            'wp-admin-toolkit-integrations' => 'Integrations',
-            'wp-admin-toolkit-tools' => 'Tools',
-            'wp-admin-toolkit-licence' => 'Licence & Updates',
+            'wp-admin-toolkit' => __('General', 'wp-agency-admin-toolkit'),
+            'wp-admin-toolkit-dashboard' => __('Client Dashboard', 'wp-agency-admin-toolkit'),
+            'wp-admin-toolkit-branding' => __('Branding', 'wp-agency-admin-toolkit'),
+            'wp-admin-toolkit-cleanup' => __('Cleanup', 'wp-agency-admin-toolkit'),
+            'wp-admin-toolkit-support' => __('Support', 'wp-agency-admin-toolkit'),
+            'wp-admin-toolkit-tickets' => __('Tickets', 'wp-agency-admin-toolkit'),
+            'wp-admin-toolkit-integrations' => __('Integrations', 'wp-agency-admin-toolkit'),
+            'wp-admin-toolkit-tools' => __('Tools', 'wp-agency-admin-toolkit'),
+            'wp-admin-toolkit-licence' => __('Licence & Updates', 'wp-agency-admin-toolkit'),
         ];
     }
 
     public function plugin_links($links) {
         $url = admin_url('admin.php?page=' . self::MENU_SLUG);
-        array_unshift($links, '<a href="' . esc_url($url) . '">Settings</a>');
+        array_unshift($links, '<a href="' . esc_url($url) . '">' . esc_html__('Settings', 'wp-agency-admin-toolkit') . '</a>');
         return $links;
     }
 
@@ -102,11 +102,20 @@ class Admin {
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('aat_support_nonce'),
             'optionName' => AAT_OPTION,
+            'strings' => [
+                'sending' => __('Sending...', 'wp-agency-admin-toolkit'),
+                'sent' => __('Sent.', 'wp-agency-admin-toolkit'),
+                'sendError' => __('Could not send request.', 'wp-agency-admin-toolkit'),
+                'label' => __('Label', 'wp-agency-admin-toolkit'),
+                'url' => __('URL', 'wp-agency-admin-toolkit'),
+                'capability' => __('Capability', 'wp-agency-admin-toolkit'),
+                'removeShortcut' => __('Remove shortcut', 'wp-agency-admin-toolkit'),
+            ],
         ]);
     }
 
     public function save_license() {
-        if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_save_license')) wp_die('Access denied.');
+        if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_save_license')) wp_die(esc_html__('Access denied.', 'wp-agency-admin-toolkit'));
         $settings = Core::get_settings();
         $licence_key = sanitize_text_field($_POST[AAT_OPTION]['licence_key'] ?? '');
         $settings['licence_key'] = $licence_key;
@@ -120,10 +129,10 @@ class Admin {
                 Licence::remote_request('deactivate', $licence_key);
             }
             $settings['licence_status'] = 'inactive';
-            $settings['licence_message'] = 'Licence deactivated on this website.';
+            $settings['licence_message'] = __('Licence deactivated on this website.', 'wp-agency-admin-toolkit');
             $settings['licence_checked_at'] = gmdate('c');
         } else {
-            $settings['licence_message'] = $licence_key ? 'Licence key saved. Activate it to enable protected updates.' : 'Licence key removed.';
+            $settings['licence_message'] = $licence_key ? __('Licence key saved. Activate it to enable protected updates.', 'wp-agency-admin-toolkit') : __('Licence key removed.', 'wp-agency-admin-toolkit');
             if (!$licence_key) {
                 $settings['licence_status'] = 'inactive';
                 $settings['licence_expires_at'] = '';
@@ -140,7 +149,7 @@ class Admin {
     }
 
     public function export() {
-        if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_export')) wp_die('Access denied.');
+        if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_export')) wp_die(esc_html__('Access denied.', 'wp-agency-admin-toolkit'));
         $settings = Core::get_settings();
         if (empty($_GET['include_sensitive'])) {
             $settings['support_webhook'] = '';
@@ -159,7 +168,7 @@ class Admin {
     }
 
     public function import() {
-        if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_import')) wp_die('Access denied.');
+        if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_import')) wp_die(esc_html__('Access denied.', 'wp-agency-admin-toolkit'));
 
         if (empty($_FILES['aat_import_file']['tmp_name']) || !is_uploaded_file($_FILES['aat_import_file']['tmp_name'])) {
             wp_safe_redirect(admin_url('admin.php?page=wp-admin-toolkit-tools'));
@@ -168,17 +177,17 @@ class Admin {
 
         $file = $_FILES['aat_import_file'];
         if (!empty($file['size']) && (int) $file['size'] > 1048576) {
-            wp_die('Import file is too large.');
+            wp_die(esc_html__('Import file is too large.', 'wp-agency-admin-toolkit'));
         }
 
         $json = file_get_contents($file['tmp_name']);
         if (!is_string($json) || strlen($json) > 1048576) {
-            wp_die('Invalid import file.');
+            wp_die(esc_html__('Invalid import file.', 'wp-agency-admin-toolkit'));
         }
 
         $data = json_decode($json, true);
         if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
-            wp_die('Invalid JSON import file.');
+            wp_die(esc_html__('Invalid JSON import file.', 'wp-agency-admin-toolkit'));
         }
 
         unset($data['_exported_by'], $data['_exported_at']);
@@ -188,7 +197,7 @@ class Admin {
     }
 
     public function reset_defaults() {
-        if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_reset_defaults')) wp_die('Access denied.');
+        if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_reset_defaults')) wp_die(esc_html__('Access denied.', 'wp-agency-admin-toolkit'));
         Core::update_settings(Core::defaults());
         wp_safe_redirect(admin_url('admin.php?page=wp-admin-toolkit-tools&aat_reset=1'));
         exit;

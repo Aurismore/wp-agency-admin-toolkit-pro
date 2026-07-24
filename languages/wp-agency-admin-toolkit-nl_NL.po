@@ -1,0 +1,1406 @@
+# Copyright (C) 2026 Creative Digital Media
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: WP Admin Toolkit Pro 1.27\n"
+"Report-Msgid-Bugs-To: https://wpclienttools.com\n"
+"Last-Translator: Creative Digital Media <paul@creativedigitalmedia.nl>\n"
+"Language-Team: Dutch <paul@creativedigitalmedia.nl>\n"
+"Language: nl_NL\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-07-24T10:07:04+00:00\n"
+"PO-Revision-Date: 2026-07-24 12:00+0000\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: wp-agency-admin-toolkit\n"
+
+#. Plugin Name of the plugin
+#: wp-agency-admin-toolkit-pro.php
+msgid "WP Admin Toolkit Pro"
+msgstr "WP Admin Toolkit Pro"
+
+#. Plugin URI of the plugin
+#: wp-agency-admin-toolkit-pro.php
+msgid "https://wpclienttools.com/wp-agency-admin-toolkit-pro"
+msgstr "https://wpclienttools.com/wp-agency-admin-toolkit-pro"
+
+#. Description of the plugin
+#: wp-agency-admin-toolkit-pro.php
+msgid "Pro white-label WordPress and WooCommerce admin dashboard, support ticket and cleanup toolkit for agencies. Sold and supported through WP Client Tools, created by Creative Digital Media."
+msgstr "Pro white-label toolkit voor WordPress- en WooCommerce-beheer, supporttickets en opschoning, gemaakt voor bureaus. Verkocht en ondersteund via WP Client Tools, ontwikkeld door Creative Digital Media."
+
+#. Author of the plugin
+#: wp-agency-admin-toolkit-pro.php
+msgid "Creative Digital Media"
+msgstr "Creative Digital Media"
+
+#. Author URI of the plugin
+#: wp-agency-admin-toolkit-pro.php
+msgid "https://creativedigitalmedia.nl"
+msgstr "https://creativedigitalmedia.nl"
+
+#. translators: %s: page name.
+#: src/Admin.php:44
+#: src/Admin/GeneralPage.php:13
+msgid "General"
+msgstr "Algemeen"
+
+#: src/Admin.php:45
+#: src/Core.php:257
+msgid "Client Dashboard"
+msgstr "Klantdashboard"
+
+#: src/Admin.php:46
+#: src/Admin/BrandingPage.php:12
+msgid "Branding"
+msgstr "Huisstijl"
+
+#: src/Admin.php:47
+msgid "Cleanup"
+msgstr "Opschonen"
+
+#: src/Admin.php:48
+#: src/Dashboard.php:149
+msgid "Support"
+msgstr "Support"
+
+#: src/Admin.php:49
+#: src/Admin/SupportPage.php:43
+#: src/Admin/TicketsPage.php:20
+#: src/Admin/TicketsPage.php:80
+msgid "Tickets"
+msgstr "Tickets"
+
+#: src/Admin.php:50
+msgid "Integrations"
+msgstr "Integraties"
+
+#: src/Admin.php:51
+msgid "Tools"
+msgstr "Hulpmiddelen"
+
+#: src/Admin.php:52
+#: src/Admin/LicencePage.php:12
+#: src/Admin/LicencePage.php:28
+msgid "Licence & Updates"
+msgstr "Licentie & updates"
+
+#: src/Admin.php:58
+msgid "Settings"
+msgstr "Instellingen"
+
+#: src/Admin.php:106
+msgid "Sending..."
+msgstr "Versturen..."
+
+#: src/Admin.php:107
+msgid "Sent."
+msgstr "Verzonden."
+
+#: src/Admin.php:108
+msgid "Could not send request."
+msgstr "Verzoek kon niet worden verzonden."
+
+#: src/Admin.php:109
+#: src/Admin/DashboardPage.php:63
+msgid "Label"
+msgstr "Label"
+
+#: src/Admin.php:110
+#: src/Admin/DashboardPage.php:64
+msgid "URL"
+msgstr "URL"
+
+#: src/Admin.php:111
+#: src/Admin/DashboardPage.php:65
+msgid "Capability"
+msgstr "Capability"
+
+#: src/Admin.php:112
+#: src/Admin/DashboardPage.php:66
+msgid "Remove shortcut"
+msgstr "Snelkoppeling verwijderen"
+
+#: src/Admin.php:118
+#: src/Admin.php:152
+#: src/Admin.php:171
+#: src/Admin.php:200
+#: src/Admin/Page.php:43
+#: src/Dashboard.php:99
+#: src/Licence.php:29
+#: src/Licence.php:39
+#: src/Tickets.php:288
+#: src/Tickets.php:298
+#: src/Tickets.php:305
+msgid "Access denied."
+msgstr "Toegang geweigerd."
+
+#: src/Admin.php:132
+msgid "Licence deactivated on this website."
+msgstr "Licentie gedeactiveerd op deze website."
+
+#: src/Admin.php:135
+msgid "Licence key saved. Activate it to enable protected updates."
+msgstr "Licentiesleutel opgeslagen. Activeer deze om beveiligde updates in te schakelen."
+
+#: src/Admin.php:135
+msgid "Licence key removed."
+msgstr "Licentiesleutel verwijderd."
+
+#: src/Admin.php:180
+msgid "Import file is too large."
+msgstr "Importbestand is te groot."
+
+#: src/Admin.php:185
+msgid "Invalid import file."
+msgstr "Ongeldig importbestand."
+
+#: src/Admin.php:190
+msgid "Invalid JSON import file."
+msgstr "Ongeldig JSON-importbestand."
+
+#: src/Admin/BrandingPage.php:25
+msgid "Branding modules"
+msgstr "Huisstijlmodules"
+
+#: src/Admin/BrandingPage.php:27
+msgid "Login page branding"
+msgstr "Huisstijl voor de inlogpagina"
+
+#: src/Admin/BrandingPage.php:28
+msgid "Admin footer branding"
+msgstr "Huisstijl in de adminvoettekst"
+
+#: src/Admin/BrandingPage.php:29
+msgid "wp-admin visual branding"
+msgstr "Visuele huisstijl in wp-admin"
+
+#: src/Admin/BrandingPage.php:30
+msgid "Hide lost password / return links on login"
+msgstr "Verberg 'wachtwoord vergeten'- en teruglinks op de inlogpagina"
+
+#: src/Admin/BrandingPage.php:35
+msgid "wp-admin branding"
+msgstr "wp-admin-huisstijl"
+
+#: src/Admin/BrandingPage.php:36
+msgid "This customises the admin area after login for affected client roles. The wp-admin logo is pulled automatically from the current website logo/site icon, so it does not need a separate setting."
+msgstr "Dit past het beheergedeelte na het inloggen aan voor de geselecteerde klantrollen. Het wp-admin-logo wordt automatisch overgenomen van het huidige websitelogo/site-icoon, dus daar is geen aparte instelling voor nodig."
+
+#: src/Admin/BrandingPage.php:38
+msgid "Primary colour"
+msgstr "Primaire kleur"
+
+#: src/Admin/BrandingPage.php:38
+msgid "Used for buttons, dashboard hero areas and main admin accents."
+msgstr "Gebruikt voor knoppen, dashboard-hero's en de belangrijkste accenten in het beheer."
+
+#: src/Admin/BrandingPage.php:39
+#: src/Admin/BrandingPage.php:66
+msgid "Accent colour"
+msgstr "Accentkleur"
+
+#: src/Admin/BrandingPage.php:39
+msgid "Used for highlights, borders and secondary visual details."
+msgstr "Gebruikt voor markeringen, randen en secundaire visuele details."
+
+#: src/Admin/BrandingPage.php:40
+msgid "Admin background"
+msgstr "Achtergrond beheeromgeving"
+
+#: src/Admin/BrandingPage.php:40
+msgid "Used behind the branded admin dashboard panels."
+msgstr "Gebruikt achter de dashboardpanelen in de huisstijl."
+
+#: src/Admin/BrandingPage.php:42
+msgid "Also apply admin branding to agency administrators"
+msgstr "Pas de admin-huisstijl ook toe op bureaubeheerders"
+
+#: src/Admin/BrandingPage.php:43
+msgid "The WordPress admin bar logo is automatically hidden when wp-admin branding is active. Client roles can also have the full top WordPress admin bar removed from the Cleanup page."
+msgstr "Het WordPress-logo in de adminbalk wordt automatisch verborgen wanneer de wp-admin-huisstijl actief is. Voor klantrollen kan de volledige adminbalk bovenaan worden uitgeschakeld op de pagina Opschonen."
+
+#: src/Admin/BrandingPage.php:47
+msgid "Login branding"
+msgstr "Inlogpagina-huisstijl"
+
+#. translators: %s: wp-login.php in a code tag.
+#: src/Admin/BrandingPage.php:48
+#, php-format
+msgid "This appears on %s, before the user enters wp-admin. The main login logo automatically uses the current website logo/site icon."
+msgstr "Dit verschijnt op %s, voordat de gebruiker wp-admin binnengaat. Het hoofdlogo op de inlogpagina gebruikt automatisch het huidige websitelogo/site-icoon."
+
+#. translators: %s: wp-login.php in a code tag.
+#: src/Admin/BrandingPage.php:49
+msgid "Agency/support footer logo URL"
+msgstr "Logo-URL voor de bureau-/supportvoettekst"
+
+#: src/Admin/BrandingPage.php:50
+msgid "Used for the agency logo in the support bar at the bottom of the login page and client dashboard. The main login logo is pulled automatically from the current website logo."
+msgstr "Gebruikt voor het bureaulogo in de supportbalk onderaan de inlogpagina en het klantdashboard. Het hoofdlogo op de inlogpagina wordt automatisch overgenomen van het huidige websitelogo."
+
+#: src/Admin/BrandingPage.php:51
+msgid "Full-screen login background image"
+msgstr "Achtergrondafbeelding inlogpagina (volledig scherm)"
+
+#: src/Admin/BrandingPage.php:54
+msgid "Upload or paste image URL"
+msgstr "Upload of plak een afbeeldings-URL"
+
+#: src/Admin/BrandingPage.php:55
+msgid "Choose login background"
+msgstr "Kies inlogachtergrond"
+
+#: src/Admin/BrandingPage.php:55
+msgid "Use this background"
+msgstr "Gebruik deze achtergrond"
+
+#: src/Admin/BrandingPage.php:55
+msgid "Upload / choose image"
+msgstr "Afbeelding uploaden/kiezen"
+
+#: src/Admin/BrandingPage.php:56
+msgid "Remove"
+msgstr "Verwijderen"
+
+#: src/Admin/BrandingPage.php:59
+msgid "Login background preview"
+msgstr "Voorbeeld inlogachtergrond"
+
+#: src/Admin/BrandingPage.php:61
+msgid "Recommended background size: <strong>1920 × 1080px</strong> minimum, ideally <strong>2560 × 1440px</strong> for large screens. Use WebP/JPG, compressed below 500KB where possible. The upload button stores the image in the WordPress Media Library."
+msgstr "Aanbevolen formaat: minimaal <strong>1920 × 1080px</strong>, idealiter <strong>2560 × 1440px</strong> voor grote schermen. Gebruik WebP/JPG, waar mogelijk gecomprimeerd tot onder 500KB. De uploadknop slaat de afbeelding op in de WordPress-mediabibliotheek."
+
+#: src/Admin/BrandingPage.php:62
+msgid "Login background colour"
+msgstr "Achtergrondkleur inlogpagina"
+
+#: src/Admin/BrandingPage.php:62
+msgid "Choose from the picker or type a hex value."
+msgstr "Kies via de kleurkiezer of typ een hexwaarde."
+
+#: src/Admin/BrandingPage.php:63
+msgid "Background overlay"
+msgstr "Achtergrondoverlay"
+
+#. translators: %s: example rgba() value in a code tag.
+#: src/Admin/BrandingPage.php:64
+#, php-format
+msgid "Overlay accepts values such as %s so transparency can be controlled."
+msgstr "De overlay accepteert waarden zoals %s, zodat de transparantie te regelen is."
+
+#. translators: %s: example rgba() value in a code tag.
+#: src/Admin/BrandingPage.php:65
+msgid "Button colour"
+msgstr "Knopkleur"
+
+#. translators: %s: example rgba() value in a code tag.
+#: src/Admin/BrandingPage.php:65
+msgid "Used for the primary login button."
+msgstr "Gebruikt voor de primaire inlogknop."
+
+#: src/Admin/BrandingPage.php:66
+msgid "Used for highlights and support accents."
+msgstr "Gebruikt voor markeringen en supportaccenten."
+
+#: src/Admin/BrandingPage.php:67
+msgid "Admin footer text"
+msgstr "Voettekst in de beheeromgeving"
+
+#: src/Admin/BrandingPage.php:71
+msgid "Save branding settings"
+msgstr "Huisstijlinstellingen opslaan"
+
+#: src/Admin/CleanupPage.php:12
+msgid "Cleanup & Restrictions"
+msgstr "Opschonen & beperkingen"
+
+#: src/Admin/CleanupPage.php:27
+msgid "Client safe mode"
+msgstr "Veilige klantmodus"
+
+#: src/Admin/CleanupPage.php:29
+msgid "Client Safe Mode"
+msgstr "Veilige klantmodus"
+
+#: src/Admin/CleanupPage.php:30
+msgid "Hide noisy admin notices"
+msgstr "Verberg drukke adminmeldingen"
+
+#: src/Admin/CleanupPage.php:31
+msgid "Disable top admin bar for clients"
+msgstr "Schakel de adminbalk bovenaan uit voor klanten"
+
+#: src/Admin/CleanupPage.php:33
+msgid "Client Safe Mode enforces the risky page restrictions below for affected roles."
+msgstr "De veilige klantmodus dwingt de onderstaande beperkingen voor risicovolle pagina's af voor de geselecteerde rollen."
+
+#: src/Admin/CleanupPage.php:37
+msgid "Admin menu cleanup"
+msgstr "Adminmenu opschonen"
+
+#. translators: 1, 2, 3: example menu slugs in code tags.
+#: src/Admin/CleanupPage.php:38
+#, php-format
+msgid "Enter one menu slug per line. These menus are removed for affected client roles. Examples: %1$s, %2$s, %3$s."
+msgstr "Voer één menuslug per regel in. Deze menu's worden verwijderd voor de geselecteerde klantrollen. Voorbeelden: %1$s, %2$s, %3$s."
+
+#: src/Admin/CleanupPage.php:43
+msgid "Risky page restrictions"
+msgstr "Beperkingen voor risicovolle pagina's"
+
+#. translators: 1: pagenow in a code tag, 2: admin.php?page=… in a code tag.
+#: src/Admin/CleanupPage.php:44
+#, php-format
+msgid "Enter one blocked admin page per line. Direct URL visits by affected roles will be blocked. Rules are matched exactly against %1$s and %2$s keys."
+msgstr "Voer één geblokkeerde adminpagina per regel in. Directe URL-bezoeken door de geselecteerde rollen worden geblokkeerd. Regels worden exact vergeleken met %1$s- en %2$s-sleutels."
+
+#: src/Admin/CleanupPage.php:49
+msgid "Save cleanup settings"
+msgstr "Opschooninstellingen opslaan"
+
+#: src/Admin/DashboardPage.php:14
+msgid "Client Dashboard Settings"
+msgstr "Instellingen klantdashboard"
+
+#: src/Admin/DashboardPage.php:27
+msgid "Dashboard modules"
+msgstr "Dashboardmodules"
+
+#: src/Admin/DashboardPage.php:29
+msgid "Custom client dashboard landing page"
+msgstr "Aangepaste startpagina voor het klantdashboard"
+
+#: src/Admin/DashboardPage.php:30
+msgid "Fallback WordPress dashboard widgets"
+msgstr "Terugval-widgets op het WordPress-dashboard"
+
+#: src/Admin/DashboardPage.php:31
+msgid "Client dashboard site snapshot card"
+msgstr "Website-overzichtskaart op het klantdashboard"
+
+#: src/Admin/DashboardPage.php:32
+msgid "Client dashboard recent content card"
+msgstr "Kaart met recente content op het klantdashboard"
+
+#: src/Admin/DashboardPage.php:37
+msgid "Dashboard content"
+msgstr "Dashboardinhoud"
+
+#: src/Admin/DashboardPage.php:38
+msgid "Dashboard title"
+msgstr "Dashboardtitel"
+
+#: src/Admin/DashboardPage.php:39
+msgid "Dashboard layout"
+msgstr "Dashboardindeling"
+
+#: src/Admin/DashboardPage.php:41
+msgid "Balanced client handover"
+msgstr "Gebalanceerde klantoverdracht"
+
+#: src/Admin/DashboardPage.php:42
+msgid "WooCommerce focused"
+msgstr "Gericht op WooCommerce"
+
+#: src/Admin/DashboardPage.php:43
+msgid "Content editing focused"
+msgstr "Gericht op contentbewerking"
+
+#: src/Admin/DashboardPage.php:46
+msgid "This changes the visual emphasis of the client dashboard without changing permissions or restrictions."
+msgstr "Dit verandert de visuele nadruk van het klantdashboard zonder rechten of beperkingen te wijzigen."
+
+#: src/Admin/DashboardPage.php:47
+msgid "Welcome message"
+msgstr "Welkomstbericht"
+
+#: src/Admin/DashboardPage.php:48
+msgid "Content you type here is shown exactly as written. Fields left at their shipped default translate automatically into each user's admin language."
+msgstr "Tekst die je hier typt wordt exact zo getoond. Velden die op de meegeleverde standaardwaarde staan, worden automatisch vertaald naar de beheertaal van elke gebruiker."
+
+#: src/Admin/DashboardPage.php:52
+msgid "Instruction boxes"
+msgstr "Instructieblokken"
+
+#: src/Admin/DashboardPage.php:59
+msgid "Dashboard shortcuts"
+msgstr "Dashboardsnelkoppelingen"
+
+#: src/Admin/DashboardPage.php:70
+msgid "Add shortcut"
+msgstr "Snelkoppeling toevoegen"
+
+#: src/Admin/DashboardPage.php:74
+msgid "Save dashboard settings"
+msgstr "Dashboardinstellingen opslaan"
+
+#. translators: %s: page name.
+#: src/Admin/GeneralPage.php:13
+#, php-format
+msgid "WP Admin Toolkit Pro — %s"
+msgstr "WP Admin Toolkit Pro — %s"
+
+#: src/Admin/GeneralPage.php:27
+msgid "Agency details"
+msgstr "Bureaugegevens"
+
+#: src/Admin/GeneralPage.php:28
+msgid "WP Client Tools Pro product."
+msgstr "WP Client Tools Pro-product."
+
+#: src/Admin/GeneralPage.php:28
+msgid "WP Admin Toolkit Pro is distributed through WP Client Tools and created by Creative Digital Media. Your own agency details below are what clients see inside their dashboard and support areas."
+msgstr "WP Admin Toolkit Pro wordt gedistribueerd via WP Client Tools en is ontwikkeld door Creative Digital Media. De bureaugegevens hieronder zijn wat klanten zien in hun dashboard en supportonderdelen."
+
+#: src/Admin/GeneralPage.php:29
+msgid "Agency name shown to clients"
+msgstr "Bureaunaam die klanten zien"
+
+#: src/Admin/GeneralPage.php:30
+msgid "Agency website shown to clients"
+msgstr "Bureauwebsite die klanten zien"
+
+#: src/Admin/GeneralPage.php:31
+msgid "Logout redirect URL"
+msgstr "Doorverwijzings-URL na uitloggen"
+
+#: src/Admin/GeneralPage.php:32
+msgid "Where affected client users are sent after logging out. Leave as the website homepage unless a custom thank-you or support page is preferred."
+msgstr "Waar geselecteerde klantgebruikers naartoe gaan na het uitloggen. Laat dit op de homepage staan, tenzij een aangepaste bedank- of supportpagina de voorkeur heeft."
+
+#: src/Admin/GeneralPage.php:36
+#: src/Admin/ToolsPage.php:103
+msgid "Affected roles"
+msgstr "Geselecteerde rollen"
+
+#: src/Admin/GeneralPage.php:37
+msgid "Select client-facing roles. Administrators and agency toolkit managers are never restricted."
+msgstr "Selecteer de klantgerichte rollen. Beheerders en toolkitbeheerders van het bureau worden nooit beperkt."
+
+#: src/Admin/GeneralPage.php:44
+msgid "Save general settings"
+msgstr "Algemene instellingen opslaan"
+
+#: src/Admin/IntegrationsPage.php:14
+msgid "Plugin Integrations"
+msgstr "Plugin-integraties"
+
+#: src/Admin/IntegrationsPage.php:26
+msgid "Integration cleanup"
+msgstr "Integraties opschonen"
+
+#: src/Admin/IntegrationsPage.php:27
+msgid "These settings only affect selected client roles after login."
+msgstr "Deze instellingen gelden alleen voor de geselecteerde klantrollen na het inloggen."
+
+#: src/Admin/IntegrationsPage.php:29
+msgid "Hide Elementor settings from clients"
+msgstr "Verberg Elementor-instellingen voor klanten"
+
+#: src/Admin/IntegrationsPage.php:30
+msgid "Hide Rank Math Overview dashboard widget"
+msgstr "Verberg de Rank Math-overzichtswidget op het dashboard"
+
+#: src/Admin/IntegrationsPage.php:31
+msgid "Hide MyParcel dashboard widget"
+msgstr "Verberg de MyParcel-dashboardwidget"
+
+#: src/Admin/IntegrationsPage.php:32
+msgid "Hide Yoast SEO dashboard widget"
+msgstr "Verberg de Yoast SEO-dashboardwidget"
+
+#: src/Admin/IntegrationsPage.php:33
+msgid "Hide WP Rocket client notices/widgets"
+msgstr "Verberg WP Rocket-meldingen/-widgets voor klanten"
+
+#: src/Admin/IntegrationsPage.php:34
+msgid "Hide LiteSpeed Cache client notices/widgets"
+msgstr "Verberg LiteSpeed Cache-meldingen/-widgets voor klanten"
+
+#: src/Admin/IntegrationsPage.php:35
+msgid "Hide ACF field group admin from clients"
+msgstr "Verberg het ACF-veldgroepbeheer voor klanten"
+
+#: src/Admin/IntegrationsPage.php:40
+msgid "Detected plugins"
+msgstr "Gedetecteerde plugins"
+
+#: src/Admin/IntegrationsPage.php:46
+msgid "The integration panel includes cleanup controls for Yoast SEO, WP Rocket, LiteSpeed Cache and Advanced Custom Fields while keeping existing Rank Math, MyParcel and Elementor controls."
+msgstr "Het integratiepaneel bevat opschoonopties voor Yoast SEO, WP Rocket, LiteSpeed Cache en Advanced Custom Fields, naast de bestaande opties voor Rank Math, MyParcel en Elementor."
+
+#: src/Admin/IntegrationsPage.php:50
+msgid "Save integration settings"
+msgstr "Integratie-instellingen opslaan"
+
+#: src/Admin/LicencePage.php:17
+msgid "Licence settings updated."
+msgstr "Licentie-instellingen bijgewerkt."
+
+#: src/Admin/LicencePage.php:29
+msgid "Enter your WP Client Tools licence key to enable protected updates."
+msgstr "Voer je WP Client Tools-licentiesleutel in om beveiligde updates in te schakelen."
+
+#: src/Admin/LicencePage.php:34
+msgid "Licence key"
+msgstr "Licentiesleutel"
+
+#: src/Admin/LicencePage.php:35
+msgid "Enter your WP Client Tools licence key"
+msgstr "Voer je WP Client Tools-licentiesleutel in"
+
+#: src/Admin/LicencePage.php:38
+#: src/Admin/TicketsPage.php:125
+#: src/Admin/TicketsPage.php:184
+msgid "Status"
+msgstr "Status"
+
+#: src/Admin/LicencePage.php:40
+#: src/Admin/ToolsPage.php:94
+#: src/Integrations.php:17
+msgid "Active"
+msgstr "Actief"
+
+#: src/Admin/LicencePage.php:40
+#: src/Admin/ToolsPage.php:77
+#: src/Integrations.php:18
+#: src/Support.php:198
+msgid "Not active"
+msgstr "Niet actief"
+
+#: src/Admin/LicencePage.php:40
+msgid "Not activated"
+msgstr "Niet geactiveerd"
+
+#. translators: %s: licence expiry date.
+#: src/Admin/LicencePage.php:45
+#, php-format
+msgid "Expires: %s"
+msgstr "Verloopt: %s"
+
+#: src/Admin/LicencePage.php:53
+msgid "Re-activate licence"
+msgstr "Licentie opnieuw activeren"
+
+#: src/Admin/LicencePage.php:53
+msgid "Activate licence"
+msgstr "Licentie activeren"
+
+#: src/Admin/LicencePage.php:55
+msgid "Deactivate licence"
+msgstr "Licentie deactiveren"
+
+#: src/Admin/Page.php:55
+msgid "WP Admin Toolkit pages"
+msgstr "WP Admin Toolkit-pagina's"
+
+#: src/Admin/Page.php:65
+msgid "Settings saved."
+msgstr "Instellingen opgeslagen."
+
+#: src/Admin/Page.php:81
+msgid "Save changes"
+msgstr "Wijzigingen opslaan"
+
+#: src/Admin/SupportPage.php:12
+msgid "Support Settings"
+msgstr "Supportinstellingen"
+
+#: src/Admin/SupportPage.php:25
+msgid "Support contact"
+msgstr "Supportcontact"
+
+#: src/Admin/SupportPage.php:26
+msgid "Support email"
+msgstr "Support-e-mailadres"
+
+#: src/Admin/SupportPage.php:27
+msgid "External support URL"
+msgstr "Externe support-URL"
+
+#: src/Admin/SupportPage.php:28
+msgid "Webhook URL"
+msgstr "Webhook-URL"
+
+#: src/Admin/SupportPage.php:29
+msgid "Support button label"
+msgstr "Label van de supportknop"
+
+#: src/Admin/SupportPage.php:33
+msgid "Support modules"
+msgstr "Supportmodules"
+
+#: src/Admin/SupportPage.php:35
+msgid "Floating request support button"
+msgstr "Zwevende supportknop"
+
+#: src/Admin/SupportPage.php:36
+msgid "Store support requests as tickets in the database"
+msgstr "Sla supportverzoeken op als tickets in de database"
+
+#. translators: %s: link to the Tickets page.
+#: src/Admin/SupportPage.php:42
+#, php-format
+msgid "Tickets are saved before email/webhook delivery is attempted, so a request is kept even when delivery fails. Manage them on the %s page."
+msgstr "Tickets worden opgeslagen voordat e-mail-/webhookbezorging wordt geprobeerd, zodat een verzoek bewaard blijft, ook als de bezorging mislukt. Beheer ze op de pagina %s."
+
+#: src/Admin/SupportPage.php:51
+msgid "Request form"
+msgstr "Aanvraagformulier"
+
+#: src/Admin/SupportPage.php:52
+msgid "Support requests can be sent by email, sent to a webhook and stored as tickets in the database."
+msgstr "Supportverzoeken kunnen per e-mail worden verzonden, naar een webhook worden gestuurd en als tickets in de database worden opgeslagen."
+
+#: src/Admin/SupportPage.php:53
+msgid "Support categories"
+msgstr "Supportcategorieën"
+
+#: src/Admin/SupportPage.php:54
+msgid "One category per line. These appear in the Request Support modal. The shipped default categories translate automatically into each user's admin language."
+msgstr "Eén categorie per regel. Deze verschijnen in het supportvenster. De meegeleverde standaardcategorieën worden automatisch vertaald naar de beheertaal van elke gebruiker."
+
+#: src/Admin/SupportPage.php:55
+msgid "Webhook format"
+msgstr "Webhookformaat"
+
+#: src/Admin/SupportPage.php:57
+msgid "Generic JSON"
+msgstr "Generieke JSON"
+
+#: src/Admin/SupportPage.php:58
+msgid "Slack-style payload"
+msgstr "Payload in Slack-stijl"
+
+#: src/Admin/SupportPage.php:59
+msgid "Discord-style payload"
+msgstr "Payload in Discord-stijl"
+
+#: src/Admin/SupportPage.php:62
+msgid "Generic JSON works with most webhook services. Slack and Discord use a cleaner text/embed structure."
+msgstr "Generieke JSON werkt met de meeste webhookdiensten. Slack en Discord gebruiken een strakkere tekst-/embedstructuur."
+
+#: src/Admin/SupportPage.php:66
+msgid "Save support settings"
+msgstr "Supportinstellingen opslaan"
+
+#: src/Admin/TicketsPage.php:16
+msgid "Support Tickets"
+msgstr "Supporttickets"
+
+#: src/Admin/TicketsPage.php:32
+msgid "Ticket status updated."
+msgstr "Ticketstatus bijgewerkt."
+
+#: src/Admin/TicketsPage.php:34
+msgid "The ticket status could not be updated."
+msgstr "De ticketstatus kon niet worden bijgewerkt."
+
+#: src/Admin/TicketsPage.php:37
+msgid "Ticket deleted."
+msgstr "Ticket verwijderd."
+
+#. translators: %d: number of tickets changed by the bulk action.
+#: src/Admin/TicketsPage.php:41
+#, php-format
+msgid "%d ticket updated."
+msgid_plural "%d tickets updated."
+msgstr[0] "%d ticket bijgewerkt."
+msgstr[1] "%d tickets bijgewerkt."
+
+#: src/Admin/TicketsPage.php:81
+msgid "Support requests submitted from the client dashboard and admin support button. Tickets are stored in the database and keep their status here even when email or webhook delivery fails."
+msgstr "Supportverzoeken die zijn ingediend via het klantdashboard en de supportknop in het beheer. Tickets worden in de database opgeslagen en behouden hier hun status, ook wanneer e-mail- of webhookbezorging mislukt."
+
+#: src/Admin/TicketsPage.php:84
+msgid "All"
+msgstr "Alle"
+
+#: src/Admin/TicketsPage.php:93
+msgid "Search subject, message or requester"
+msgstr "Zoek op onderwerp, bericht of aanvrager"
+
+#: src/Admin/TicketsPage.php:94
+msgid "Search"
+msgstr "Zoeken"
+
+#: src/Admin/TicketsPage.php:98
+msgid "No tickets match this filter."
+msgstr "Geen tickets voldoen aan dit filter."
+
+#: src/Admin/TicketsPage.php:98
+msgid "No support tickets have been received yet."
+msgstr "Er zijn nog geen supporttickets ontvangen."
+
+#: src/Admin/TicketsPage.php:105
+msgid "Bulk actions"
+msgstr "Bulkacties"
+
+#. translators: %s: ticket status label.
+#: src/Admin/TicketsPage.php:109
+#, php-format
+msgid "Mark as %s"
+msgstr "Markeren als %s"
+
+#: src/Admin/TicketsPage.php:112
+msgid "Delete"
+msgstr "Verwijderen"
+
+#: src/Admin/TicketsPage.php:114
+msgid "Delete the selected tickets permanently?"
+msgstr "De geselecteerde tickets permanent verwijderen?"
+
+#: src/Admin/TicketsPage.php:114
+msgid "Apply"
+msgstr "Toepassen"
+
+#: src/Admin/TicketsPage.php:120
+msgid "ID"
+msgstr "ID"
+
+#: src/Admin/TicketsPage.php:121
+#: src/Support.php:79
+#: src/Support.php:215
+msgid "Subject"
+msgstr "Onderwerp"
+
+#: src/Admin/TicketsPage.php:122
+msgid "From"
+msgstr "Van"
+
+#: src/Admin/TicketsPage.php:123
+#: src/Admin/TicketsPage.php:186
+#: src/Support.php:64
+#: src/Support.php:111
+#: src/Support.php:125
+#: src/Support.php:216
+msgid "Category"
+msgstr "Categorie"
+
+#: src/Admin/TicketsPage.php:124
+#: src/Admin/TicketsPage.php:185
+#: src/Support.php:72
+#: src/Support.php:112
+#: src/Support.php:126
+#: src/Support.php:217
+msgid "Priority"
+msgstr "Prioriteit"
+
+#: src/Admin/TicketsPage.php:126
+msgid "Date"
+msgstr "Datum"
+
+#: src/Admin/TicketsPage.php:134
+#: src/Admin/TicketsPage.php:181
+msgid "(no subject)"
+msgstr "(geen onderwerp)"
+
+#: src/Admin/TicketsPage.php:166
+msgid "Ticket not found. It may have been deleted."
+msgstr "Ticket niet gevonden. Mogelijk is het verwijderd."
+
+#: src/Admin/TicketsPage.php:166
+#: src/Admin/TicketsPage.php:180
+msgid "Back to tickets"
+msgstr "Terug naar tickets"
+
+#: src/Admin/TicketsPage.php:187
+msgid "Requester"
+msgstr "Aanvrager"
+
+#: src/Admin/TicketsPage.php:188
+msgid "Submitted"
+msgstr "Ingediend"
+
+#: src/Admin/TicketsPage.php:189
+msgid "Last updated"
+msgstr "Laatst bijgewerkt"
+
+#: src/Admin/TicketsPage.php:191
+#: src/Support.php:194
+msgid "Page"
+msgstr "Pagina"
+
+#: src/Admin/TicketsPage.php:195
+#: src/Support.php:80
+#: src/Support.php:218
+msgid "Message"
+msgstr "Bericht"
+
+#: src/Admin/TicketsPage.php:199
+msgid "Diagnostics"
+msgstr "Diagnostiek"
+
+#: src/Admin/TicketsPage.php:207
+msgid "Change status"
+msgstr "Status wijzigen"
+
+#: src/Admin/TicketsPage.php:213
+msgid "Update status"
+msgstr "Status bijwerken"
+
+#: src/Admin/TicketsPage.php:214
+msgid "Delete this ticket permanently?"
+msgstr "Dit ticket permanent verwijderen?"
+
+#: src/Admin/TicketsPage.php:214
+msgid "Delete ticket"
+msgstr "Ticket verwijderen"
+
+#: src/Admin/ToolsPage.php:15
+msgid "Tools & System Status"
+msgstr "Hulpmiddelen & systeemstatus"
+
+#: src/Admin/ToolsPage.php:20
+msgid "Settings imported successfully."
+msgstr "Instellingen succesvol geïmporteerd."
+
+#: src/Admin/ToolsPage.php:21
+msgid "Defaults restored successfully."
+msgstr "Standaardwaarden succesvol hersteld."
+
+#: src/Admin/ToolsPage.php:22
+msgid "Update cache cleared. WordPress will check WP Client Tools again."
+msgstr "Updatecache geleegd. WordPress controleert WP Client Tools opnieuw."
+
+#: src/Admin/ToolsPage.php:23
+msgid "Licence revalidated against WP Client Tools."
+msgstr "Licentie opnieuw gevalideerd bij WP Client Tools."
+
+#: src/Admin/ToolsPage.php:29
+msgid "Import / Export"
+msgstr "Importeren/exporteren"
+
+#: src/Admin/ToolsPage.php:30
+msgid "Export this setup and import it on another client website."
+msgstr "Exporteer deze configuratie en importeer die op een andere klantwebsite."
+
+#: src/Admin/ToolsPage.php:31
+msgid "Safe export excludes sensitive support webhook data. Use full export only for moving settings between your own trusted sites."
+msgstr "Veilige export sluit gevoelige webhookgegevens uit. Gebruik volledige export alleen om instellingen tussen je eigen vertrouwde websites te verplaatsen."
+
+#: src/Admin/ToolsPage.php:33
+msgid "Export safe settings"
+msgstr "Veilige instellingen exporteren"
+
+#: src/Admin/ToolsPage.php:34
+msgid "Export full settings"
+msgstr "Volledige instellingen exporteren"
+
+#: src/Admin/ToolsPage.php:39
+msgid "Import settings"
+msgstr "Instellingen importeren"
+
+#: src/Admin/ToolsPage.php:44
+msgid "Reset"
+msgstr "Resetten"
+
+#: src/Admin/ToolsPage.php:45
+msgid "Restore WP Admin Toolkit Pro defaults. This keeps the plugin active but replaces saved settings with the recommended WP Client Tools product configuration."
+msgstr "Herstel de standaardwaarden van WP Admin Toolkit Pro. De plugin blijft actief, maar de opgeslagen instellingen worden vervangen door de aanbevolen WP Client Tools-productconfiguratie."
+
+#: src/Admin/ToolsPage.php:46
+msgid "Reset WP Admin Toolkit Pro settings to defaults?"
+msgstr "WP Admin Toolkit Pro-instellingen terugzetten naar de standaardwaarden?"
+
+#: src/Admin/ToolsPage.php:46
+msgid "Reset to defaults"
+msgstr "Terug naar standaardwaarden"
+
+#: src/Admin/ToolsPage.php:50
+msgid "System Status"
+msgstr "Systeemstatus"
+
+#: src/Admin/ToolsPage.php:51
+msgid "Use this when troubleshooting client sites or preparing support requests. It contains environment details but avoids licence keys and webhook URLs."
+msgstr "Gebruik dit bij het oplossen van problemen op klantwebsites of het voorbereiden van supportverzoeken. Het bevat omgevingsdetails, maar geen licentiesleutels of webhook-URL's."
+
+#: src/Admin/ToolsPage.php:58
+msgid "Check licence now"
+msgstr "Licentie nu controleren"
+
+#: src/Admin/ToolsPage.php:59
+msgid "Clear update cache"
+msgstr "Updatecache legen"
+
+#: src/Admin/ToolsPage.php:61
+msgid "Copy system report"
+msgstr "Systeemrapport kopiëren"
+
+#: src/Admin/ToolsPage.php:75
+msgid "Yes"
+msgstr "Ja"
+
+#: src/Admin/ToolsPage.php:76
+msgid "No"
+msgstr "Nee"
+
+#. translators: 1: total ticket count, 2: new ticket count, 3: in-progress ticket count.
+#: src/Admin/ToolsPage.php:81
+#, php-format
+msgid "%1$d total · %2$d new · %3$d in progress"
+msgstr "%1$d totaal · %2$d nieuw · %3$d in behandeling"
+
+#: src/Admin/ToolsPage.php:82
+msgid "Table not installed"
+msgstr "Tabel niet geïnstalleerd"
+
+#: src/Admin/ToolsPage.php:84
+msgid "Plugin version"
+msgstr "Pluginversie"
+
+#: src/Admin/ToolsPage.php:85
+msgid "WordPress version"
+msgstr "WordPress-versie"
+
+#: src/Admin/ToolsPage.php:86
+msgid "PHP version"
+msgstr "PHP-versie"
+
+#: src/Admin/ToolsPage.php:87
+msgid "Site URL"
+msgstr "Website-URL"
+
+#: src/Admin/ToolsPage.php:88
+msgid "Admin email configured"
+msgstr "Beheer-e-mailadres ingesteld"
+
+#: src/Admin/ToolsPage.php:89
+msgid "Webhook configured"
+msgstr "Webhook ingesteld"
+
+#: src/Admin/ToolsPage.php:90
+msgid "Support tickets"
+msgstr "Supporttickets"
+
+#: src/Admin/ToolsPage.php:99
+#: src/Support.php:199
+msgid "Theme"
+msgstr "Thema"
+
+#: src/Admin/ToolsPage.php:100
+msgid "Multisite"
+msgstr "Multisite"
+
+#: src/Admin/ToolsPage.php:101
+msgid "Uploads writable"
+msgstr "Uploads beschrijfbaar"
+
+#: src/Admin/ToolsPage.php:102
+msgid "Enabled"
+msgstr "Ingeschakeld"
+
+#: src/Admin/ToolsPage.php:102
+msgid "Not enabled"
+msgstr "Niet ingeschakeld"
+
+#: src/Admin/ToolsPage.php:104
+msgid "Licence status"
+msgstr "Licentiestatus"
+
+#: src/Admin/ToolsPage.php:105
+msgid "Licence last checked"
+msgstr "Licentie laatst gecontroleerd"
+
+#: src/Admin/ToolsPage.php:106
+msgid "Product slug"
+msgstr "Productslug"
+
+#: src/Admin/ToolsPage.php:107
+msgid "Update server"
+msgstr "Updateserver"
+
+#: src/Admin/ToolsPage.php:108
+msgid "Remote version"
+msgstr "Externe versie"
+
+#: src/Admin/ToolsPage.php:108
+msgid "Not cached"
+msgstr "Niet in cache"
+
+#: src/Admin/ToolsPage.php:109
+msgid "Update channel"
+msgstr "Updatekanaal"
+
+#: src/Admin/ToolsPage.php:109
+msgid "(default)"
+msgstr "(standaard)"
+
+#: src/Admin/ToolsPage.php:110
+msgid "Package SHA-256"
+msgstr "Pakket-SHA-256"
+
+#: src/Admin/ToolsPage.php:110
+msgid "Not advertised"
+msgstr "Niet opgegeven"
+
+#. translators: this is the first line of the copyable plain-text system report.
+#: src/Admin/ToolsPage.php:116
+msgid "WP Admin Toolkit Pro System Report"
+msgstr "WP Admin Toolkit Pro-systeemrapport"
+
+#. translators: this is the first line of the copyable plain-text system report.
+#: src/Admin/ToolsPage.php:116
+msgid "Generated:"
+msgstr "Gegenereerd:"
+
+#. translators: %s: agency name.
+#: src/Branding.php:387
+#, php-format
+msgid "Managed by %s"
+msgstr "Beheerd door %s"
+
+#: src/Cleanup.php:75
+#: src/Cleanup.php:76
+msgid "Protected agency setting"
+msgstr "Beschermde bureau-instelling"
+
+#: src/Cleanup.php:75
+msgid "This area can affect the website, payments, theme, plugins or store settings. Please request support before making changes here."
+msgstr "Dit onderdeel kan de website, betalingen, het thema, plugins of winkelinstellingen beïnvloeden. Vraag eerst support aan voordat je hier iets wijzigt."
+
+#: src/Cleanup.php:75
+msgid "Return to dashboard"
+msgstr "Terug naar dashboard"
+
+#: src/Core.php:202
+msgid "Client Admin"
+msgstr "Klantbeheerder"
+
+#: src/Core.php:258
+msgid "Welcome. Use the shortcuts below for the most common website tasks. If anything feels unclear, request support before changing technical settings."
+msgstr "Welkom. Gebruik de snelkoppelingen hieronder voor de meest voorkomende websitetaken. Is iets onduidelijk? Vraag dan support aan voordat je technische instellingen wijzigt."
+
+#: src/Core.php:259
+msgid "Managed with care by your website team"
+msgstr "Met zorg beheerd door je websiteteam"
+
+#: src/Core.php:260
+#: src/Support.php:58
+msgid "Request Support"
+msgstr "Support aanvragen"
+
+#: src/Core.php:282
+msgid "Use Products to add or update store items. Avoid changing tax, payment, shipping or advanced WooCommerce settings unless your agency asks you to."
+msgstr "Gebruik Producten om winkelartikelen toe te voegen of bij te werken. Wijzig geen btw-, betaal-, verzend- of geavanceerde WooCommerce-instellingen, tenzij je bureau daarom vraagt."
+
+#: src/Core.php:283
+msgid "Use Orders to review, process and update customer purchases. Always double-check payment and shipping details before changing an order status."
+msgstr "Gebruik Bestellingen om aankopen van klanten te bekijken, te verwerken en bij te werken. Controleer betaal- en verzendgegevens altijd goed voordat je een bestelstatus wijzigt."
+
+#: src/Core.php:284
+msgid "Use Pages to edit website content. Make small changes and preview before publishing."
+msgstr "Gebruik Pagina's om websitecontent te bewerken. Maak kleine wijzigingen en bekijk een voorbeeld voordat je publiceert."
+
+#: src/Core.php:285
+msgid "Upload clear, compressed images. Avoid very large files because they can slow down the website."
+msgstr "Upload duidelijke, gecomprimeerde afbeeldingen. Vermijd erg grote bestanden, want die kunnen de website vertragen."
+
+#: src/Core.php:295
+#: src/Core.php:307
+msgid "Products"
+msgstr "Producten"
+
+#: src/Core.php:296
+msgid "Orders"
+msgstr "Bestellingen"
+
+#: src/Core.php:297
+#: src/Core.php:308
+msgid "Pages"
+msgstr "Pagina's"
+
+#: src/Core.php:298
+msgid "Media"
+msgstr "Media"
+
+#: src/Core.php:305
+msgid "View Orders"
+msgstr "Bestellingen bekijken"
+
+#: src/Core.php:306
+msgid "Add Product"
+msgstr "Product toevoegen"
+
+#: src/Core.php:309
+msgid "Media Library"
+msgstr "Mediabibliotheek"
+
+#: src/Core.php:310
+msgid "View Website"
+msgstr "Website bekijken"
+
+#: src/Core.php:317
+msgid "General website help"
+msgstr "Algemene websitehulp"
+
+#: src/Core.php:318
+msgid "Content change"
+msgstr "Contentwijziging"
+
+#: src/Core.php:319
+msgid "WooCommerce / orders"
+msgstr "WooCommerce / bestellingen"
+
+#: src/Core.php:320
+msgid "Technical issue"
+msgstr "Technisch probleem"
+
+#: src/Core.php:321
+msgid "Urgent issue"
+msgstr "Urgent probleem"
+
+#: src/Dashboard.php:117
+msgid "Log out"
+msgstr "Uitloggen"
+
+#: src/Dashboard.php:124
+msgid "Site snapshot"
+msgstr "Website-overzicht"
+
+#: src/Dashboard.php:130
+msgid "Common tasks"
+msgstr "Veelvoorkomende taken"
+
+#: src/Dashboard.php:136
+msgid "Recent orders"
+msgstr "Recente bestellingen"
+
+#: src/Dashboard.php:143
+msgid "Recently edited content"
+msgstr "Recent bewerkte content"
+
+#: src/Dashboard.php:154
+msgid "Client instructions"
+msgstr "Instructies voor klanten"
+
+#: src/Dashboard.php:175
+msgid "Published pages"
+msgstr "Gepubliceerde pagina's"
+
+#: src/Dashboard.php:177
+msgid "Media files"
+msgstr "Mediabestanden"
+
+#: src/Dashboard.php:179
+msgid "Published products"
+msgstr "Gepubliceerde producten"
+
+#: src/Dashboard.php:181
+msgid "Processing orders"
+msgstr "Bestellingen in behandeling"
+
+#: src/Dashboard.php:218
+msgid "No snapshot items are available for this user role."
+msgstr "Voor deze gebruikersrol zijn geen overzichtsitems beschikbaar."
+
+#: src/Dashboard.php:237
+msgid "No editable content is available for this user role."
+msgstr "Voor deze gebruikersrol is geen bewerkbare content beschikbaar."
+
+#: src/Dashboard.php:252
+msgid "No recent content found."
+msgstr "Geen recente content gevonden."
+
+#: src/Dashboard.php:261
+msgid "(no title)"
+msgstr "(geen titel)"
+
+#: src/Dashboard.php:270
+msgid "Website Shortcuts"
+msgstr "Websitesnelkoppelingen"
+
+#: src/Dashboard.php:271
+msgid "Agency Support"
+msgstr "Bureausupport"
+
+#: src/Dashboard.php:273
+msgid "Store Snapshot"
+msgstr "Winkeloverzicht"
+
+#: src/Dashboard.php:347
+msgid "Tip:"
+msgstr "Tip:"
+
+#: src/Dashboard.php:347
+msgid "When in doubt, use the support button before changing technical settings."
+msgstr "Gebruik bij twijfel de supportknop voordat je technische instellingen wijzigt."
+
+#: src/Dashboard.php:366
+msgid "Need help with the website? Send a request with page context so your agency can respond faster."
+msgstr "Hulp nodig met de website? Verstuur een verzoek met paginacontext, zodat je bureau sneller kan reageren."
+
+#: src/Dashboard.php:369
+msgid "Open Support Portal"
+msgstr "Supportportaal openen"
+
+#: src/Dashboard.php:376
+msgid "WooCommerce is active, but order helper functions are not available."
+msgstr "WooCommerce is actief, maar de hulpfuncties voor bestellingen zijn niet beschikbaar."
+
+#: src/Dashboard.php:381
+msgid "No recent orders found."
+msgstr "Geen recente bestellingen gevonden."
+
+#. translators: %s: order number.
+#: src/Dashboard.php:387
+#, php-format
+msgid "Order #%s"
+msgstr "Bestelling #%s"
+
+#: src/Licence.php:78
+msgid "Please enter a licence key."
+msgstr "Voer een licentiesleutel in."
+
+#: src/Licence.php:115
+msgid "Invalid response from WP Client Tools."
+msgstr "Ongeldig antwoord van WP Client Tools."
+
+#. translators: %s: error code returned by the licence server.
+#: src/Licence.php:124
+#, php-format
+msgid "WP Client Tools error: %s"
+msgstr "WP Client Tools-fout: %s"
+
+#. translators: %d: HTTP status code.
+#: src/Licence.php:126
+#, php-format
+msgid "WP Client Tools returned HTTP %d."
+msgstr "WP Client Tools gaf HTTP %d terug."
+
+#: src/Licence.php:215
+#: src/Licence.php:284
+msgid "WP Admin Toolkit Pro updates are delivered through WP Client Tools after licence validation."
+msgstr "Updates voor WP Admin Toolkit Pro worden geleverd via WP Client Tools na licentievalidatie."
+
+#: src/Licence.php:216
+#: src/Licence.php:285
+msgid "No changelog supplied."
+msgstr "Geen changelog meegeleverd."
+
+#: src/Licence.php:242
+msgid "Update check failed."
+msgstr "Updatecontrole mislukt."
+
+#: src/Licence.php:293
+msgid "WP Client Tools responded but no downloadable package was available."
+msgstr "WP Client Tools antwoordde, maar er was geen downloadbaar pakket beschikbaar."
+
+#: src/Support.php:57
+msgid "Close"
+msgstr "Sluiten"
+
+#: src/Support.php:59
+msgid "Describe what you need help with. The request will include the current page and basic site details."
+msgstr "Beschrijf waar je hulp bij nodig hebt. Het verzoek bevat automatisch de huidige pagina en basisgegevens van de website."
+
+#: src/Support.php:81
+msgid "Include basic diagnostic details so support can respond faster."
+msgstr "Voeg basisdiagnostiek toe zodat support sneller kan reageren."
+
+#: src/Support.php:82
+msgid "Send Request"
+msgstr "Verzoek versturen"
+
+#: src/Support.php:113
+#: src/Support.php:127
+#: src/Support.php:193
+msgid "Site"
+msgstr "Website"
+
+#: src/Support.php:143
+msgid "Invalid request method."
+msgstr "Ongeldige verzoekmethode."
+
+#: src/Support.php:149
+msgid "Please log in to request support."
+msgstr "Log in om support aan te vragen."
+
+#: src/Support.php:154
+msgid "Website support request"
+msgstr "Websitesupportverzoek"
+
+#: src/Support.php:165
+msgid "Please add a message before sending."
+msgstr "Voeg een bericht toe voordat je verstuurt."
+
+#: src/Support.php:195
+msgid "User"
+msgstr "Gebruiker"
+
+#: src/Support.php:196
+msgid "IP"
+msgstr "IP"
+
+#: src/Support.php:197
+msgid "WordPress"
+msgstr "WordPress"
+
+#: src/Support.php:201
+msgid "Browser"
+msgstr "Browser"
+
+#. translators: %s: site URL.
+#: src/Support.php:210
+#, php-format
+msgid "Support request from %s"
+msgstr "Supportverzoek van %s"
+
+#. translators: %d: ticket number.
+#: src/Support.php:213
+#, php-format
+msgid "Ticket: #%d"
+msgstr "Ticket: #%d"
+
+#: src/Support.php:219
+msgid "Context"
+msgstr "Context"
+
+#: src/Support.php:223
+msgid "Diagnostics not included by requester."
+msgstr "Diagnostiek niet meegestuurd door de aanvrager."
+
+#: src/Support.php:254
+msgid "Support request sent."
+msgstr "Supportverzoek verzonden."
+
+#. translators: %d: ticket number.
+#: src/Support.php:258
+#, php-format
+msgid "Support request saved as ticket #%d. Your team will pick it up from the ticket list."
+msgstr "Supportverzoek opgeslagen als ticket #%d. Je team pakt het op via de ticketlijst."
+
+#: src/Support.php:260
+msgid "The request could not be sent. Check the support email/webhook settings."
+msgstr "Het verzoek kon niet worden verzonden. Controleer de instellingen voor support-e-mail/webhook."
+
+#: src/Tickets.php:32
+msgid "New"
+msgstr "Nieuw"
+
+#: src/Tickets.php:33
+msgid "In progress"
+msgstr "In behandeling"
+
+#: src/Tickets.php:34
+msgid "Resolved"
+msgstr "Opgelost"
+
+#: src/Tickets.php:35
+msgid "Closed"
+msgstr "Gesloten"
+
+#: src/Tickets.php:45
+msgid "Normal"
+msgstr "Normaal"
+
+#: src/Tickets.php:46
+msgid "High"
+msgstr "Hoog"
+
+#: src/Tickets.php:47
+msgid "Urgent"
+msgstr "Urgent"

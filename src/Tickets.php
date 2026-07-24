@@ -18,12 +18,40 @@ class Tickets {
     const DB_VERSION = '1';
     const DB_VERSION_OPTION = 'aat_db_version';
 
+    // Stored status keys. Display labels come from statuses(), which resolves
+    // per-request so each admin sees them in their own language.
     const STATUSES = [
         'new' => 'New',
         'in_progress' => 'In progress',
         'resolved' => 'Resolved',
         'closed' => 'Closed',
     ];
+
+    public static function statuses() {
+        return [
+            'new' => __('New', 'wp-agency-admin-toolkit'),
+            'in_progress' => __('In progress', 'wp-agency-admin-toolkit'),
+            'resolved' => __('Resolved', 'wp-agency-admin-toolkit'),
+            'closed' => __('Closed', 'wp-agency-admin-toolkit'),
+        ];
+    }
+
+    /**
+     * Ticket priorities are stored as their canonical English values
+     * (Normal/High/Urgent) and translated for display only.
+     */
+    public static function priority_labels() {
+        return [
+            'Normal' => __('Normal', 'wp-agency-admin-toolkit'),
+            'High' => __('High', 'wp-agency-admin-toolkit'),
+            'Urgent' => __('Urgent', 'wp-agency-admin-toolkit'),
+        ];
+    }
+
+    public static function priority_label($priority) {
+        $labels = self::priority_labels();
+        return $labels[$priority] ?? $priority;
+    }
 
     public function __construct(Core $core) {
         $this->core = $core;
@@ -248,7 +276,8 @@ class Tickets {
     }
 
     public static function status_label($status) {
-        return self::STATUSES[$status] ?? ucfirst((string) $status);
+        $labels = self::statuses();
+        return $labels[$status] ?? ucfirst((string) $status);
     }
 
     private static function list_url($args = []) {
@@ -256,7 +285,7 @@ class Tickets {
     }
 
     public function handle_update() {
-        if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_update_ticket')) wp_die('Access denied.');
+        if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_update_ticket')) wp_die(esc_html__('Access denied.', 'wp-agency-admin-toolkit'));
         $id = absint($_POST['ticket_id'] ?? 0);
         $status = sanitize_key(wp_unslash($_POST['ticket_status'] ?? ''));
         $updated = $id ? self::update_status($id, $status) : false;
@@ -266,14 +295,14 @@ class Tickets {
 
     public function handle_delete() {
         $id = absint($_GET['ticket_id'] ?? 0);
-        if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_delete_ticket_' . $id)) wp_die('Access denied.');
+        if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_delete_ticket_' . $id)) wp_die(esc_html__('Access denied.', 'wp-agency-admin-toolkit'));
         self::delete($id);
         wp_safe_redirect(self::list_url(['aat_ticket_deleted' => 1]));
         exit;
     }
 
     public function handle_bulk() {
-        if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_ticket_bulk')) wp_die('Access denied.');
+        if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_ticket_bulk')) wp_die(esc_html__('Access denied.', 'wp-agency-admin-toolkit'));
         $action = sanitize_key(wp_unslash($_POST['bulk_action'] ?? ''));
         $ids = array_filter(array_map('absint', (array) ($_POST['ticket_ids'] ?? [])));
         $done = 0;
