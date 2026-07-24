@@ -72,4 +72,17 @@
   $(document).on('change','#aat-tickets-select-all',function(){
     $('.aat-ticket-cb').prop('checked', this.checked);
   });
+
+  $(document).on('click','.aat-switch-licence',function(e){
+    e.preventDefault();
+    var $row=$('.aat-licence-switch-row');
+    $row.addClass('is-open');
+    $row.find('.aat-licence-key-input').prop('disabled', false).trigger('focus');
+  });
+  $(document).on('click','.aat-licence-switch-cancel',function(e){
+    e.preventDefault();
+    var $row=$('.aat-licence-switch-row');
+    $row.removeClass('is-open');
+    $row.find('.aat-licence-key-input').prop('disabled', true).val('');
+  });
 })(jQuery);

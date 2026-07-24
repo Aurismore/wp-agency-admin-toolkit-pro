@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Admin Toolkit Pro 1.27\n"
+"Project-Id-Version: WP Admin Toolkit Pro 1.28\n"
 "Report-Msgid-Bugs-To: https://wpclienttools.com\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-24T10:07:04+00:00\n"
+"POT-Creation-Date: 2026-07-24T10:33:50+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wp-agency-admin-toolkit\n"
@@ -81,7 +81,6 @@ msgstr ""
 
 #: src/Admin.php:52
 #: src/Admin/LicencePage.php:12
-#: src/Admin/LicencePage.php:28
 msgid "Licence & Updates"
 msgstr ""
 
@@ -122,9 +121,9 @@ msgid "Remove shortcut"
 msgstr ""
 
 #: src/Admin.php:118
-#: src/Admin.php:152
-#: src/Admin.php:171
-#: src/Admin.php:200
+#: src/Admin.php:158
+#: src/Admin.php:177
+#: src/Admin.php:206
 #: src/Admin/Page.php:43
 #: src/Dashboard.php:99
 #: src/Licence.php:29
@@ -135,27 +134,27 @@ msgstr ""
 msgid "Access denied."
 msgstr ""
 
-#: src/Admin.php:132
+#: src/Admin.php:138
 msgid "Licence deactivated on this website."
 msgstr ""
 
-#: src/Admin.php:135
+#: src/Admin.php:141
 msgid "Licence key saved. Activate it to enable protected updates."
 msgstr ""
 
-#: src/Admin.php:135
+#: src/Admin.php:141
 msgid "Licence key removed."
 msgstr ""
 
-#: src/Admin.php:180
+#: src/Admin.php:186
 msgid "Import file is too large."
 msgstr ""
 
-#: src/Admin.php:185
+#: src/Admin.php:191
 msgid "Invalid import file."
 msgstr ""
 
-#: src/Admin.php:190
+#: src/Admin.php:196
 msgid "Invalid JSON import file."
 msgstr ""
 
@@ -538,57 +537,98 @@ msgstr ""
 msgid "Licence settings updated."
 msgstr ""
 
-#: src/Admin/LicencePage.php:29
-msgid "Enter your WP Client Tools licence key to enable protected updates."
+#: src/Admin/LicencePage.php:18
+#: src/Admin/ToolsPage.php:23
+msgid "Licence revalidated against WP Client Tools."
 msgstr ""
 
-#: src/Admin/LicencePage.php:34
-msgid "Licence key"
-msgstr ""
-
-#: src/Admin/LicencePage.php:35
-msgid "Enter your WP Client Tools licence key"
-msgstr ""
-
-#: src/Admin/LicencePage.php:38
-#: src/Admin/TicketsPage.php:125
-#: src/Admin/TicketsPage.php:184
-msgid "Status"
-msgstr ""
-
-#: src/Admin/LicencePage.php:40
+#: src/Admin/LicencePage.php:41
 #: src/Admin/ToolsPage.php:94
 #: src/Integrations.php:17
 msgid "Active"
 msgstr ""
 
-#: src/Admin/LicencePage.php:40
+#: src/Admin/LicencePage.php:44
 #: src/Admin/ToolsPage.php:77
 #: src/Integrations.php:18
 #: src/Support.php:198
 msgid "Not active"
 msgstr ""
 
-#: src/Admin/LicencePage.php:40
+#: src/Admin/LicencePage.php:44
 msgid "Not activated"
 msgstr ""
 
-#. translators: %s: licence expiry date.
-#: src/Admin/LicencePage.php:45
-#, php-format
-msgid "Expires: %s"
+#: src/Admin/LicencePage.php:49
+msgid "Licence Settings"
 msgstr ""
 
-#: src/Admin/LicencePage.php:53
-msgid "Re-activate licence"
+#: src/Admin/LicencePage.php:56
+msgid "Status:"
 msgstr ""
 
-#: src/Admin/LicencePage.php:53
+#: src/Admin/LicencePage.php:64
+#: src/Admin/LicencePage.php:108
+#: src/Admin/LicencePage.php:123
 msgid "Activate licence"
 msgstr ""
 
-#: src/Admin/LicencePage.php:55
-msgid "Deactivate licence"
+#: src/Admin/LicencePage.php:67
+msgid "Check licence status"
+msgstr ""
+
+#: src/Admin/LicencePage.php:69
+msgid "My Account"
+msgstr ""
+
+#: src/Admin/LicencePage.php:76
+msgid "Subscription:"
+msgstr ""
+
+#. translators: %s: licence expiry date.
+#: src/Admin/LicencePage.php:80
+#, php-format
+msgid "expires %s"
+msgstr ""
+
+#. translators: %s: masked licence key.
+#: src/Admin/LicencePage.php:94
+#, php-format
+msgid "You&#8217;re connected with licence key %s. Want to activate this website with a different licence key?"
+msgstr ""
+
+#: src/Admin/LicencePage.php:101
+msgid "Switch licence key"
+msgstr ""
+
+#: src/Admin/LicencePage.php:105
+#: src/Admin/LicencePage.php:120
+msgid "Licence key"
+msgstr ""
+
+#: src/Admin/LicencePage.php:106
+#: src/Admin/LicencePage.php:121
+msgid "Enter your WP Client Tools licence key"
+msgstr ""
+
+#: src/Admin/LicencePage.php:109
+msgid "Cancel"
+msgstr ""
+
+#: src/Admin/LicencePage.php:113
+msgid "Want to deactivate the licence for any reason?"
+msgstr ""
+
+#: src/Admin/LicencePage.php:115
+msgid "Disconnect"
+msgstr ""
+
+#: src/Admin/LicencePage.php:115
+msgid "Deactivate this website's licence?"
+msgstr ""
+
+#: src/Admin/LicencePage.php:126
+msgid "Enter your WP Client Tools licence key to enable protected updates."
 msgstr ""
 
 #: src/Admin/Page.php:55
@@ -787,6 +827,11 @@ msgstr ""
 msgid "Priority"
 msgstr ""
 
+#: src/Admin/TicketsPage.php:125
+#: src/Admin/TicketsPage.php:184
+msgid "Status"
+msgstr ""
+
 #: src/Admin/TicketsPage.php:126
 msgid "Date"
 msgstr ""
@@ -862,10 +907,6 @@ msgstr ""
 
 #: src/Admin/ToolsPage.php:22
 msgid "Update cache cleared. WordPress will check WP Client Tools again."
-msgstr ""
-
-#: src/Admin/ToolsPage.php:23
-msgid "Licence revalidated against WP Client Tools."
 msgstr ""
 
 #: src/Admin/ToolsPage.php:29
@@ -1249,41 +1290,41 @@ msgstr ""
 msgid "Order #%s"
 msgstr ""
 
-#: src/Licence.php:78
+#: src/Licence.php:83
 msgid "Please enter a licence key."
 msgstr ""
 
-#: src/Licence.php:115
+#: src/Licence.php:120
 msgid "Invalid response from WP Client Tools."
 msgstr ""
 
 #. translators: %s: error code returned by the licence server.
-#: src/Licence.php:124
+#: src/Licence.php:129
 #, php-format
 msgid "WP Client Tools error: %s"
 msgstr ""
 
 #. translators: %d: HTTP status code.
-#: src/Licence.php:126
+#: src/Licence.php:131
 #, php-format
 msgid "WP Client Tools returned HTTP %d."
 msgstr ""
 
-#: src/Licence.php:215
-#: src/Licence.php:284
+#: src/Licence.php:220
+#: src/Licence.php:289
 msgid "WP Admin Toolkit Pro updates are delivered through WP Client Tools after licence validation."
 msgstr ""
 
-#: src/Licence.php:216
-#: src/Licence.php:285
+#: src/Licence.php:221
+#: src/Licence.php:290
 msgid "No changelog supplied."
 msgstr ""
 
-#: src/Licence.php:242
+#: src/Licence.php:247
 msgid "Update check failed."
 msgstr ""
 
-#: src/Licence.php:293
+#: src/Licence.php:298
 msgid "WP Client Tools responded but no downloadable package was available."
 msgstr ""
 

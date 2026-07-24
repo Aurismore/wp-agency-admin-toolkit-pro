@@ -4,7 +4,7 @@ Tags: admin, dashboard, agency, woocommerce, client dashboard, white label
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.27
+Stable tag: 1.28
 License: GPLv2 or later
 
 White-label WordPress and WooCommerce admin cleanup toolkit for agencies. Distributed through WP Client Tools and created by Creative Digital Media.
@@ -41,6 +41,13 @@ This product is distributed and supported through WP Client Tools. The plugin is
 * Fully translation-ready: every screen follows each admin user's own profile language, with Dutch (nl_NL) included
 
 == Changelog ==
+
+= 1.28 =
+* **Redesigned the Licence & Updates page** into a clean row-based licence panel modelled on Elementor's licence screen: a status row ("Status: Active" in green) with "Check licence status" and "My Account" buttons, a subscription row showing the product and expiry date, a "You're connected with licence key ••••••••1234" row with a "Switch licence key" flow that only reveals the key input when needed, and a "Want to deactivate the licence for any reason?" row with a Disconnect button (with confirmation).
+* The licence key is no longer shown in an always-visible field; it appears masked (fixed-length bullets plus the last 4 characters). When no key is activated yet, the panel shows the key input with an Activate button directly.
+* "Check licence status" on the licence page returns to the licence page (the same button on Tools still returns to System Status). "My Account" opens the WP Client Tools account page; the URL is filterable via `aat_account_url`.
+* Disconnect now falls back to the stored key for the remote deactivation call if the form's key field is empty, so the deactivation always reaches WP Client Tools.
+* All new panel strings are translated, including Dutch (nl_NL).
 
 = 1.27 =
 * **The dashboard and all plugin screens now automatically show in each admin user's own language.** Every plugin string (~320) is wrapped in WordPress translation functions under the `wp-agency-admin-toolkit` text domain, so the per-user profile language (Users > Profile > Language) that WordPress already resolves for wp-admin now applies to the client dashboard, all nine settings pages, the support modal and its responses, the ticket screens, and the protected-page block screen. Users without a profile language get the site language, as always.

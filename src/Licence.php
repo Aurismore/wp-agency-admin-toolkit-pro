@@ -46,7 +46,12 @@ class Licence {
             Core::update_settings($settings);
         }
         delete_site_transient($this->cache_key);
-        wp_safe_redirect(admin_url('admin.php?page=wp-admin-toolkit-tools&aat_licence_checked=1#aat-status'));
+        // The button lives on both the Licence page and the Tools/System
+        // Status page; return the operator to wherever they clicked it.
+        $target = (isset($_GET['aat_redirect']) && $_GET['aat_redirect'] === 'licence')
+            ? 'admin.php?page=wp-admin-toolkit-licence&aat_licence_checked=1'
+            : 'admin.php?page=wp-admin-toolkit-tools&aat_licence_checked=1#aat-status';
+        wp_safe_redirect(admin_url($target));
         exit;
     }
 

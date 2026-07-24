@@ -117,6 +117,7 @@ class Admin {
     public function save_license() {
         if (!current_user_can(AAT_CAP) || !check_admin_referer('aat_save_license')) wp_die(esc_html__('Access denied.', 'wp-agency-admin-toolkit'));
         $settings = Core::get_settings();
+        $saved_key = (string) ($settings['licence_key'] ?? '');
         $licence_key = sanitize_text_field($_POST[AAT_OPTION]['licence_key'] ?? '');
         $settings['licence_key'] = $licence_key;
         $settings['enable_private_updates'] = 1;
@@ -125,9 +126,14 @@ class Admin {
             $response = Licence::remote_request('activate', $licence_key);
             $settings = Licence::settings_from_licence_response($settings, $licence_key, $response);
         } elseif (isset($_POST['aat_deactivate_license'])) {
-            if ($licence_key) {
-                Licence::remote_request('deactivate', $licence_key);
+            // Disconnect can be submitted while the hidden switch-key input is
+            // empty; fall back to the stored key so the remote deactivation
+            // still reaches WP Client Tools.
+            $key_for_remote = $licence_key !== '' ? $licence_key : $saved_key;
+            if ($key_for_remote) {
+                Licence::remote_request('deactivate', $key_for_remote);
             }
+            $settings['licence_key'] = $key_for_remote;
             $settings['licence_status'] = 'inactive';
             $settings['licence_message'] = __('Licence deactivated on this website.', 'wp-agency-admin-toolkit');
             $settings['licence_checked_at'] = gmdate('c');
