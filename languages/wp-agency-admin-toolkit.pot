@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Admin Toolkit Pro 1.28\n"
+"Project-Id-Version: WP Admin Toolkit Pro 1.29\n"
 "Report-Msgid-Bugs-To: https://wpclienttools.com\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-24T10:33:50+00:00\n"
+"POT-Creation-Date: 2026-07-24T10:52:46+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wp-agency-admin-toolkit\n"
@@ -46,7 +46,7 @@ msgid "General"
 msgstr ""
 
 #: src/Admin.php:45
-#: src/Core.php:257
+#: src/Core.php:258
 msgid "Client Dashboard"
 msgstr ""
 
@@ -121,9 +121,9 @@ msgid "Remove shortcut"
 msgstr ""
 
 #: src/Admin.php:118
-#: src/Admin.php:158
-#: src/Admin.php:177
-#: src/Admin.php:206
+#: src/Admin.php:159
+#: src/Admin.php:178
+#: src/Admin.php:207
 #: src/Admin/Page.php:43
 #: src/Dashboard.php:99
 #: src/Licence.php:29
@@ -146,15 +146,15 @@ msgstr ""
 msgid "Licence key removed."
 msgstr ""
 
-#: src/Admin.php:186
+#: src/Admin.php:187
 msgid "Import file is too large."
 msgstr ""
 
-#: src/Admin.php:191
+#: src/Admin.php:192
 msgid "Invalid import file."
 msgstr ""
 
-#: src/Admin.php:196
+#: src/Admin.php:197
 msgid "Invalid JSON import file."
 msgstr ""
 
@@ -542,92 +542,92 @@ msgstr ""
 msgid "Licence revalidated against WP Client Tools."
 msgstr ""
 
-#: src/Admin/LicencePage.php:41
+#: src/Admin/LicencePage.php:48
 #: src/Admin/ToolsPage.php:94
 #: src/Integrations.php:17
 msgid "Active"
 msgstr ""
 
-#: src/Admin/LicencePage.php:44
+#: src/Admin/LicencePage.php:51
 #: src/Admin/ToolsPage.php:77
 #: src/Integrations.php:18
 #: src/Support.php:198
 msgid "Not active"
 msgstr ""
 
-#: src/Admin/LicencePage.php:44
+#: src/Admin/LicencePage.php:51
 msgid "Not activated"
 msgstr ""
 
-#: src/Admin/LicencePage.php:49
+#: src/Admin/LicencePage.php:56
 msgid "Licence Settings"
 msgstr ""
 
-#: src/Admin/LicencePage.php:56
+#: src/Admin/LicencePage.php:63
 msgid "Status:"
 msgstr ""
 
-#: src/Admin/LicencePage.php:64
-#: src/Admin/LicencePage.php:108
-#: src/Admin/LicencePage.php:123
+#: src/Admin/LicencePage.php:71
+#: src/Admin/LicencePage.php:116
+#: src/Admin/LicencePage.php:131
 msgid "Activate licence"
 msgstr ""
 
-#: src/Admin/LicencePage.php:67
+#: src/Admin/LicencePage.php:74
 msgid "Check licence status"
 msgstr ""
 
-#: src/Admin/LicencePage.php:69
+#: src/Admin/LicencePage.php:76
 msgid "My Account"
 msgstr ""
 
-#: src/Admin/LicencePage.php:76
+#: src/Admin/LicencePage.php:83
 msgid "Subscription:"
 msgstr ""
 
 #. translators: %s: licence expiry date.
-#: src/Admin/LicencePage.php:80
+#: src/Admin/LicencePage.php:88
 #, php-format
 msgid "expires %s"
 msgstr ""
 
 #. translators: %s: masked licence key.
-#: src/Admin/LicencePage.php:94
+#: src/Admin/LicencePage.php:102
 #, php-format
 msgid "You&#8217;re connected with licence key %s. Want to activate this website with a different licence key?"
 msgstr ""
 
-#: src/Admin/LicencePage.php:101
+#: src/Admin/LicencePage.php:109
 msgid "Switch licence key"
 msgstr ""
 
-#: src/Admin/LicencePage.php:105
-#: src/Admin/LicencePage.php:120
+#: src/Admin/LicencePage.php:113
+#: src/Admin/LicencePage.php:128
 msgid "Licence key"
 msgstr ""
 
-#: src/Admin/LicencePage.php:106
-#: src/Admin/LicencePage.php:121
+#: src/Admin/LicencePage.php:114
+#: src/Admin/LicencePage.php:129
 msgid "Enter your WP Client Tools licence key"
 msgstr ""
 
-#: src/Admin/LicencePage.php:109
+#: src/Admin/LicencePage.php:117
 msgid "Cancel"
 msgstr ""
 
-#: src/Admin/LicencePage.php:113
+#: src/Admin/LicencePage.php:121
 msgid "Want to deactivate the licence for any reason?"
 msgstr ""
 
-#: src/Admin/LicencePage.php:115
+#: src/Admin/LicencePage.php:123
 msgid "Disconnect"
 msgstr ""
 
-#: src/Admin/LicencePage.php:115
+#: src/Admin/LicencePage.php:123
 msgid "Deactivate this website's licence?"
 msgstr ""
 
-#: src/Admin/LicencePage.php:126
+#: src/Admin/LicencePage.php:134
 msgid "Enter your WP Client Tools licence key to enable protected updates."
 msgstr ""
 
@@ -1105,90 +1105,90 @@ msgstr ""
 msgid "Return to dashboard"
 msgstr ""
 
-#: src/Core.php:202
+#: src/Core.php:203
 msgid "Client Admin"
 msgstr ""
 
-#: src/Core.php:258
+#: src/Core.php:259
 msgid "Welcome. Use the shortcuts below for the most common website tasks. If anything feels unclear, request support before changing technical settings."
 msgstr ""
 
-#: src/Core.php:259
+#: src/Core.php:260
 msgid "Managed with care by your website team"
 msgstr ""
 
-#: src/Core.php:260
+#: src/Core.php:261
 #: src/Support.php:58
 msgid "Request Support"
 msgstr ""
 
-#: src/Core.php:282
+#: src/Core.php:283
 msgid "Use Products to add or update store items. Avoid changing tax, payment, shipping or advanced WooCommerce settings unless your agency asks you to."
 msgstr ""
 
-#: src/Core.php:283
+#: src/Core.php:284
 msgid "Use Orders to review, process and update customer purchases. Always double-check payment and shipping details before changing an order status."
 msgstr ""
 
-#: src/Core.php:284
+#: src/Core.php:285
 msgid "Use Pages to edit website content. Make small changes and preview before publishing."
 msgstr ""
 
-#: src/Core.php:285
+#: src/Core.php:286
 msgid "Upload clear, compressed images. Avoid very large files because they can slow down the website."
 msgstr ""
 
-#: src/Core.php:295
-#: src/Core.php:307
+#: src/Core.php:296
+#: src/Core.php:308
 msgid "Products"
 msgstr ""
 
-#: src/Core.php:296
+#: src/Core.php:297
 msgid "Orders"
 msgstr ""
 
-#: src/Core.php:297
-#: src/Core.php:308
+#: src/Core.php:298
+#: src/Core.php:309
 msgid "Pages"
 msgstr ""
 
-#: src/Core.php:298
+#: src/Core.php:299
 msgid "Media"
 msgstr ""
 
-#: src/Core.php:305
+#: src/Core.php:306
 msgid "View Orders"
 msgstr ""
 
-#: src/Core.php:306
+#: src/Core.php:307
 msgid "Add Product"
 msgstr ""
 
-#: src/Core.php:309
+#: src/Core.php:310
 msgid "Media Library"
 msgstr ""
 
-#: src/Core.php:310
+#: src/Core.php:311
 msgid "View Website"
 msgstr ""
 
-#: src/Core.php:317
+#: src/Core.php:318
 msgid "General website help"
 msgstr ""
 
-#: src/Core.php:318
+#: src/Core.php:319
 msgid "Content change"
 msgstr ""
 
-#: src/Core.php:319
+#: src/Core.php:320
 msgid "WooCommerce / orders"
 msgstr ""
 
-#: src/Core.php:320
+#: src/Core.php:321
 msgid "Technical issue"
 msgstr ""
 
-#: src/Core.php:321
+#: src/Core.php:322
 msgid "Urgent issue"
 msgstr ""
 
@@ -1310,21 +1310,21 @@ msgstr ""
 msgid "WP Client Tools returned HTTP %d."
 msgstr ""
 
-#: src/Licence.php:220
-#: src/Licence.php:289
+#: src/Licence.php:226
+#: src/Licence.php:295
 msgid "WP Admin Toolkit Pro updates are delivered through WP Client Tools after licence validation."
 msgstr ""
 
-#: src/Licence.php:221
-#: src/Licence.php:290
+#: src/Licence.php:227
+#: src/Licence.php:296
 msgid "No changelog supplied."
 msgstr ""
 
-#: src/Licence.php:247
+#: src/Licence.php:253
 msgid "Update check failed."
 msgstr ""
 
-#: src/Licence.php:298
+#: src/Licence.php:304
 msgid "WP Client Tools responded but no downloadable package was available."
 msgstr ""
 

@@ -31,6 +31,13 @@ class LicencePage extends Page {
             $expires = $ts ? date_i18n(get_option('date_format'), $ts) : $expires_raw;
         }
 
+        // The purchased product's name comes from the WCTLM server (1.4.14+);
+        // fall back to the product's own name until the server has been checked.
+        $product_name = (string) ($s['licence_product_name'] ?? '');
+        if ($product_name === '') {
+            $product_name = 'WP Admin Toolkit Pro';
+        }
+
         // Fixed number of bullets so the markup doesn't leak the key length.
         $masked_key = $has_key ? str_repeat('•', 8) . substr($licence_key, -4) : '';
 
@@ -74,7 +81,8 @@ class LicencePage extends Page {
                     <div class="aat-licence-row">
                         <div class="aat-licence-row-text">
                             <strong><?php esc_html_e('Subscription:', 'wp-agency-admin-toolkit'); ?></strong>
-                            WP Admin Toolkit Pro<?php
+                            <?php
+                            echo esc_html($product_name);
                             if ($expires) {
                                 /* translators: %s: licence expiry date. */
                                 echo ' — ' . esc_html(sprintf(__('expires %s', 'wp-agency-admin-toolkit'), $expires));

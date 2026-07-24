@@ -142,6 +142,7 @@ class Admin {
             if (!$licence_key) {
                 $settings['licence_status'] = 'inactive';
                 $settings['licence_expires_at'] = '';
+                $settings['licence_product_name'] = '';
                 $settings['licence_activations_used'] = 0;
                 $settings['licence_activation_limit'] = 0;
             }

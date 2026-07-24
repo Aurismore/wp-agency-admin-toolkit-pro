@@ -4,7 +4,7 @@ Tags: admin, dashboard, agency, woocommerce, client dashboard, white label
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.28
+Stable tag: 1.29
 License: GPLv2 or later
 
 White-label WordPress and WooCommerce admin cleanup toolkit for agencies. Distributed through WP Client Tools and created by Creative Digital Media.
@@ -41,6 +41,11 @@ This product is distributed and supported through WP Client Tools. The plugin is
 * Fully translation-ready: every screen follows each admin user's own profile language, with Dutch (nl_NL) included
 
 == Changelog ==
+
+= 1.29 =
+* The Licence & Updates panel's Subscription row now shows the real purchased product name returned by the WP Client Tools Licence Manager (server 1.4.14+), instead of a hardcoded product name. It falls back to "WP Admin Toolkit Pro" until the licence has been checked against a server that supplies the name.
+* Stored the product name in the plugin settings from the activate/check response, and cleared it when the licence key is removed. No new user-facing strings were added.
+* Compatible with the WCTLM response change that returns `key_last4` instead of the full licence key in the licence block — the plugin never read that field, so nothing else changes.
 
 = 1.28 =
 * **Redesigned the Licence & Updates page** into a clean row-based licence panel modelled on Elementor's licence screen: a status row ("Status: Active" in green) with "Check licence status" and "My Account" buttons, a subscription row showing the product and expiry date, a "You're connected with licence key ••••••••1234" row with a "Switch licence key" flow that only reveals the key input when needed, and a "Want to deactivate the licence for any reason?" row with a Disconnect button (with confirmation).

@@ -107,6 +107,7 @@ class Core {
             'licence_message' => '',
             'licence_checked_at' => '',
             'licence_expires_at' => '',
+            'licence_product_name' => '',
             'licence_activations_used' => 0,
             'licence_activation_limit' => 0,
             'admin_primary_color' => '#17243B',
@@ -418,6 +419,7 @@ class Core {
         $clean['licence_message'] = sanitize_text_field($input['licence_message'] ?? '');
         $clean['licence_checked_at'] = sanitize_text_field($input['licence_checked_at'] ?? '');
         $clean['licence_expires_at'] = sanitize_text_field($input['licence_expires_at'] ?? '');
+        $clean['licence_product_name'] = sanitize_text_field($input['licence_product_name'] ?? '');
         $clean['licence_activations_used'] = absint($input['licence_activations_used'] ?? 0);
         $clean['licence_activation_limit'] = absint($input['licence_activation_limit'] ?? 0);
         $clean['logout_redirect_url'] = esc_url_raw($input['logout_redirect_url'] ?? $defaults['logout_redirect_url'], ['http', 'https']);

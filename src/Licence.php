@@ -153,6 +153,12 @@ class Licence {
             $settings['licence_expires_at'] = sanitize_text_field($licence['expires_at'] ?? '');
             $settings['licence_activations_used'] = absint($licence['activations_used'] ?? 0);
             $settings['licence_activation_limit'] = absint($licence['activation_limit'] ?? 0);
+            // WCTLM 1.4.14+ returns the purchased product's name so the licence
+            // panel can show it. Only overwrite when the server actually sends
+            // a non-empty value, so an older server doesn't blank a stored name.
+            if (!empty($licence['product_name'])) {
+                $settings['licence_product_name'] = sanitize_text_field($licence['product_name']);
+            }
         }
         return $settings;
     }
