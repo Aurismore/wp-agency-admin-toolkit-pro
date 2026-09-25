@@ -4,7 +4,7 @@ Tags: admin, dashboard, agency, woocommerce, client dashboard, white label
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.31
+Stable tag: 1.32
 License: GPLv2 or later
 
 White-label WordPress and WooCommerce admin cleanup toolkit for agencies. Distributed through WP Client Tools and created by Lubies Factory.
@@ -31,6 +31,8 @@ This product is distributed and supported through WP Client Tools. The plugin is
 * Support categories and priority selector
 * Generic, Slack-style and Discord-style webhook payloads
 * WooCommerce-aware shortcuts and widgets
+* Store sales chart with this-period vs comparison-period trend and a date-range picker (WooCommerce-focused layout)
+* Three distinct dashboard layouts (balanced, WooCommerce focused, content editing focused)
 * Elementor settings hiding
 * Rank Math overview hiding
 * MyParcel widget hiding
@@ -41,6 +43,15 @@ This product is distributed and supported through WP Client Tools. The plugin is
 * Fully translation-ready: every screen follows each admin user's own profile language, with Dutch (nl_NL) included
 
 == Changelog ==
+
+= 1.32 =
+* **The three client dashboard layouts now genuinely differ** in which panels appear, their order and emphasis — previously the selector only changed two minor CSS rules. Balanced keeps the even client-handover overview. WooCommerce focused leads with store metrics and the new sales chart, with recent orders and content moved lower. Content editing focused leads with recently edited content and hides the store panels even when WooCommerce is active.
+* **New store sales chart on the WooCommerce-focused layout**: an inline-SVG chart (no external libraries) plotting cumulative sales for the selected period against the comparison period, so you can see whether you are pacing ahead of or behind it. Totals and a percentage delta are shown above, and hovering the chart reveals per-day figures.
+* **Date-range picker** for the chart: presets (This month vs last month, Last 7 / 30 / 90 days, This year vs last year) plus a custom from/to range that is compared to the immediately preceding period of equal length.
+* Recent orders now show the order date alongside the number, status and total.
+* The site snapshot card adapts to the layout: the store layout shows product/order counts, the content layout shows page/media counts, and balanced shows all.
+* Sales figures are gated behind the WooCommerce reporting capability (`view_woocommerce_reports`) and count `processing` + `completed` orders net of refunds, in the store currency and timezone. The chart's per-period order totals are cached for 30 minutes. A new "Store sales chart" toggle sits on the Client Dashboard settings page.
+* All new interface strings are translated, including Dutch (nl_NL).
 
 = 1.31 =
 * Pointed the plugin site to https://lubies.shop: the Plugin URI header, the composer homepage, and the plugin homepage shown in the WordPress update-info popup now use lubies.shop instead of the old wpclienttools.com product page.

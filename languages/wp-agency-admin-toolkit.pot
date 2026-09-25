@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Admin Toolkit Pro 1.30\n"
+"Project-Id-Version: WP Admin Toolkit Pro 1.32\n"
 "Report-Msgid-Bugs-To: https://wpclienttools.com\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-24T12:11:23+00:00\n"
+"POT-Creation-Date: 2026-09-25T16:16:22+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wp-agency-admin-toolkit\n"
@@ -46,7 +46,7 @@ msgid "General"
 msgstr ""
 
 #: src/Admin.php:45
-#: src/Core.php:258
+#: src/Core.php:259
 msgid "Client Dashboard"
 msgstr ""
 
@@ -60,7 +60,7 @@ msgid "Cleanup"
 msgstr ""
 
 #: src/Admin.php:48
-#: src/Dashboard.php:149
+#: src/Dashboard.php:248
 msgid "Support"
 msgstr ""
 
@@ -101,22 +101,22 @@ msgid "Could not send request."
 msgstr ""
 
 #: src/Admin.php:109
-#: src/Admin/DashboardPage.php:63
+#: src/Admin/DashboardPage.php:65
 msgid "Label"
 msgstr ""
 
 #: src/Admin.php:110
-#: src/Admin/DashboardPage.php:64
+#: src/Admin/DashboardPage.php:66
 msgid "URL"
 msgstr ""
 
 #: src/Admin.php:111
-#: src/Admin/DashboardPage.php:65
+#: src/Admin/DashboardPage.php:67
 msgid "Capability"
 msgstr ""
 
 #: src/Admin.php:112
-#: src/Admin/DashboardPage.php:66
+#: src/Admin/DashboardPage.php:68
 msgid "Remove shortcut"
 msgstr ""
 
@@ -382,55 +382,63 @@ msgstr ""
 msgid "Client dashboard recent content card"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:37
-msgid "Dashboard content"
+#: src/Admin/DashboardPage.php:33
+msgid "Store sales chart (WooCommerce-focused layout)"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:38
-msgid "Dashboard title"
+#: src/Admin/DashboardPage.php:35
+msgid "The sales chart appears on the WooCommerce-focused layout only, and only for users who can view WooCommerce reports."
 msgstr ""
 
 #: src/Admin/DashboardPage.php:39
-msgid "Dashboard layout"
+msgid "Dashboard content"
+msgstr ""
+
+#: src/Admin/DashboardPage.php:40
+msgid "Dashboard title"
 msgstr ""
 
 #: src/Admin/DashboardPage.php:41
-msgid "Balanced client handover"
-msgstr ""
-
-#: src/Admin/DashboardPage.php:42
-msgid "WooCommerce focused"
+msgid "Dashboard layout"
 msgstr ""
 
 #: src/Admin/DashboardPage.php:43
+msgid "Balanced client handover"
+msgstr ""
+
+#: src/Admin/DashboardPage.php:44
+msgid "WooCommerce focused"
+msgstr ""
+
+#: src/Admin/DashboardPage.php:45
 msgid "Content editing focused"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:46
-msgid "This changes the visual emphasis of the client dashboard without changing permissions or restrictions."
+#: src/Admin/DashboardPage.php:48
+msgid "Each layout changes which panels appear, their order and emphasis. Balanced shows an even overview. WooCommerce focused leads with store metrics and a sales chart, moving content lower. Content editing focused leads with recently edited content and hides the store panels. Permissions and restrictions are never changed."
 msgstr ""
 
-#: src/Admin/DashboardPage.php:47
+#: src/Admin/DashboardPage.php:49
 msgid "Welcome message"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:48
+#: src/Admin/DashboardPage.php:50
 msgid "Content you type here is shown exactly as written. Fields left at their shipped default translate automatically into each user's admin language."
 msgstr ""
 
-#: src/Admin/DashboardPage.php:52
+#: src/Admin/DashboardPage.php:54
 msgid "Instruction boxes"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:59
+#: src/Admin/DashboardPage.php:61
 msgid "Dashboard shortcuts"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:70
+#: src/Admin/DashboardPage.php:72
 msgid "Add shortcut"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:74
+#: src/Admin/DashboardPage.php:76
 msgid "Save dashboard settings"
 msgstr ""
 
@@ -792,6 +800,7 @@ msgid "Delete the selected tickets permanently?"
 msgstr ""
 
 #: src/Admin/TicketsPage.php:114
+#: src/Dashboard.php:743
 msgid "Apply"
 msgstr ""
 
@@ -806,6 +815,7 @@ msgid "Subject"
 msgstr ""
 
 #: src/Admin/TicketsPage.php:122
+#: src/Dashboard.php:738
 msgid "From"
 msgstr ""
 
@@ -1105,189 +1115,260 @@ msgstr ""
 msgid "Return to dashboard"
 msgstr ""
 
-#: src/Core.php:203
+#: src/Core.php:204
 msgid "Client Admin"
 msgstr ""
 
-#: src/Core.php:259
+#: src/Core.php:260
 msgid "Welcome. Use the shortcuts below for the most common website tasks. If anything feels unclear, request support before changing technical settings."
 msgstr ""
 
-#: src/Core.php:260
+#: src/Core.php:261
 msgid "Managed with care by your website team"
 msgstr ""
 
-#: src/Core.php:261
+#: src/Core.php:262
 #: src/Support.php:58
 msgid "Request Support"
 msgstr ""
 
-#: src/Core.php:283
+#: src/Core.php:284
 msgid "Use Products to add or update store items. Avoid changing tax, payment, shipping or advanced WooCommerce settings unless your agency asks you to."
 msgstr ""
 
-#: src/Core.php:284
+#: src/Core.php:285
 msgid "Use Orders to review, process and update customer purchases. Always double-check payment and shipping details before changing an order status."
 msgstr ""
 
-#: src/Core.php:285
+#: src/Core.php:286
 msgid "Use Pages to edit website content. Make small changes and preview before publishing."
 msgstr ""
 
-#: src/Core.php:286
+#: src/Core.php:287
 msgid "Upload clear, compressed images. Avoid very large files because they can slow down the website."
 msgstr ""
 
-#: src/Core.php:296
-#: src/Core.php:308
+#: src/Core.php:297
+#: src/Core.php:309
 msgid "Products"
 msgstr ""
 
-#: src/Core.php:297
+#: src/Core.php:298
 msgid "Orders"
 msgstr ""
 
-#: src/Core.php:298
-#: src/Core.php:309
+#: src/Core.php:299
+#: src/Core.php:310
 msgid "Pages"
 msgstr ""
 
-#: src/Core.php:299
+#: src/Core.php:300
 msgid "Media"
 msgstr ""
 
-#: src/Core.php:306
+#: src/Core.php:307
 msgid "View Orders"
 msgstr ""
 
-#: src/Core.php:307
+#: src/Core.php:308
 msgid "Add Product"
 msgstr ""
 
-#: src/Core.php:310
+#: src/Core.php:311
 msgid "Media Library"
 msgstr ""
 
-#: src/Core.php:311
+#: src/Core.php:312
 msgid "View Website"
 msgstr ""
 
-#: src/Core.php:318
+#: src/Core.php:319
 msgid "General website help"
 msgstr ""
 
-#: src/Core.php:319
+#: src/Core.php:320
 msgid "Content change"
 msgstr ""
 
-#: src/Core.php:320
+#: src/Core.php:321
 msgid "WooCommerce / orders"
 msgstr ""
 
-#: src/Core.php:321
+#: src/Core.php:322
 msgid "Technical issue"
 msgstr ""
 
-#: src/Core.php:322
+#: src/Core.php:323
 msgid "Urgent issue"
 msgstr ""
 
-#: src/Dashboard.php:117
+#: src/Dashboard.php:118
 msgid "Log out"
 msgstr ""
 
-#: src/Dashboard.php:124
+#: src/Dashboard.php:228
 msgid "Site snapshot"
 msgstr ""
 
-#: src/Dashboard.php:130
-msgid "Common tasks"
+#: src/Dashboard.php:232
+msgid "Sales overview"
 msgstr ""
 
-#: src/Dashboard.php:136
+#: src/Dashboard.php:236
 msgid "Recent orders"
 msgstr ""
 
-#: src/Dashboard.php:143
+#: src/Dashboard.php:240
 msgid "Recently edited content"
 msgstr ""
 
-#: src/Dashboard.php:154
-msgid "Client instructions"
-msgstr ""
-
-#: src/Dashboard.php:175
-msgid "Published pages"
-msgstr ""
-
-#: src/Dashboard.php:177
-msgid "Media files"
-msgstr ""
-
-#: src/Dashboard.php:179
-msgid "Published products"
-msgstr ""
-
-#: src/Dashboard.php:181
-msgid "Processing orders"
-msgstr ""
-
-#: src/Dashboard.php:218
-msgid "No snapshot items are available for this user role."
-msgstr ""
-
-#: src/Dashboard.php:237
-msgid "No editable content is available for this user role."
+#: src/Dashboard.php:244
+msgid "Common tasks"
 msgstr ""
 
 #: src/Dashboard.php:252
+msgid "Client instructions"
+msgstr ""
+
+#: src/Dashboard.php:275
+msgid "Published pages"
+msgstr ""
+
+#: src/Dashboard.php:277
+msgid "Media files"
+msgstr ""
+
+#: src/Dashboard.php:279
+msgid "Published products"
+msgstr ""
+
+#: src/Dashboard.php:281
+msgid "Processing orders"
+msgstr ""
+
+#: src/Dashboard.php:321
+msgid "No snapshot items are available for this user role."
+msgstr ""
+
+#: src/Dashboard.php:340
+msgid "No editable content is available for this user role."
+msgstr ""
+
+#: src/Dashboard.php:355
 msgid "No recent content found."
 msgstr ""
 
-#: src/Dashboard.php:261
+#: src/Dashboard.php:364
 msgid "(no title)"
 msgstr ""
 
-#: src/Dashboard.php:270
+#: src/Dashboard.php:373
 msgid "Website Shortcuts"
 msgstr ""
 
-#: src/Dashboard.php:271
+#: src/Dashboard.php:374
 msgid "Agency Support"
 msgstr ""
 
-#: src/Dashboard.php:273
+#: src/Dashboard.php:376
 msgid "Store Snapshot"
 msgstr ""
 
-#: src/Dashboard.php:347
+#: src/Dashboard.php:450
 msgid "Tip:"
 msgstr ""
 
-#: src/Dashboard.php:347
+#: src/Dashboard.php:450
 msgid "When in doubt, use the support button before changing technical settings."
 msgstr ""
 
-#: src/Dashboard.php:366
+#: src/Dashboard.php:469
 msgid "Need help with the website? Send a request with page context so your agency can respond faster."
 msgstr ""
 
-#: src/Dashboard.php:369
+#: src/Dashboard.php:472
 msgid "Open Support Portal"
 msgstr ""
 
-#: src/Dashboard.php:376
+#: src/Dashboard.php:479
 msgid "WooCommerce is active, but order helper functions are not available."
 msgstr ""
 
-#: src/Dashboard.php:381
+#: src/Dashboard.php:484
 msgid "No recent orders found."
 msgstr ""
 
 #. translators: %s: order number.
-#: src/Dashboard.php:387
+#: src/Dashboard.php:490
 #, php-format
 msgid "Order #%s"
+msgstr ""
+
+#: src/Dashboard.php:529
+#: src/Dashboard.php:622
+msgid "This month"
+msgstr ""
+
+#: src/Dashboard.php:530
+#: src/Dashboard.php:597
+msgid "Last 7 days"
+msgstr ""
+
+#: src/Dashboard.php:531
+#: src/Dashboard.php:598
+msgid "Last 30 days"
+msgstr ""
+
+#: src/Dashboard.php:532
+#: src/Dashboard.php:599
+msgid "Last 90 days"
+msgstr ""
+
+#: src/Dashboard.php:533
+#: src/Dashboard.php:611
+msgid "This year"
+msgstr ""
+
+#: src/Dashboard.php:584
+msgid "Previous period"
+msgstr ""
+
+#: src/Dashboard.php:597
+msgid "Previous 7 days"
+msgstr ""
+
+#: src/Dashboard.php:598
+msgid "Previous 30 days"
+msgstr ""
+
+#: src/Dashboard.php:599
+msgid "Previous 90 days"
+msgstr ""
+
+#: src/Dashboard.php:611
+msgid "Last year"
+msgstr ""
+
+#: src/Dashboard.php:622
+msgid "Last month"
+msgstr ""
+
+#: src/Dashboard.php:716
+msgid "No sales in this period yet."
+msgstr ""
+
+#: src/Dashboard.php:726
+msgid "Date range"
+msgstr ""
+
+#: src/Dashboard.php:741
+msgid "To"
+msgstr ""
+
+#. translators: 1: current period label, 2: current total, 3: comparison period label, 4: comparison total.
+#: src/Dashboard.php:805
+#, php-format
+msgid "Cumulative sales. %1$s: %2$s. %3$s: %4$s."
 msgstr ""
 
 #: src/Licence.php:83

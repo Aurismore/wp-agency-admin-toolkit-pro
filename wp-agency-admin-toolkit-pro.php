@@ -3,7 +3,7 @@
  * Plugin Name: WP Admin Toolkit Pro
  * Plugin URI: https://lubies.shop
  * Description: Pro white-label WordPress and WooCommerce admin dashboard, support ticket and cleanup toolkit for agencies. Sold and supported through WP Client Tools, created by Lubies Factory.
- * Version: 1.31
+ * Version: 1.32
  * Author: Lubies Factory
  * Author URI: https://lubies.nl
  * Text Domain: wp-agency-admin-toolkit
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('AAT_VERSION', '1.31');
+define('AAT_VERSION', '1.32');
 define('AAT_FILE', __FILE__);
 define('AAT_PATH', plugin_dir_path(__FILE__));
 define('AAT_URL', plugin_dir_url(__FILE__));

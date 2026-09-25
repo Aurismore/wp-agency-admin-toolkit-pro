@@ -232,3 +232,37 @@
     .aat-licence-actions{justify-content:flex-start;margin-top:12px}
     .aat-licence-key-input{width:100%;max-width:100%}
 }
+
+/* v1.32 client-dashboard sales chart + layout emphasis */
+.aat-order-date{color:#6b7280}
+.aat-sales-panel .aat-sales-range{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin:4px 0 16px}
+.aat-sales-presets{display:flex;flex-wrap:wrap;gap:6px}
+.aat-range-btn{display:inline-flex;align-items:center;text-decoration:none;background:#f7f8fb;border:1px solid #dcdcde;border-radius:999px;padding:5px 12px;font-weight:700;font-size:12px;color:#17243B;line-height:1.6}
+.aat-range-btn:hover,.aat-range-btn:focus{background:#eef0f5;color:#17243B}
+.aat-range-btn.aat-range-active{background:#17243B;border-color:#17243B;color:#fff}
+.aat-sales-custom{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.aat-sales-custom input[type=date]{border-radius:8px;border:1px solid #c3c4c7;min-height:32px;padding:3px 8px;font-size:13px}
+.aat-sales-custom-sep{color:#6b7280}
+.aat-sales-summary{display:flex;flex-wrap:wrap;align-items:center;gap:22px;margin:0 0 12px}
+.aat-sales-figure{display:flex;align-items:center;gap:8px}
+.aat-sales-figure-label{color:#4b5565;font-weight:600;font-size:13px}
+.aat-sales-figure strong{font-size:20px;color:#17243B}
+.aat-sales-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#17243B}
+.aat-sales-dot-muted{background:#b8c0cc}
+.aat-sales-delta{margin-left:auto;font-weight:800;font-size:13px;border-radius:999px;padding:4px 12px;background:#eceef2;color:#4b5565}
+.aat-sales-delta-up{background:#e2f6e9;color:#067647}
+.aat-sales-delta-down{background:#fdecec;color:#b42318}
+.aat-sales-chart{position:relative;width:100%}
+.aat-sales-svg{display:block;width:100%;height:auto;overflow:visible;touch-action:none}
+.aat-sales-axis{stroke:#e5e7eb;stroke-width:1}
+.aat-sales-empty{color:#6b7280;background:#f7f8fb;border:1px solid #eceef2;border-radius:12px;padding:22px;text-align:center;margin:6px 0 0}
+.aat-sales-tooltip{position:absolute;top:0;z-index:5;pointer-events:none;background:#fff;border:1px solid #dcdcde;border-radius:10px;box-shadow:0 12px 30px rgba(23,36,59,.16);padding:8px 12px;font-size:12px;line-height:1.5;white-space:nowrap;color:#17243B}
+.aat-tip-day{display:block;font-weight:800;margin-bottom:3px}
+.aat-tip-row{display:flex;align-items:center;gap:6px}
+.aat-tip-dot{display:inline-block;width:9px;height:9px;border-radius:50%}
+.aat-tip-row strong{font-weight:800}
+@media(max-width:782px){
+    .aat-sales-panel .aat-sales-range{flex-direction:column;align-items:stretch}
+    .aat-sales-delta{margin-left:0}
+    .aat-sales-figure strong{font-size:18px}
+}

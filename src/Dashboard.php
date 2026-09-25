@@ -99,8 +99,9 @@ class Dashboard {
         if (!$this->custom_dashboard_enabled()) wp_die(esc_html__('Access denied.', 'wp-agency-admin-toolkit'));
         $s = $this->core->settings;
         $site_logo = Core::get_site_logo_url();
+        $layout = $this->current_layout();
         ?>
-        <div class="wrap aat-client-dashboard aat-dashboard-layout-<?php echo esc_attr($s['dashboard_layout'] ?? 'balanced'); ?>">
+        <div class="wrap aat-client-dashboard aat-dashboard-layout-<?php echo esc_attr($layout); ?>">
             <div class="aat-hero-card">
                 <div class="aat-hero-main">
                     <div class="aat-site-branding">
@@ -119,54 +120,153 @@ class Dashboard {
             </div>
 
             <div class="aat-dashboard-grid">
-                <?php if (!empty($s['enable_site_snapshot'])): ?>
-                    <section class="aat-panel aat-site-snapshot-panel">
-                        <h2><?php esc_html_e('Site snapshot', 'wp-agency-admin-toolkit'); ?></h2>
-                        <?php $this->site_snapshot_widget(); ?>
-                    </section>
-                <?php endif; ?>
-
-                <section class="aat-panel aat-panel-wide">
-                    <h2><?php esc_html_e('Common tasks', 'wp-agency-admin-toolkit'); ?></h2>
-                    <?php $this->shortcuts_widget(); ?>
-                </section>
-
-                <?php if (class_exists('WooCommerce')): ?>
-                    <section class="aat-panel">
-                        <h2><?php esc_html_e('Recent orders', 'wp-agency-admin-toolkit'); ?></h2>
-                        <?php $this->woocommerce_widget(); ?>
-                    </section>
-                <?php endif; ?>
-
-                <?php if (!empty($s['enable_recent_content'])): ?>
-                    <section class="aat-panel">
-                        <h2><?php esc_html_e('Recently edited content', 'wp-agency-admin-toolkit'); ?></h2>
-                        <?php $this->recent_content_widget(); ?>
-                    </section>
-                <?php endif; ?>
-
-                <section class="aat-panel">
-                    <h2><?php esc_html_e('Support', 'wp-agency-admin-toolkit'); ?></h2>
-                    <?php $this->support_widget(); ?>
-                </section>
-
-                <section class="aat-panel aat-panel-wide">
-                    <h2><?php esc_html_e('Client instructions', 'wp-agency-admin-toolkit'); ?></h2>
-                    <div class="aat-instruction-grid">
-                        <?php foreach ((array)$s['instructions'] as $key => $message): ?>
-                            <?php if (!$message) continue; ?>
-                            <div class="aat-instruction-card">
-                                <h3><?php echo esc_html(Core::instruction_heading($key)); ?></h3>
-                                <p><?php echo wp_kses_post(Core::translated_instruction($key, $message)); ?></p>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </section>
+                <?php foreach ($this->layout_panels($layout) as $panel_key => $wide) {
+                    $this->render_grid_panel($panel_key, (bool) $wide, $s, $layout);
+                } ?>
             </div>
 
             <?php $this->render_dashboard_footer_card(); ?>
         </div>
         <?php
+    }
+
+    /**
+     * Resolve the configured dashboard layout to a known value.
+     */
+    private function current_layout() {
+        $layout = sanitize_key($this->core->settings['dashboard_layout'] ?? 'balanced');
+        return in_array($layout, ['balanced', 'commerce', 'content'], true) ? $layout : 'balanced';
+    }
+
+    /**
+     * Ordered panels per layout, keyed by panel slug with a "wide" (full-width)
+     * flag. This is what actually makes the three layouts differ: which panels
+     * appear, in what order, and at what emphasis — not just CSS width.
+     *
+     *  - balanced: an even client-handover overview (this is the historic order).
+     *  - commerce: store-first — KPIs and the sales chart lead; content drops down.
+     *  - content: editing-first — recently edited content leads; store panels are
+     *    omitted even when WooCommerce is active.
+     */
+    private function layout_panels($layout) {
+        switch ($layout) {
+            case 'commerce':
+                return [
+                    'snapshot' => true,
+                    'sales_chart' => true,
+                    'orders' => false,
+                    'content' => false,
+                    'tasks' => false,
+                    'support' => false,
+                    'instructions' => true,
+                ];
+            case 'content':
+                return [
+                    'content' => true,
+                    'tasks' => true,
+                    'snapshot' => false,
+                    'support' => false,
+                    'instructions' => true,
+                ];
+            case 'balanced':
+            default:
+                return [
+                    'snapshot' => false,
+                    'tasks' => true,
+                    'orders' => false,
+                    'content' => false,
+                    'support' => false,
+                    'instructions' => true,
+                ];
+        }
+    }
+
+    /**
+     * Which snapshot metrics a layout emphasises: the store layout shows
+     * commerce counts, the content layout shows content counts, balanced
+     * shows everything.
+     */
+    private function snapshot_context($layout) {
+        if ($layout === 'commerce') return 'commerce';
+        if ($layout === 'content') return 'content';
+        return 'full';
+    }
+
+    private function panel_available($key, $s) {
+        switch ($key) {
+            case 'snapshot':
+                return !empty($s['enable_site_snapshot']);
+            case 'sales_chart':
+                return $this->sales_chart_enabled();
+            case 'orders':
+                return class_exists('WooCommerce') && function_exists('wc_get_orders');
+            case 'content':
+                return !empty($s['enable_recent_content']);
+            case 'tasks':
+            case 'support':
+            case 'instructions':
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Render one grid panel (heading + widget) if it is available for the
+     * current user and settings.
+     */
+    private function render_grid_panel($key, $wide, $s, $layout) {
+        if (!$this->panel_available($key, $s)) return;
+
+        $classes = ['aat-panel'];
+        if ($wide) $classes[] = 'aat-panel-wide';
+        if ($key === 'snapshot') $classes[] = 'aat-site-snapshot-panel';
+        if ($key === 'sales_chart') $classes[] = 'aat-sales-panel';
+
+        echo '<section class="' . esc_attr(implode(' ', $classes)) . '">';
+        switch ($key) {
+            case 'snapshot':
+                echo '<h2>' . esc_html__('Site snapshot', 'wp-agency-admin-toolkit') . '</h2>';
+                $this->site_snapshot_widget($this->snapshot_context($layout));
+                break;
+            case 'sales_chart':
+                echo '<h2>' . esc_html__('Sales overview', 'wp-agency-admin-toolkit') . '</h2>';
+                $this->sales_chart_widget();
+                break;
+            case 'orders':
+                echo '<h2>' . esc_html__('Recent orders', 'wp-agency-admin-toolkit') . '</h2>';
+                $this->woocommerce_widget();
+                break;
+            case 'content':
+                echo '<h2>' . esc_html__('Recently edited content', 'wp-agency-admin-toolkit') . '</h2>';
+                $this->recent_content_widget();
+                break;
+            case 'tasks':
+                echo '<h2>' . esc_html__('Common tasks', 'wp-agency-admin-toolkit') . '</h2>';
+                $this->shortcuts_widget();
+                break;
+            case 'support':
+                echo '<h2>' . esc_html__('Support', 'wp-agency-admin-toolkit') . '</h2>';
+                $this->support_widget();
+                break;
+            case 'instructions':
+                echo '<h2>' . esc_html__('Client instructions', 'wp-agency-admin-toolkit') . '</h2>';
+                $this->instructions_widget();
+                break;
+        }
+        echo '</section>';
+    }
+
+    private function instructions_widget() {
+        $s = $this->core->settings;
+        echo '<div class="aat-instruction-grid">';
+        foreach ((array) $s['instructions'] as $key => $message) {
+            if (!$message) continue;
+            echo '<div class="aat-instruction-card">';
+            echo '<h3>' . esc_html(Core::instruction_heading($key)) . '</h3>';
+            echo '<p>' . wp_kses_post(Core::translated_instruction($key, $message)) . '</p>';
+            echo '</div>';
+        }
+        echo '</div>';
     }
 
     private function snapshot_label($key) {
@@ -189,25 +289,28 @@ class Dashboard {
      * dashboard loads are cheap even on busy sites. Only label *keys* are
      * cached; labels resolve per request so they follow the viewer's language.
      */
-    public function site_snapshot_widget() {
-        $cache_key = 'aat_site_snapshot_' . get_current_user_id();
+    public function site_snapshot_widget($context = 'full') {
+        $context = in_array($context, ['full', 'commerce', 'content'], true) ? $context : 'full';
+        $show_content = ($context === 'full' || $context === 'content');
+        $show_commerce = ($context === 'full' || $context === 'commerce');
+        $cache_key = 'aat_site_snapshot_' . $context . '_' . get_current_user_id();
         $items = get_transient($cache_key);
 
         if ($items === false) {
             $items = [];
-            if (current_user_can('edit_pages')) {
+            if ($show_content && current_user_can('edit_pages')) {
                 $counts = wp_count_posts('page');
                 $items[] = ['label_key' => 'pages', 'value' => isset($counts->publish) ? (int) $counts->publish : 0, 'url' => admin_url('edit.php?post_type=page')];
             }
-            if (current_user_can('upload_files')) {
+            if ($show_content && current_user_can('upload_files')) {
                 $media_counts = wp_count_posts('attachment');
                 $items[] = ['label_key' => 'media', 'value' => isset($media_counts->inherit) ? (int) $media_counts->inherit : 0, 'url' => admin_url('upload.php')];
             }
-            if (class_exists('WooCommerce') && current_user_can('edit_products')) {
+            if ($show_commerce && class_exists('WooCommerce') && current_user_can('edit_products')) {
                 $product_counts = wp_count_posts('product');
                 $items[] = ['label_key' => 'products', 'value' => isset($product_counts->publish) ? (int) $product_counts->publish : 0, 'url' => admin_url('edit.php?post_type=product')];
             }
-            if (function_exists('wc_orders_count') && current_user_can('edit_shop_orders')) {
+            if ($show_commerce && function_exists('wc_orders_count') && current_user_can('edit_shop_orders')) {
                 $processing_count = wc_orders_count('processing');
                 $items[] = ['label_key' => 'orders', 'value' => (int) $processing_count, 'url' => admin_url('admin.php?page=wc-orders&status=wc-processing')];
             }
@@ -385,9 +488,338 @@ class Dashboard {
         foreach ($orders as $order) {
             /* translators: %s: order number. */
             $order_label = sprintf(__('Order #%s', 'wp-agency-admin-toolkit'), $order->get_order_number());
-            echo '<li><a href="' . esc_url($order->get_edit_order_url()) . '">' . esc_html($order_label) . '</a> · ' . esc_html(wc_get_order_status_name($order->get_status())) . ' · ' . wp_kses_post($order->get_formatted_order_total()) . '</li>';
+            $created = $order->get_date_created();
+            $date = $created ? wc_format_datetime($created, get_option('date_format')) : '';
+            echo '<li><a href="' . esc_url($order->get_edit_order_url()) . '">' . esc_html($order_label) . '</a> · ' . esc_html(wc_get_order_status_name($order->get_status())) . ' · ' . wp_kses_post($order->get_formatted_order_total());
+            if ($date !== '') {
+                echo ' · <span class="aat-order-date">' . esc_html($date) . '</span>';
+            }
+            echo '</li>';
         }
         echo '</ul>';
+    }
+
+    /* ---------------------------------------------------------------------
+     * Sales chart (WooCommerce-focused layout)
+     * ------------------------------------------------------------------- */
+
+    /**
+     * The sales chart shows revenue, so it is limited to WooCommerce being
+     * active, the toggle being on, and the viewer having the WooCommerce
+     * reporting capability. Client roles without that capability simply do
+     * not see the panel.
+     */
+    private function sales_chart_enabled() {
+        return !empty($this->core->settings['enable_sales_chart'])
+            && class_exists('WooCommerce')
+            && function_exists('wc_get_orders')
+            && current_user_can('view_woocommerce_reports');
+    }
+
+    private function format_price($amount) {
+        $amount = (float) $amount;
+        if (function_exists('wc_price')) {
+            return trim(html_entity_decode(wp_strip_all_tags(wc_price($amount)), ENT_QUOTES, 'UTF-8'));
+        }
+        return number_format_i18n($amount, 2);
+    }
+
+    private function range_presets() {
+        return [
+            'this_month' => __('This month', 'wp-agency-admin-toolkit'),
+            'last_7' => __('Last 7 days', 'wp-agency-admin-toolkit'),
+            'last_30' => __('Last 30 days', 'wp-agency-admin-toolkit'),
+            'last_90' => __('Last 90 days', 'wp-agency-admin-toolkit'),
+            'this_year' => __('This year', 'wp-agency-admin-toolkit'),
+        ];
+    }
+
+    private function parse_range_date($value, \DateTimeZone $tz) {
+        $value = trim((string) $value);
+        if ($value === '') return null;
+        $d = \DateTimeImmutable::createFromFormat('!Y-m-d', $value, $tz);
+        $errors = \DateTimeImmutable::getLastErrors();
+        if (!$d || ($errors && (!empty($errors['warning_count']) || !empty($errors['error_count'])))) {
+            return null;
+        }
+        $year = (int) $d->format('Y');
+        if ($year < 2000 || $year > 2100) return null;
+        return $d;
+    }
+
+    private function format_date_range(\DateTimeInterface $start, \DateTimeInterface $end) {
+        $fmt = get_option('date_format') ?: 'Y-m-d';
+        return wp_date($fmt, $start->getTimestamp()) . ' – ' . wp_date($fmt, $end->getTimestamp());
+    }
+
+    /**
+     * Resolve the selected date range and its comparison period from the
+     * request. Presets each define their own comparison; a custom from/to
+     * range is compared to the immediately preceding period of equal length.
+     */
+    private function current_sales_range() {
+        $tz = wp_timezone();
+        $today = new \DateTimeImmutable('now', $tz);
+        $today_start = $today->setTime(0, 0, 0);
+        $today_end = $today->setTime(23, 59, 59);
+
+        $from = isset($_GET['aat_from']) ? $this->parse_range_date(sanitize_text_field(wp_unslash($_GET['aat_from'])), $tz) : null;
+        $to = isset($_GET['aat_to']) ? $this->parse_range_date(sanitize_text_field(wp_unslash($_GET['aat_to'])), $tz) : null;
+        if ($from && $to) {
+            if ($to < $from) { $swap = $from; $from = $to; $to = $swap; }
+            $start = $from->setTime(0, 0, 0);
+            $end = $to->setTime(23, 59, 59);
+            $days = (int) $start->diff($end->setTime(0, 0, 0))->days + 1;
+            if ($days > 366) {
+                $start = $end->setTime(0, 0, 0)->modify('-365 days');
+                $days = 366;
+            }
+            $cmp_end = $start->modify('-1 day')->setTime(23, 59, 59);
+            $cmp_start = $cmp_end->setTime(0, 0, 0)->modify('-' . ($days - 1) . ' days');
+            return [
+                'preset' => 'custom',
+                'start' => $start, 'end' => $end,
+                'cmp_start' => $cmp_start, 'cmp_end' => $cmp_end,
+                'label' => $this->format_date_range($start, $end),
+                'cmp_label' => __('Previous period', 'wp-agency-admin-toolkit'),
+            ];
+        }
+
+        $preset = isset($_GET['aat_range']) ? sanitize_key(wp_unslash($_GET['aat_range'])) : 'this_month';
+
+        if (in_array($preset, ['last_7', 'last_30', 'last_90'], true)) {
+            $n = ['last_7' => 7, 'last_30' => 30, 'last_90' => 90][$preset];
+            $start = $today_start->modify('-' . ($n - 1) . ' days');
+            $end = $today_end;
+            $cmp_end = $start->modify('-1 day')->setTime(23, 59, 59);
+            $cmp_start = $cmp_end->setTime(0, 0, 0)->modify('-' . ($n - 1) . ' days');
+            $labels = [
+                'last_7' => [__('Last 7 days', 'wp-agency-admin-toolkit'), __('Previous 7 days', 'wp-agency-admin-toolkit')],
+                'last_30' => [__('Last 30 days', 'wp-agency-admin-toolkit'), __('Previous 30 days', 'wp-agency-admin-toolkit')],
+                'last_90' => [__('Last 90 days', 'wp-agency-admin-toolkit'), __('Previous 90 days', 'wp-agency-admin-toolkit')],
+            ];
+            return ['preset' => $preset, 'start' => $start, 'end' => $end, 'cmp_start' => $cmp_start, 'cmp_end' => $cmp_end, 'label' => $labels[$preset][0], 'cmp_label' => $labels[$preset][1]];
+        }
+
+        if ($preset === 'this_year') {
+            $year = (int) $today->format('Y');
+            $start = new \DateTimeImmutable($year . '-01-01 00:00:00', $tz);
+            $end = $today_end;
+            $days_in = (int) $start->diff($today_start)->days;
+            $cmp_start = new \DateTimeImmutable(($year - 1) . '-01-01 00:00:00', $tz);
+            $cmp_end = $cmp_start->modify('+' . $days_in . ' days')->setTime(23, 59, 59);
+            return ['preset' => 'this_year', 'start' => $start, 'end' => $end, 'cmp_start' => $cmp_start, 'cmp_end' => $cmp_end, 'label' => __('This year', 'wp-agency-admin-toolkit'), 'cmp_label' => __('Last year', 'wp-agency-admin-toolkit')];
+        }
+
+        // Default: this month vs last month, aligned by day of month.
+        $start = new \DateTimeImmutable($today->format('Y-m') . '-01 00:00:00', $tz);
+        $end = $today_end;
+        $prev_month_start = $start->modify('-1 month');
+        $prev_month_last = $start->modify('-1 day')->setTime(23, 59, 59);
+        $day_index = (int) $start->diff($today_start)->days;
+        $cmp_end = $prev_month_start->modify('+' . $day_index . ' days')->setTime(23, 59, 59);
+        if ($cmp_end > $prev_month_last) $cmp_end = $prev_month_last;
+        return ['preset' => 'this_month', 'start' => $start, 'end' => $end, 'cmp_start' => $prev_month_start, 'cmp_end' => $cmp_end, 'label' => __('This month', 'wp-agency-admin-toolkit'), 'cmp_label' => __('Last month', 'wp-agency-admin-toolkit')];
+    }
+
+    /**
+     * Daily net sales (order total minus refunds) for processing + completed
+     * orders between two instants, bucketed by site-timezone day. The order
+     * query is the expensive part, so the per-day map is cached for 30 minutes
+     * per date span.
+     */
+    private function sales_series(\DateTimeInterface $start, \DateTimeInterface $end) {
+        $tz = wp_timezone();
+        $dates = [];
+        $cursor = new \DateTimeImmutable($start->format('Y-m-d') . ' 00:00:00', $tz);
+        $last = new \DateTimeImmutable($end->format('Y-m-d') . ' 00:00:00', $tz);
+        while ($cursor <= $last) {
+            $dates[] = $cursor->format('Y-m-d');
+            $cursor = $cursor->modify('+1 day');
+        }
+
+        $cache_key = 'aat_sales_' . md5($start->format('Y-m-d') . '|' . $end->format('Y-m-d'));
+        $cached = get_transient($cache_key);
+        if (is_array($cached) && isset($cached['map']) && is_array($cached['map'])) {
+            $map = $cached['map'];
+        } else {
+            $map = array_fill_keys($dates, 0.0);
+            $orders = wc_get_orders([
+                'status' => ['wc-processing', 'wc-completed'],
+                'date_created' => $start->getTimestamp() . '...' . $end->getTimestamp(),
+                'limit' => -1,
+                'return' => 'objects',
+                'type' => 'shop_order',
+            ]);
+            foreach ((array) $orders as $order) {
+                if (!is_object($order) || !method_exists($order, 'get_date_created')) continue;
+                $created = $order->get_date_created();
+                if (!$created) continue;
+                $key = wp_date('Y-m-d', $created->getTimestamp());
+                if (!array_key_exists($key, $map)) continue;
+                $net = (float) $order->get_total() - (float) $order->get_total_refunded();
+                if ($net < 0) $net = 0.0;
+                $map[$key] += $net;
+            }
+            set_transient($cache_key, ['map' => $map], 30 * MINUTE_IN_SECONDS);
+        }
+
+        $totals = [];
+        $sum = 0.0;
+        foreach ($dates as $dkey) {
+            $v = isset($map[$dkey]) ? (float) $map[$dkey] : 0.0;
+            $totals[] = $v;
+            $sum += $v;
+        }
+        return ['dates' => $dates, 'totals' => $totals, 'sum' => $sum];
+    }
+
+    private function cumulative($arr) {
+        $out = [];
+        $run = 0.0;
+        foreach ($arr as $v) {
+            $run += (float) $v;
+            $out[] = $run;
+        }
+        return $out;
+    }
+
+    public function sales_chart_widget() {
+        if (!$this->sales_chart_enabled()) return;
+
+        $range = $this->current_sales_range();
+        $cur = $this->sales_series($range['start'], $range['end']);
+        $cmp = $this->sales_series($range['cmp_start'], $range['cmp_end']);
+        $cur_cum = $this->cumulative($cur['totals']);
+        $cmp_cum = $this->cumulative($cmp['totals']);
+
+        $primary = sanitize_hex_color($this->core->settings['admin_primary_color'] ?? '') ?: '#17243B';
+        $muted = '#b8c0cc';
+
+        $this->render_sales_range_picker($range);
+
+        $delta = null;
+        if ($cmp['sum'] > 0) {
+            $delta = (($cur['sum'] - $cmp['sum']) / $cmp['sum']) * 100;
+        }
+        echo '<div class="aat-sales-summary">';
+        echo '<div class="aat-sales-figure"><span class="aat-sales-dot" style="background:' . esc_attr($primary) . '"></span><span class="aat-sales-figure-label">' . esc_html($range['label']) . '</span><strong>' . esc_html($this->format_price($cur['sum'])) . '</strong></div>';
+        echo '<div class="aat-sales-figure"><span class="aat-sales-dot aat-sales-dot-muted"></span><span class="aat-sales-figure-label">' . esc_html($range['cmp_label']) . '</span><strong>' . esc_html($this->format_price($cmp['sum'])) . '</strong></div>';
+        if ($delta !== null) {
+            $dir = $delta > 0.05 ? 'up' : ($delta < -0.05 ? 'down' : 'flat');
+            $arrow = $dir === 'up' ? '▲' : ($dir === 'down' ? '▼' : '▬');
+            echo '<div class="aat-sales-delta aat-sales-delta-' . esc_attr($dir) . '">' . esc_html($arrow . ' ' . number_format_i18n(abs($delta), 1) . '%') . '</div>';
+        }
+        echo '</div>';
+
+        if ($cur['sum'] <= 0 && $cmp['sum'] <= 0) {
+            echo '<p class="aat-sales-empty">' . esc_html__('No sales in this period yet.', 'wp-agency-admin-toolkit') . '</p>';
+            return;
+        }
+
+        $this->render_sales_svg($range, $cur, $cmp, $cur_cum, $cmp_cum, $primary, $muted);
+    }
+
+    private function render_sales_range_picker($range) {
+        $base = $this->client_dashboard_url();
+        echo '<div class="aat-sales-range">';
+        echo '<div class="aat-sales-presets" role="group" aria-label="' . esc_attr__('Date range', 'wp-agency-admin-toolkit') . '">';
+        foreach ($this->range_presets() as $key => $label) {
+            $url = add_query_arg(['aat_range' => $key], $base);
+            $cls = ($range['preset'] === $key) ? 'aat-range-btn aat-range-active' : 'aat-range-btn';
+            echo '<a class="' . esc_attr($cls) . '" href="' . esc_url($url) . '">' . esc_html($label) . '</a>';
+        }
+        echo '</div>';
+
+        $from_val = ($range['preset'] === 'custom') ? $range['start']->format('Y-m-d') : '';
+        $to_val = ($range['preset'] === 'custom') ? $range['end']->format('Y-m-d') : '';
+        echo '<form class="aat-sales-custom" method="get" action="' . esc_url(admin_url('admin.php')) . '">';
+        echo '<input type="hidden" name="page" value="wp-agency-admin-dashboard">';
+        echo '<label class="screen-reader-text" for="aat-sales-from">' . esc_html__('From', 'wp-agency-admin-toolkit') . '</label>';
+        echo '<input type="date" id="aat-sales-from" name="aat_from" value="' . esc_attr($from_val) . '">';
+        echo '<span class="aat-sales-custom-sep" aria-hidden="true">–</span>';
+        echo '<label class="screen-reader-text" for="aat-sales-to">' . esc_html__('To', 'wp-agency-admin-toolkit') . '</label>';
+        echo '<input type="date" id="aat-sales-to" name="aat_to" value="' . esc_attr($to_val) . '">';
+        echo '<button type="submit" class="button">' . esc_html__('Apply', 'wp-agency-admin-toolkit') . '</button>';
+        echo '</form>';
+        echo '</div>';
+    }
+
+    private function render_sales_svg($range, $cur, $cmp, $cur_cum, $cmp_cum, $primary, $muted) {
+        $count_cur = count($cur_cum);
+        $count_cmp = count($cmp_cum);
+        $n = max($count_cur, $count_cmp, 2);
+
+        $maxY = 1.0;
+        foreach ($cur_cum as $v) { if ($v > $maxY) $maxY = $v; }
+        foreach ($cmp_cum as $v) { if ($v > $maxY) $maxY = $v; }
+
+        $W = 1000; $H = 340; $padT = 18; $padB = 22;
+        $plotH = $H - $padT - $padB;
+        $baseline = $padT + $plotH;
+        $xi = function ($i) use ($n, $W) { return $n <= 1 ? 0.0 : round(($i / ($n - 1)) * $W, 2); };
+        $yv = function ($v) use ($padT, $plotH, $maxY) { return round($padT + (1 - ($v / $maxY)) * $plotH, 2); };
+
+        $cur_points = [];
+        $y_cur = [];
+        foreach ($cur_cum as $i => $v) { $cur_points[] = $xi($i) . ',' . $yv($v); $y_cur[] = $yv($v); }
+        $cmp_points = [];
+        $y_cmp = [];
+        foreach ($cmp_cum as $i => $v) { $cmp_points[] = $xi($i) . ',' . $yv($v); $y_cmp[] = $yv($v); }
+        $cur_line = implode(' ', $cur_points);
+        $cmp_line = implode(' ', $cmp_points);
+
+        $area = '';
+        if ($count_cur > 0) {
+            $area = 'M ' . $xi(0) . ',' . round($baseline, 2)
+                . ' L ' . implode(' L ', $cur_points)
+                . ' L ' . $xi($count_cur - 1) . ',' . round($baseline, 2) . ' Z';
+        }
+
+        $tz = wp_timezone();
+        $labels = [];
+        $xs = [];
+        for ($i = 0; $i < $n; $i++) {
+            $xs[] = $xi($i);
+            $ds = isset($cur['dates'][$i]) ? $cur['dates'][$i] : (isset($cmp['dates'][$i]) ? $cmp['dates'][$i] : '');
+            if ($ds !== '') {
+                $ts = (new \DateTimeImmutable($ds . ' 12:00:00', $tz))->getTimestamp();
+                $labels[] = wp_date('j M', $ts);
+            } else {
+                $labels[] = '#' . ($i + 1);
+            }
+        }
+        $cur_fmt = array_map([$this, 'format_price'], $cur_cum);
+        $cmp_fmt = array_map([$this, 'format_price'], $cmp_cum);
+
+        $data = wp_json_encode([
+            'n' => $n, 'W' => $W, 'baseline' => round($baseline, 2), 'padT' => $padT,
+            'x' => $xs, 'yCur' => $y_cur, 'yCmp' => $y_cmp,
+            'labels' => $labels, 'cur' => $cur_fmt, 'cmp' => $cmp_fmt,
+            'curLabel' => $range['label'], 'cmpLabel' => $range['cmp_label'],
+            'cCur' => $primary, 'cCmp' => $muted,
+        ]);
+
+        $aria = sprintf(
+            /* translators: 1: current period label, 2: current total, 3: comparison period label, 4: comparison total. */
+            __('Cumulative sales. %1$s: %2$s. %3$s: %4$s.', 'wp-agency-admin-toolkit'),
+            $range['label'], $this->format_price($cur['sum']), $range['cmp_label'], $this->format_price($cmp['sum'])
+        );
+
+        echo '<div class="aat-sales-chart" data-series="' . esc_attr($data) . '">';
+        echo '<svg viewBox="0 0 ' . $W . ' ' . $H . '" class="aat-sales-svg" role="img" aria-label="' . esc_attr($aria) . '" preserveAspectRatio="xMidYMid meet">';
+        echo '<line x1="0" y1="' . round($baseline, 2) . '" x2="' . $W . '" y2="' . round($baseline, 2) . '" class="aat-sales-axis" />';
+        if ($area !== '') {
+            echo '<path d="' . esc_attr($area) . '" fill="' . esc_attr($primary) . '" fill-opacity="0.08" stroke="none" />';
+        }
+        echo '<polyline points="' . esc_attr($cmp_line) . '" fill="none" stroke="' . esc_attr($muted) . '" stroke-width="3" stroke-dasharray="7 7" stroke-linecap="round" stroke-linejoin="round" />';
+        echo '<polyline points="' . esc_attr($cur_line) . '" fill="none" stroke="' . esc_attr($primary) . '" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />';
+        echo '<line class="aat-sales-hairline" x1="0" y1="' . $padT . '" x2="0" y2="' . round($baseline, 2) . '" stroke="' . esc_attr($muted) . '" stroke-width="1.5" style="display:none" />';
+        echo '<circle class="aat-sales-marker aat-sales-marker-cmp" r="6" fill="' . esc_attr($muted) . '" style="display:none" />';
+        echo '<circle class="aat-sales-marker aat-sales-marker-cur" r="6" fill="' . esc_attr($primary) . '" style="display:none" />';
+        echo '</svg>';
+        echo '<div class="aat-sales-tooltip" role="status" style="display:none"></div>';
+        echo '</div>';
     }
 
     public function contextual_instructions() {

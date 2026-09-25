@@ -89,6 +89,7 @@ class Core {
             'enable_custom_dashboard' => 1,
             'enable_site_snapshot' => 1,
             'enable_recent_content' => 1,
+            'enable_sales_chart' => 1,
             'enable_login_branding' => 1,
             'enable_admin_branding' => 1,
             'enable_wp_admin_branding' => 1,
@@ -376,7 +377,7 @@ class Core {
     public static function screen_fields() {
         return [
             'general' => ['agency_name', 'agency_url', 'logout_redirect_url', 'affected_roles'],
-            'dashboard' => ['enable_custom_dashboard', 'enable_dashboard_widgets', 'enable_site_snapshot', 'enable_recent_content', 'dashboard_title', 'dashboard_layout', 'welcome_message', 'instructions', 'shortcuts'],
+            'dashboard' => ['enable_custom_dashboard', 'enable_dashboard_widgets', 'enable_site_snapshot', 'enable_recent_content', 'enable_sales_chart', 'dashboard_title', 'dashboard_layout', 'welcome_message', 'instructions', 'shortcuts'],
             'branding' => ['enable_login_branding', 'enable_admin_branding', 'enable_wp_admin_branding', 'admin_branding_for_agency', 'login_hide_aux_links', 'login_logo_url', 'login_background_image_url', 'login_background_image_id', 'login_background_overlay', 'login_background', 'login_button_color', 'login_accent_color', 'admin_footer_text', 'admin_primary_color', 'admin_accent_color', 'admin_background_color'],
             'cleanup' => ['client_safe_mode', 'hide_notices', 'disable_admin_bar_for_clients', 'hidden_menu', 'restricted_pages'],
             'support' => ['support_email', 'support_url', 'support_webhook', 'support_button_label', 'enable_floating_support', 'enable_support_log', 'support_categories', 'support_webhook_template'],
@@ -423,7 +424,7 @@ class Core {
         $clean['licence_activations_used'] = absint($input['licence_activations_used'] ?? 0);
         $clean['licence_activation_limit'] = absint($input['licence_activation_limit'] ?? 0);
         $clean['logout_redirect_url'] = esc_url_raw($input['logout_redirect_url'] ?? $defaults['logout_redirect_url'], ['http', 'https']);
-        foreach (['client_safe_mode','hide_notices','enable_floating_support','enable_dashboard_widgets','enable_custom_dashboard','enable_site_snapshot','enable_recent_content','enable_login_branding','enable_admin_branding','enable_wp_admin_branding','admin_branding_for_agency','disable_admin_bar_for_clients','hide_elementor_settings','hide_rank_math_overview','hide_myparcel_overview','hide_yoast_overview','hide_wp_rocket_notices','hide_litespeed_notices','hide_acf_admin_from_clients','enable_support_log','login_hide_aux_links'] as $key) {
+        foreach (['client_safe_mode','hide_notices','enable_floating_support','enable_dashboard_widgets','enable_custom_dashboard','enable_site_snapshot','enable_recent_content','enable_sales_chart','enable_login_branding','enable_admin_branding','enable_wp_admin_branding','admin_branding_for_agency','disable_admin_bar_for_clients','hide_elementor_settings','hide_rank_math_overview','hide_myparcel_overview','hide_yoast_overview','hide_wp_rocket_notices','hide_litespeed_notices','hide_acf_admin_from_clients','enable_support_log','login_hide_aux_links'] as $key) {
             $clean[$key] = !empty($input[$key]) ? 1 : 0;
         }
         $clean['affected_roles'] = array_values(array_filter(array_map('sanitize_key', (array)($input['affected_roles'] ?? []))));

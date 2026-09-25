@@ -2,17 +2,17 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Admin Toolkit Pro 1.30\n"
+"Project-Id-Version: WP Admin Toolkit Pro 1.32\n"
 "Report-Msgid-Bugs-To: https://wpclienttools.com\n"
-"Last-Translator: Creative Digital Media <paul@creativedigitalmedia.nl>\n"
-"Language-Team: Dutch <paul@creativedigitalmedia.nl>\n"
+"Last-Translator: Lubies Factory <info@lubies.nl>\n"
+"Language-Team: Dutch <info@lubies.nl>\n"
 "Language: nl_NL\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-24T12:11:23+00:00\n"
-"PO-Revision-Date: 2026-07-24 12:00+0000\n"
+"POT-Creation-Date: 2026-09-25T16:16:22+00:00\n"
+"PO-Revision-Date: 2026-09-25 12:00+0000\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wp-agency-admin-toolkit\n"
 
@@ -48,7 +48,7 @@ msgid "General"
 msgstr "Algemeen"
 
 #: src/Admin.php:45
-#: src/Core.php:258
+#: src/Core.php:259
 msgid "Client Dashboard"
 msgstr "Klantdashboard"
 
@@ -62,7 +62,7 @@ msgid "Cleanup"
 msgstr "Opschonen"
 
 #: src/Admin.php:48
-#: src/Dashboard.php:149
+#: src/Dashboard.php:248
 msgid "Support"
 msgstr "Support"
 
@@ -103,22 +103,22 @@ msgid "Could not send request."
 msgstr "Verzoek kon niet worden verzonden."
 
 #: src/Admin.php:109
-#: src/Admin/DashboardPage.php:63
+#: src/Admin/DashboardPage.php:65
 msgid "Label"
 msgstr "Label"
 
 #: src/Admin.php:110
-#: src/Admin/DashboardPage.php:64
+#: src/Admin/DashboardPage.php:66
 msgid "URL"
 msgstr "URL"
 
 #: src/Admin.php:111
-#: src/Admin/DashboardPage.php:65
+#: src/Admin/DashboardPage.php:67
 msgid "Capability"
 msgstr "Capability"
 
 #: src/Admin.php:112
-#: src/Admin/DashboardPage.php:66
+#: src/Admin/DashboardPage.php:68
 msgid "Remove shortcut"
 msgstr "Snelkoppeling verwijderen"
 
@@ -384,55 +384,63 @@ msgstr "Website-overzichtskaart op het klantdashboard"
 msgid "Client dashboard recent content card"
 msgstr "Kaart met recente content op het klantdashboard"
 
-#: src/Admin/DashboardPage.php:37
+#: src/Admin/DashboardPage.php:33
+msgid "Store sales chart (WooCommerce-focused layout)"
+msgstr "Verkoopgrafiek van de winkel (WooCommerce-gerichte indeling)"
+
+#: src/Admin/DashboardPage.php:35
+msgid "The sales chart appears on the WooCommerce-focused layout only, and only for users who can view WooCommerce reports."
+msgstr "De verkoopgrafiek verschijnt alleen in de WooCommerce-gerichte indeling en alleen voor gebruikers die WooCommerce-rapporten mogen bekijken."
+
+#: src/Admin/DashboardPage.php:39
 msgid "Dashboard content"
 msgstr "Dashboardinhoud"
 
-#: src/Admin/DashboardPage.php:38
+#: src/Admin/DashboardPage.php:40
 msgid "Dashboard title"
 msgstr "Dashboardtitel"
 
-#: src/Admin/DashboardPage.php:39
+#: src/Admin/DashboardPage.php:41
 msgid "Dashboard layout"
 msgstr "Dashboardindeling"
 
-#: src/Admin/DashboardPage.php:41
+#: src/Admin/DashboardPage.php:43
 msgid "Balanced client handover"
 msgstr "Gebalanceerde klantoverdracht"
 
-#: src/Admin/DashboardPage.php:42
+#: src/Admin/DashboardPage.php:44
 msgid "WooCommerce focused"
 msgstr "Gericht op WooCommerce"
 
-#: src/Admin/DashboardPage.php:43
+#: src/Admin/DashboardPage.php:45
 msgid "Content editing focused"
 msgstr "Gericht op contentbewerking"
 
-#: src/Admin/DashboardPage.php:46
-msgid "This changes the visual emphasis of the client dashboard without changing permissions or restrictions."
-msgstr "Dit verandert de visuele nadruk van het klantdashboard zonder rechten of beperkingen te wijzigen."
+#: src/Admin/DashboardPage.php:48
+msgid "Each layout changes which panels appear, their order and emphasis. Balanced shows an even overview. WooCommerce focused leads with store metrics and a sales chart, moving content lower. Content editing focused leads with recently edited content and hides the store panels. Permissions and restrictions are never changed."
+msgstr "Elke indeling bepaalt welke panelen verschijnen, hun volgorde en nadruk. Gebalanceerd toont een evenwichtig overzicht. WooCommerce-gericht begint met winkelcijfers en een verkoopgrafiek en plaatst content lager. Contentbewerking-gericht begint met recent bewerkte content en verbergt de winkelpanelen. Rechten en beperkingen worden nooit gewijzigd."
 
-#: src/Admin/DashboardPage.php:47
+#: src/Admin/DashboardPage.php:49
 msgid "Welcome message"
 msgstr "Welkomstbericht"
 
-#: src/Admin/DashboardPage.php:48
+#: src/Admin/DashboardPage.php:50
 msgid "Content you type here is shown exactly as written. Fields left at their shipped default translate automatically into each user's admin language."
 msgstr "Tekst die je hier typt wordt exact zo getoond. Velden die op de meegeleverde standaardwaarde staan, worden automatisch vertaald naar de beheertaal van elke gebruiker."
 
-#: src/Admin/DashboardPage.php:52
+#: src/Admin/DashboardPage.php:54
 msgid "Instruction boxes"
 msgstr "Instructieblokken"
 
-#: src/Admin/DashboardPage.php:59
+#: src/Admin/DashboardPage.php:61
 msgid "Dashboard shortcuts"
 msgstr "Dashboardsnelkoppelingen"
 
-#: src/Admin/DashboardPage.php:70
+#: src/Admin/DashboardPage.php:72
 msgid "Add shortcut"
 msgstr "Snelkoppeling toevoegen"
 
-#: src/Admin/DashboardPage.php:74
+#: src/Admin/DashboardPage.php:76
 msgid "Save dashboard settings"
 msgstr "Dashboardinstellingen opslaan"
 
@@ -794,6 +802,7 @@ msgid "Delete the selected tickets permanently?"
 msgstr "De geselecteerde tickets permanent verwijderen?"
 
 #: src/Admin/TicketsPage.php:114
+#: src/Dashboard.php:743
 msgid "Apply"
 msgstr "Toepassen"
 
@@ -808,6 +817,7 @@ msgid "Subject"
 msgstr "Onderwerp"
 
 #: src/Admin/TicketsPage.php:122
+#: src/Dashboard.php:738
 msgid "From"
 msgstr "Van"
 
@@ -1107,190 +1117,261 @@ msgstr "Dit onderdeel kan de website, betalingen, het thema, plugins of winkelin
 msgid "Return to dashboard"
 msgstr "Terug naar dashboard"
 
-#: src/Core.php:203
+#: src/Core.php:204
 msgid "Client Admin"
 msgstr "Klantbeheerder"
 
-#: src/Core.php:259
+#: src/Core.php:260
 msgid "Welcome. Use the shortcuts below for the most common website tasks. If anything feels unclear, request support before changing technical settings."
 msgstr "Welkom. Gebruik de snelkoppelingen hieronder voor de meest voorkomende websitetaken. Is iets onduidelijk? Vraag dan support aan voordat je technische instellingen wijzigt."
 
-#: src/Core.php:260
+#: src/Core.php:261
 msgid "Managed with care by your website team"
 msgstr "Met zorg beheerd door je websiteteam"
 
-#: src/Core.php:261
+#: src/Core.php:262
 #: src/Support.php:58
 msgid "Request Support"
 msgstr "Support aanvragen"
 
-#: src/Core.php:283
+#: src/Core.php:284
 msgid "Use Products to add or update store items. Avoid changing tax, payment, shipping or advanced WooCommerce settings unless your agency asks you to."
 msgstr "Gebruik Producten om winkelartikelen toe te voegen of bij te werken. Wijzig geen btw-, betaal-, verzend- of geavanceerde WooCommerce-instellingen, tenzij je bureau daarom vraagt."
 
-#: src/Core.php:284
+#: src/Core.php:285
 msgid "Use Orders to review, process and update customer purchases. Always double-check payment and shipping details before changing an order status."
 msgstr "Gebruik Bestellingen om aankopen van klanten te bekijken, te verwerken en bij te werken. Controleer betaal- en verzendgegevens altijd goed voordat je een bestelstatus wijzigt."
 
-#: src/Core.php:285
+#: src/Core.php:286
 msgid "Use Pages to edit website content. Make small changes and preview before publishing."
 msgstr "Gebruik Pagina's om websitecontent te bewerken. Maak kleine wijzigingen en bekijk een voorbeeld voordat je publiceert."
 
-#: src/Core.php:286
+#: src/Core.php:287
 msgid "Upload clear, compressed images. Avoid very large files because they can slow down the website."
 msgstr "Upload duidelijke, gecomprimeerde afbeeldingen. Vermijd erg grote bestanden, want die kunnen de website vertragen."
 
-#: src/Core.php:296
-#: src/Core.php:308
+#: src/Core.php:297
+#: src/Core.php:309
 msgid "Products"
 msgstr "Producten"
 
-#: src/Core.php:297
+#: src/Core.php:298
 msgid "Orders"
 msgstr "Bestellingen"
 
-#: src/Core.php:298
-#: src/Core.php:309
+#: src/Core.php:299
+#: src/Core.php:310
 msgid "Pages"
 msgstr "Pagina's"
 
-#: src/Core.php:299
+#: src/Core.php:300
 msgid "Media"
 msgstr "Media"
 
-#: src/Core.php:306
+#: src/Core.php:307
 msgid "View Orders"
 msgstr "Bestellingen bekijken"
 
-#: src/Core.php:307
+#: src/Core.php:308
 msgid "Add Product"
 msgstr "Product toevoegen"
 
-#: src/Core.php:310
+#: src/Core.php:311
 msgid "Media Library"
 msgstr "Mediabibliotheek"
 
-#: src/Core.php:311
+#: src/Core.php:312
 msgid "View Website"
 msgstr "Website bekijken"
 
-#: src/Core.php:318
+#: src/Core.php:319
 msgid "General website help"
 msgstr "Algemene websitehulp"
 
-#: src/Core.php:319
+#: src/Core.php:320
 msgid "Content change"
 msgstr "Contentwijziging"
 
-#: src/Core.php:320
+#: src/Core.php:321
 msgid "WooCommerce / orders"
 msgstr "WooCommerce / bestellingen"
 
-#: src/Core.php:321
+#: src/Core.php:322
 msgid "Technical issue"
 msgstr "Technisch probleem"
 
-#: src/Core.php:322
+#: src/Core.php:323
 msgid "Urgent issue"
 msgstr "Urgent probleem"
 
-#: src/Dashboard.php:117
+#: src/Dashboard.php:118
 msgid "Log out"
 msgstr "Uitloggen"
 
-#: src/Dashboard.php:124
+#: src/Dashboard.php:228
 msgid "Site snapshot"
 msgstr "Website-overzicht"
 
-#: src/Dashboard.php:130
-msgid "Common tasks"
-msgstr "Veelvoorkomende taken"
+#: src/Dashboard.php:232
+msgid "Sales overview"
+msgstr "Verkoopoverzicht"
 
-#: src/Dashboard.php:136
+#: src/Dashboard.php:236
 msgid "Recent orders"
 msgstr "Recente bestellingen"
 
-#: src/Dashboard.php:143
+#: src/Dashboard.php:240
 msgid "Recently edited content"
 msgstr "Recent bewerkte content"
 
-#: src/Dashboard.php:154
+#: src/Dashboard.php:244
+msgid "Common tasks"
+msgstr "Veelvoorkomende taken"
+
+#: src/Dashboard.php:252
 msgid "Client instructions"
 msgstr "Instructies voor klanten"
 
-#: src/Dashboard.php:175
+#: src/Dashboard.php:275
 msgid "Published pages"
 msgstr "Gepubliceerde pagina's"
 
-#: src/Dashboard.php:177
+#: src/Dashboard.php:277
 msgid "Media files"
 msgstr "Mediabestanden"
 
-#: src/Dashboard.php:179
+#: src/Dashboard.php:279
 msgid "Published products"
 msgstr "Gepubliceerde producten"
 
-#: src/Dashboard.php:181
+#: src/Dashboard.php:281
 msgid "Processing orders"
 msgstr "Bestellingen in behandeling"
 
-#: src/Dashboard.php:218
+#: src/Dashboard.php:321
 msgid "No snapshot items are available for this user role."
 msgstr "Voor deze gebruikersrol zijn geen overzichtsitems beschikbaar."
 
-#: src/Dashboard.php:237
+#: src/Dashboard.php:340
 msgid "No editable content is available for this user role."
 msgstr "Voor deze gebruikersrol is geen bewerkbare content beschikbaar."
 
-#: src/Dashboard.php:252
+#: src/Dashboard.php:355
 msgid "No recent content found."
 msgstr "Geen recente content gevonden."
 
-#: src/Dashboard.php:261
+#: src/Dashboard.php:364
 msgid "(no title)"
 msgstr "(geen titel)"
 
-#: src/Dashboard.php:270
+#: src/Dashboard.php:373
 msgid "Website Shortcuts"
 msgstr "Websitesnelkoppelingen"
 
-#: src/Dashboard.php:271
+#: src/Dashboard.php:374
 msgid "Agency Support"
 msgstr "Bureausupport"
 
-#: src/Dashboard.php:273
+#: src/Dashboard.php:376
 msgid "Store Snapshot"
 msgstr "Winkeloverzicht"
 
-#: src/Dashboard.php:347
+#: src/Dashboard.php:450
 msgid "Tip:"
 msgstr "Tip:"
 
-#: src/Dashboard.php:347
+#: src/Dashboard.php:450
 msgid "When in doubt, use the support button before changing technical settings."
 msgstr "Gebruik bij twijfel de supportknop voordat je technische instellingen wijzigt."
 
-#: src/Dashboard.php:366
+#: src/Dashboard.php:469
 msgid "Need help with the website? Send a request with page context so your agency can respond faster."
 msgstr "Hulp nodig met de website? Verstuur een verzoek met paginacontext, zodat je bureau sneller kan reageren."
 
-#: src/Dashboard.php:369
+#: src/Dashboard.php:472
 msgid "Open Support Portal"
 msgstr "Supportportaal openen"
 
-#: src/Dashboard.php:376
+#: src/Dashboard.php:479
 msgid "WooCommerce is active, but order helper functions are not available."
 msgstr "WooCommerce is actief, maar de hulpfuncties voor bestellingen zijn niet beschikbaar."
 
-#: src/Dashboard.php:381
+#: src/Dashboard.php:484
 msgid "No recent orders found."
 msgstr "Geen recente bestellingen gevonden."
 
 #. translators: %s: order number.
-#: src/Dashboard.php:387
+#: src/Dashboard.php:490
 #, php-format
 msgid "Order #%s"
 msgstr "Bestelling #%s"
+
+#: src/Dashboard.php:529
+#: src/Dashboard.php:622
+msgid "This month"
+msgstr "Deze maand"
+
+#: src/Dashboard.php:530
+#: src/Dashboard.php:597
+msgid "Last 7 days"
+msgstr "Laatste 7 dagen"
+
+#: src/Dashboard.php:531
+#: src/Dashboard.php:598
+msgid "Last 30 days"
+msgstr "Laatste 30 dagen"
+
+#: src/Dashboard.php:532
+#: src/Dashboard.php:599
+msgid "Last 90 days"
+msgstr "Laatste 90 dagen"
+
+#: src/Dashboard.php:533
+#: src/Dashboard.php:611
+msgid "This year"
+msgstr "Dit jaar"
+
+#: src/Dashboard.php:584
+msgid "Previous period"
+msgstr "Vorige periode"
+
+#: src/Dashboard.php:597
+msgid "Previous 7 days"
+msgstr "Vorige 7 dagen"
+
+#: src/Dashboard.php:598
+msgid "Previous 30 days"
+msgstr "Vorige 30 dagen"
+
+#: src/Dashboard.php:599
+msgid "Previous 90 days"
+msgstr "Vorige 90 dagen"
+
+#: src/Dashboard.php:611
+msgid "Last year"
+msgstr "Vorig jaar"
+
+#: src/Dashboard.php:622
+msgid "Last month"
+msgstr "Vorige maand"
+
+#: src/Dashboard.php:716
+msgid "No sales in this period yet."
+msgstr "Nog geen verkopen in deze periode."
+
+#: src/Dashboard.php:726
+msgid "Date range"
+msgstr "Datumbereik"
+
+#: src/Dashboard.php:741
+msgid "To"
+msgstr "Tot"
+
+#. translators: 1: current period label, 2: current total, 3: comparison period label, 4: comparison total.
+#: src/Dashboard.php:805
+#, php-format
+msgid "Cumulative sales. %1$s: %2$s. %3$s: %4$s."
+msgstr "Cumulatieve verkopen. %1$s: %2$s. %3$s: %4$s."
 
 #: src/Licence.php:83
 msgid "Please enter a licence key."

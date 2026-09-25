@@ -30,7 +30,9 @@ class DashboardPage extends Page {
                     $this->checkbox($s, 'enable_dashboard_widgets', __('Fallback WordPress dashboard widgets', 'wp-agency-admin-toolkit'));
                     $this->checkbox($s, 'enable_site_snapshot', __('Client dashboard site snapshot card', 'wp-agency-admin-toolkit'));
                     $this->checkbox($s, 'enable_recent_content', __('Client dashboard recent content card', 'wp-agency-admin-toolkit'));
+                    $this->checkbox($s, 'enable_sales_chart', __('Store sales chart (WooCommerce-focused layout)', 'wp-agency-admin-toolkit'));
                     ?>
+                    <p class="description"><?php esc_html_e('The sales chart appears on the WooCommerce-focused layout only, and only for users who can view WooCommerce reports.', 'wp-agency-admin-toolkit'); ?></p>
                 </section>
 
                 <section class="aat-card">
@@ -43,7 +45,7 @@ class DashboardPage extends Page {
                             <option value="content" <?php selected($s['dashboard_layout'], 'content'); ?>><?php esc_html_e('Content editing focused', 'wp-agency-admin-toolkit'); ?></option>
                         </select>
                     </label>
-                    <p class="description"><?php esc_html_e('This changes the visual emphasis of the client dashboard without changing permissions or restrictions.', 'wp-agency-admin-toolkit'); ?></p>
+                    <p class="description"><?php esc_html_e('Each layout changes which panels appear, their order and emphasis. Balanced shows an even overview. WooCommerce focused leads with store metrics and a sales chart, moving content lower. Content editing focused leads with recently edited content and hides the store panels. Permissions and restrictions are never changed.', 'wp-agency-admin-toolkit'); ?></p>
                     <label><?php esc_html_e('Welcome message', 'wp-agency-admin-toolkit'); ?> <textarea name="<?php echo $opt; ?>[welcome_message]" rows="4"><?php echo esc_textarea($s['welcome_message']); ?></textarea></label>
                     <p class="description"><?php esc_html_e('Content you type here is shown exactly as written. Fields left at their shipped default translate automatically into each user\'s admin language.', 'wp-agency-admin-toolkit'); ?></p>
                 </section>
