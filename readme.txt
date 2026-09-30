@@ -4,7 +4,7 @@ Tags: admin, dashboard, agency, woocommerce, client dashboard, white label
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.32
+Stable tag: 1.33
 License: GPLv2 or later
 
 White-label WordPress and WooCommerce admin cleanup toolkit for agencies. Distributed through WP Client Tools and created by Lubies Factory.
@@ -43,6 +43,9 @@ This product is distributed and supported through WP Client Tools. The plugin is
 * Fully translation-ready: every screen follows each admin user's own profile language, with Dutch (nl_NL) included
 
 == Changelog ==
+
+= 1.33 =
+* **Fixed a critical error in the client dashboard's Recent orders card after a refund was issued.** The card's order query did not restrict the order type, so a refund record (`WC_Order_Refund`) could be returned as a recent "order". Rendering it called `get_edit_order_url()`, which exists on `WC_Order` but not on refunds, throwing a fatal error that showed "There has been a critical error on this website" in place of the orders list. The query is now limited to `shop_order`, and the loop defensively skips any row that is not a full order object, so a stray refund (or any other type) can no longer take down the dashboard.
 
 = 1.32 =
 * **The three client dashboard layouts now genuinely differ** in which panels appear, their order and emphasis — previously the selector only changed two minor CSS rules. Balanced keeps the even client-handover overview. WooCommerce focused leads with store metrics and the new sales chart, with recent orders and content moved lower. Content editing focused leads with recently edited content and hides the store panels even when WooCommerce is active.

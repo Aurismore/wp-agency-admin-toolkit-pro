@@ -479,13 +479,29 @@ class Dashboard {
             echo '<p>' . esc_html__('WooCommerce is active, but order helper functions are not available.', 'wp-agency-admin-toolkit') . '</p>';
             return;
         }
-        $orders = wc_get_orders(['limit' => 5, 'orderby' => 'date', 'order' => 'DESC', 'return' => 'objects']);
+        $orders = wc_get_orders([
+            'limit' => 5,
+            'orderby' => 'date',
+            'order' => 'DESC',
+            'return' => 'objects',
+            // Restrict to real orders. Without this a refund (WC_Order_Refund)
+            // can surface as a recent "order"; it extends WC_Abstract_Order and
+            // does not implement get_edit_order_url(), so rendering it below
+            // would fatal the whole dashboard ("critical error").
+            'type' => 'shop_order',
+        ]);
         if (empty($orders)) {
             echo '<p>' . esc_html__('No recent orders found.', 'wp-agency-admin-toolkit') . '</p>';
             return;
         }
         echo '<ul class="aat-order-list">';
         foreach ($orders as $order) {
+            // Defensive: skip anything that is not a full order object (e.g. a
+            // refund slipping through a filter) so one bad row can never take
+            // down the dashboard.
+            if (!is_object($order) || !method_exists($order, 'get_edit_order_url')) {
+                continue;
+            }
             /* translators: %s: order number. */
             $order_label = sprintf(__('Order #%s', 'wp-agency-admin-toolkit'), $order->get_order_number());
             $created = $order->get_date_created();
