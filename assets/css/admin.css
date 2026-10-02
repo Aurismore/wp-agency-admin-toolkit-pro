@@ -266,3 +266,7 @@
     .aat-sales-delta{margin-left:0}
     .aat-sales-figure strong{font-size:18px}
 }
+
+/* v1.34 recent-orders refund row */
+.aat-order-list .aat-order-refund{color:#6b7280}
+.aat-order-refunded{font-weight:700;color:#b42318}

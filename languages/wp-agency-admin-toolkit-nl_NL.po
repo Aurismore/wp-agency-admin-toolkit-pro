@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Admin Toolkit Pro 1.32\n"
+"Project-Id-Version: WP Admin Toolkit Pro 1.34\n"
 "Report-Msgid-Bugs-To: https://wpclienttools.com\n"
 "Last-Translator: Lubies Factory <info@lubies.nl>\n"
 "Language-Team: Dutch <info@lubies.nl>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-25T16:16:22+00:00\n"
+"POT-Creation-Date: 2026-10-02T10:15:50+00:00\n"
 "PO-Revision-Date: 2026-09-25 12:00+0000\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wp-agency-admin-toolkit\n"
@@ -802,7 +802,7 @@ msgid "Delete the selected tickets permanently?"
 msgstr "De geselecteerde tickets permanent verwijderen?"
 
 #: src/Admin/TicketsPage.php:114
-#: src/Dashboard.php:743
+#: src/Dashboard.php:855
 msgid "Apply"
 msgstr "Toepassen"
 
@@ -817,7 +817,7 @@ msgid "Subject"
 msgstr "Onderwerp"
 
 #: src/Admin/TicketsPage.php:122
-#: src/Dashboard.php:738
+#: src/Dashboard.php:850
 msgid "From"
 msgstr "Van"
 
@@ -1232,143 +1232,154 @@ msgstr "Veelvoorkomende taken"
 msgid "Client instructions"
 msgstr "Instructies voor klanten"
 
-#: src/Dashboard.php:275
+#: src/Dashboard.php:279
 msgid "Published pages"
 msgstr "Gepubliceerde pagina's"
 
-#: src/Dashboard.php:277
+#: src/Dashboard.php:281
 msgid "Media files"
 msgstr "Mediabestanden"
 
-#: src/Dashboard.php:279
+#: src/Dashboard.php:283
 msgid "Published products"
 msgstr "Gepubliceerde producten"
 
-#: src/Dashboard.php:281
+#: src/Dashboard.php:285
 msgid "Processing orders"
 msgstr "Bestellingen in behandeling"
 
-#: src/Dashboard.php:321
+#: src/Dashboard.php:325
 msgid "No snapshot items are available for this user role."
 msgstr "Voor deze gebruikersrol zijn geen overzichtsitems beschikbaar."
 
-#: src/Dashboard.php:340
+#: src/Dashboard.php:344
 msgid "No editable content is available for this user role."
 msgstr "Voor deze gebruikersrol is geen bewerkbare content beschikbaar."
 
-#: src/Dashboard.php:355
+#: src/Dashboard.php:359
 msgid "No recent content found."
 msgstr "Geen recente content gevonden."
 
-#: src/Dashboard.php:364
+#. translators: %s: first name of the person who last edited the content.
+#: src/Dashboard.php:373
+#, php-format
+msgid "by %s"
+msgstr "door %s"
+
+#: src/Dashboard.php:375
 msgid "(no title)"
 msgstr "(geen titel)"
 
-#: src/Dashboard.php:373
+#: src/Dashboard.php:404
 msgid "Website Shortcuts"
 msgstr "Websitesnelkoppelingen"
 
-#: src/Dashboard.php:374
+#: src/Dashboard.php:405
 msgid "Agency Support"
 msgstr "Bureausupport"
 
-#: src/Dashboard.php:376
+#: src/Dashboard.php:407
 msgid "Store Snapshot"
 msgstr "Winkeloverzicht"
 
-#: src/Dashboard.php:450
+#: src/Dashboard.php:481
 msgid "Tip:"
 msgstr "Tip:"
 
-#: src/Dashboard.php:450
+#: src/Dashboard.php:481
 msgid "When in doubt, use the support button before changing technical settings."
 msgstr "Gebruik bij twijfel de supportknop voordat je technische instellingen wijzigt."
 
-#: src/Dashboard.php:469
+#: src/Dashboard.php:535
 msgid "Need help with the website? Send a request with page context so your agency can respond faster."
 msgstr "Hulp nodig met de website? Verstuur een verzoek met paginacontext, zodat je bureau sneller kan reageren."
 
-#: src/Dashboard.php:472
+#: src/Dashboard.php:538
 msgid "Open Support Portal"
 msgstr "Supportportaal openen"
 
-#: src/Dashboard.php:479
+#: src/Dashboard.php:545
 msgid "WooCommerce is active, but order helper functions are not available."
 msgstr "WooCommerce is actief, maar de hulpfuncties voor bestellingen zijn niet beschikbaar."
 
-#: src/Dashboard.php:484
+#: src/Dashboard.php:561
 msgid "No recent orders found."
 msgstr "Geen recente bestellingen gevonden."
 
 #. translators: %s: order number.
-#: src/Dashboard.php:490
+#: src/Dashboard.php:574
+#: src/Dashboard.php:595
 #, php-format
 msgid "Order #%s"
 msgstr "Bestelling #%s"
 
-#: src/Dashboard.php:529
-#: src/Dashboard.php:622
+#: src/Dashboard.php:607
+msgid "Refunded"
+msgstr "Terugbetaald"
+
+#: src/Dashboard.php:641
+#: src/Dashboard.php:734
 msgid "This month"
 msgstr "Deze maand"
 
-#: src/Dashboard.php:530
-#: src/Dashboard.php:597
+#: src/Dashboard.php:642
+#: src/Dashboard.php:709
 msgid "Last 7 days"
 msgstr "Laatste 7 dagen"
 
-#: src/Dashboard.php:531
-#: src/Dashboard.php:598
+#: src/Dashboard.php:643
+#: src/Dashboard.php:710
 msgid "Last 30 days"
 msgstr "Laatste 30 dagen"
 
-#: src/Dashboard.php:532
-#: src/Dashboard.php:599
+#: src/Dashboard.php:644
+#: src/Dashboard.php:711
 msgid "Last 90 days"
 msgstr "Laatste 90 dagen"
 
-#: src/Dashboard.php:533
-#: src/Dashboard.php:611
+#: src/Dashboard.php:645
+#: src/Dashboard.php:723
 msgid "This year"
 msgstr "Dit jaar"
 
-#: src/Dashboard.php:584
+#: src/Dashboard.php:696
 msgid "Previous period"
 msgstr "Vorige periode"
 
-#: src/Dashboard.php:597
+#: src/Dashboard.php:709
 msgid "Previous 7 days"
 msgstr "Vorige 7 dagen"
 
-#: src/Dashboard.php:598
+#: src/Dashboard.php:710
 msgid "Previous 30 days"
 msgstr "Vorige 30 dagen"
 
-#: src/Dashboard.php:599
+#: src/Dashboard.php:711
 msgid "Previous 90 days"
 msgstr "Vorige 90 dagen"
 
-#: src/Dashboard.php:611
+#: src/Dashboard.php:723
 msgid "Last year"
 msgstr "Vorig jaar"
 
-#: src/Dashboard.php:622
+#: src/Dashboard.php:734
 msgid "Last month"
 msgstr "Vorige maand"
 
-#: src/Dashboard.php:716
+#: src/Dashboard.php:828
 msgid "No sales in this period yet."
 msgstr "Nog geen verkopen in deze periode."
 
-#: src/Dashboard.php:726
+#: src/Dashboard.php:838
 msgid "Date range"
 msgstr "Datumbereik"
 
-#: src/Dashboard.php:741
+#: src/Dashboard.php:853
 msgid "To"
 msgstr "Tot"
 
 #. translators: 1: current period label, 2: current total, 3: comparison period label, 4: comparison total.
-#: src/Dashboard.php:805
+#: src/Dashboard.php:917
 #, php-format
 msgid "Cumulative sales. %1$s: %2$s. %3$s: %4$s."
 msgstr "Cumulatieve verkopen. %1$s: %2$s. %3$s: %4$s."

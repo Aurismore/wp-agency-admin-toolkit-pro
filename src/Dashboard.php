@@ -258,9 +258,13 @@ class Dashboard {
 
     private function instructions_widget() {
         $s = $this->core->settings;
+        // The Products / Orders instruction boxes are WooCommerce-specific; do
+        // not show them on sites without WooCommerce.
+        $wc_instruction_keys = ['products', 'orders'];
         echo '<div class="aat-instruction-grid">';
         foreach ((array) $s['instructions'] as $key => $message) {
             if (!$message) continue;
+            if (in_array($key, $wc_instruction_keys, true) && !$this->woocommerce_active()) continue;
             echo '<div class="aat-instruction-card">';
             echo '<h3>' . esc_html(Core::instruction_heading($key)) . '</h3>';
             echo '<p>' . wp_kses_post(Core::translated_instruction($key, $message)) . '</p>';
@@ -361,10 +365,37 @@ class Dashboard {
             $query->the_post();
             $edit_url = get_edit_post_link(get_the_ID(), 'raw');
             $type = get_post_type_object(get_post_type());
-            echo '<li><a href="' . esc_url($edit_url) . '">' . esc_html(get_the_title() ?: __('(no title)', 'wp-agency-admin-toolkit')) . '</a><span>' . esc_html($type ? $type->labels->singular_name : get_post_type()) . ' · ' . esc_html(get_the_modified_date()) . '</span></li>';
+            $type_label = $type ? $type->labels->singular_name : get_post_type();
+            $meta = $type_label . ' · ' . get_the_modified_date();
+            $first = $this->editor_first_name(get_the_ID(), (int) get_the_author_meta('ID'));
+            if ($first !== '') {
+                /* translators: %s: first name of the person who last edited the content. */
+                $meta .= ' · ' . sprintf(__('by %s', 'wp-agency-admin-toolkit'), $first);
+            }
+            echo '<li><a href="' . esc_url($edit_url) . '">' . esc_html(get_the_title() ?: __('(no title)', 'wp-agency-admin-toolkit')) . '</a><span>' . esc_html($meta) . '</span></li>';
         }
         wp_reset_postdata();
         echo '</ul>';
+    }
+
+    /**
+     * First name of the person who last edited a post. WordPress records the
+     * last editor in the `_edit_last` post meta; fall back to the author when
+     * that is missing, and to the first word of the display name when the user
+     * has no first name set.
+     */
+    private function editor_first_name($post_id, $fallback_author_id) {
+        $uid = (int) get_post_meta($post_id, '_edit_last', true);
+        if (!$uid) $uid = (int) $fallback_author_id;
+        if (!$uid) return '';
+        $first = trim((string) get_the_author_meta('first_name', $uid));
+        if ($first === '') {
+            $display = trim((string) get_the_author_meta('display_name', $uid));
+            if ($display === '') return '';
+            $parts = preg_split('/\s+/', $display);
+            $first = $parts[0];
+        }
+        return $first;
     }
 
     public function widgets() {
@@ -455,13 +486,48 @@ class Dashboard {
         foreach ((array)$this->core->settings['shortcuts'] as $shortcut) {
             $label = isset($shortcut['label']) ? trim((string) $shortcut['label']) : '';
             if (strcasecmp($label, 'Log Out') === 0 || strcasecmp($label, 'Logout') === 0) continue;
-            $cap = !empty($shortcut['cap']) ? $shortcut['cap'] : 'read';
-            if (!current_user_can($cap)) continue;
+            if (!$this->shortcut_available($shortcut)) continue;
             $url = $shortcut['url'];
             if (strpos($url, 'http') !== 0) $url = admin_url($url);
             echo '<a class="aat-shortcut" href="' . esc_url($url) . '">' . esc_html(Core::translated_shortcut_label($label)) . '</a>';
         }
         echo '</div>';
+    }
+
+    private function woocommerce_active() {
+        return class_exists('WooCommerce');
+    }
+
+    /**
+     * Whether a dashboard shortcut should be shown to the current user.
+     *
+     * Beyond the capability check, this hides shortcuts whose target is not
+     * actually available: WooCommerce shortcuts (the product post type, wc-*
+     * admin pages, or a WooCommerce capability) are hidden when WooCommerce is
+     * inactive, and any shortcut pointing at a post-type admin screen is hidden
+     * when that post type does not exist. This stops product/order links (and
+     * the capabilities the plugin's own client role is granted) from surfacing
+     * on sites without WooCommerce.
+     */
+    private function shortcut_available($shortcut) {
+        $cap = !empty($shortcut['cap']) ? $shortcut['cap'] : 'read';
+        if (!current_user_can($cap)) return false;
+
+        $url = (string) ($shortcut['url'] ?? '');
+        $wc_caps = ['edit_products', 'read_product', 'publish_products', 'edit_shop_orders', 'read_shop_order', 'manage_woocommerce', 'view_woocommerce_reports', 'edit_shop_coupons'];
+        $targets_wc = (stripos($url, 'post_type=product') !== false)
+            || (stripos($url, 'page=wc-') !== false)
+            || (stripos($url, 'wc-orders') !== false)
+            || (stripos($url, 'page=woocommerce') !== false)
+            || in_array($cap, $wc_caps, true);
+        if ($targets_wc && !$this->woocommerce_active()) return false;
+
+        // A shortcut to a specific post-type admin screen needs that post type
+        // to exist (covers product and any custom type).
+        if (preg_match('/[?&]post_type=([a-z0-9_\-]+)/i', $url, $m) && !post_type_exists($m[1])) {
+            return false;
+        }
+        return true;
     }
 
     public function support_widget() {
@@ -484,11 +550,12 @@ class Dashboard {
             'orderby' => 'date',
             'order' => 'DESC',
             'return' => 'objects',
-            // Restrict to real orders. Without this a refund (WC_Order_Refund)
-            // can surface as a recent "order"; it extends WC_Abstract_Order and
-            // does not implement get_edit_order_url(), so rendering it below
-            // would fatal the whole dashboard ("critical error").
-            'type' => 'shop_order',
+            // Include refunds so they can be shown as their own "Refunded" row.
+            // A refund is a WC_Order_Refund (no get_edit_order_url) and is
+            // rendered through its parent order below; a real order renders
+            // normally. Anything else is skipped defensively so one unexpected
+            // row can never fatal the dashboard.
+            'type' => ['shop_order', 'shop_order_refund'],
         ]);
         if (empty($orders)) {
             echo '<p>' . esc_html__('No recent orders found.', 'wp-agency-admin-toolkit') . '</p>';
@@ -496,12 +563,13 @@ class Dashboard {
         }
         echo '<ul class="aat-order-list">';
         foreach ($orders as $order) {
-            // Defensive: skip anything that is not a full order object (e.g. a
-            // refund slipping through a filter) so one bad row can never take
-            // down the dashboard.
-            if (!is_object($order) || !method_exists($order, 'get_edit_order_url')) {
+            if (!is_object($order)) continue;
+            if ($order instanceof \WC_Order_Refund) {
+                $this->render_refund_row($order);
                 continue;
             }
+            // Defensive: only render objects that are full orders.
+            if (!method_exists($order, 'get_edit_order_url')) continue;
             /* translators: %s: order number. */
             $order_label = sprintf(__('Order #%s', 'wp-agency-admin-toolkit'), $order->get_order_number());
             $created = $order->get_date_created();
@@ -513,6 +581,34 @@ class Dashboard {
             echo '</li>';
         }
         echo '</ul>';
+    }
+
+    /**
+     * Render a refund as a "Refunded" row, attributed to and linked to its
+     * parent order. The amount is shown as a negative total.
+     */
+    private function render_refund_row($refund) {
+        $parent_id = (int) $refund->get_parent_id();
+        $parent = $parent_id && function_exists('wc_get_order') ? wc_get_order($parent_id) : false;
+        $number = ($parent && method_exists($parent, 'get_order_number')) ? $parent->get_order_number() : $refund->get_id();
+        /* translators: %s: order number. */
+        $label = sprintf(__('Order #%s', 'wp-agency-admin-toolkit'), $number);
+        $edit = ($parent && method_exists($parent, 'get_edit_order_url')) ? $parent->get_edit_order_url() : '';
+        $created = $refund->get_date_created();
+        $date = $created ? wc_format_datetime($created, get_option('date_format')) : '';
+        $amount = $this->format_price(-1 * abs((float) $refund->get_amount()));
+
+        echo '<li class="aat-order-refund">';
+        if ($edit !== '') {
+            echo '<a href="' . esc_url($edit) . '">' . esc_html($label) . '</a>';
+        } else {
+            echo '<span>' . esc_html($label) . '</span>';
+        }
+        echo ' · <span class="aat-order-refunded">' . esc_html__('Refunded', 'wp-agency-admin-toolkit') . '</span> · ' . esc_html($amount);
+        if ($date !== '') {
+            echo ' · <span class="aat-order-date">' . esc_html($date) . '</span>';
+        }
+        echo '</li>';
     }
 
     /* ---------------------------------------------------------------------

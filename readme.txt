@@ -4,7 +4,7 @@ Tags: admin, dashboard, agency, woocommerce, client dashboard, white label
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.33
+Stable tag: 1.34
 License: GPLv2 or later
 
 White-label WordPress and WooCommerce admin cleanup toolkit for agencies. Distributed through WP Client Tools and created by Lubies Factory.
@@ -43,6 +43,12 @@ This product is distributed and supported through WP Client Tools. The plugin is
 * Fully translation-ready: every screen follows each admin user's own profile language, with Dutch (nl_NL) included
 
 == Changelog ==
+
+= 1.34 =
+* **Recent orders now shows refunds as their own "Refunded" row**, attributed to and linked to the parent order, with the refund amount shown as a negative total. (Refunds were hidden since 1.33; they are now surfaced explicitly.)
+* **Recently edited content now shows who last edited each item** (first name only). It uses WordPress's recorded last editor, falling back to the author, and to the first word of the display name when no first name is set.
+* **Product and order links no longer appear on sites without WooCommerce.** The plugin's client role is granted WooCommerce capabilities at activation, so capability checks alone let the Products/Orders shortcuts and instruction boxes show even with WooCommerce uninstalled, linking to pages that don't exist. Shortcuts that target the product post type, wc-* admin pages or a WooCommerce capability are now hidden when WooCommerce is inactive, any shortcut pointing at a non-existent post type is hidden, and the Products/Orders instruction boxes are hidden without WooCommerce. (The site snapshot and recent-content product entries were already gated.)
+* New interface strings are translated, including Dutch (nl_NL).
 
 = 1.33 =
 * **Fixed a critical error in the client dashboard's Recent orders card after a refund was issued.** The card's order query did not restrict the order type, so a refund record (`WC_Order_Refund`) could be returned as a recent "order". Rendering it called `get_edit_order_url()`, which exists on `WC_Order` but not on refunds, throwing a fatal error that showed "There has been a critical error on this website" in place of the orders list. The query is now limited to `shop_order`, and the loop defensively skips any row that is not a full order object, so a stray refund (or any other type) can no longer take down the dashboard.
